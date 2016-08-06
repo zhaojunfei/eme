@@ -68,8 +68,8 @@
 								<canvas id="canvas" width="450px" height="450px"></canvas>
 							</div>
 							<div>
-							<label class="text-style">注：M1：思想道德素质，M2：专业理论素质，M3：创新精神与实践能力，M4：文化素质，M5：身心素质</label>
-						</div>
+								<label class="text-style">注：M1：思想道德素质，M2：专业理论素质，M3：创新精神与实践能力，M4：文化素质，M5：身心素质</label>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -96,48 +96,53 @@
 		//显示后将request里的Message清空，防止回退时重复显示。
 
 		//当选择学年开始时间之后给定结束时间
-		
+
 		function changeEndYear() {
 			var startSchoolYear = $("#startSchoolYear").val();
 			document.getElementById("endSchoolYear").value = parseInt(startSchoolYear) + 1;
 		}
 		function selectEvaluateResult() {
-			$("#canvas").html("");
+			
 			var startSchoolYear = $("#startSchoolYear").val();
 			var endSchoolYear = $("#endSchoolYear").val();
 			var schoolYear = startSchoolYear + "-" + endSchoolYear;
 			$("#evaluateScoreList tbody").html("");
+			
 			$.getJSON("Json_selectEvaluateResult", {
 				schoolYear : schoolYear
 			}, function(data) {
-				$("#evaluateScoreList").append(
-						"<tr><td>" + data.evaluateResult.student.stuSchNum
-								+ "</td><td>"
-								+ data.evaluateResult.student.stuName
-								+ "</td><td class='M1'>"
-								+ data.evaluateResult.m1
-								+ "</td><td class='M2'>"
-								+ data.evaluateResult.m2
-								+ "</td><td class='M3'>"
-								+ data.evaluateResult.m3
-								+ "</td><td class='M4'>"
-								+ data.evaluateResult.m4
-								+ "</td><td class='M5'>"
-								+ data.evaluateResult.m5 + "</td></tr>");
-			
-				radarPhoto(data.maxEva.maxM1,data.maxEva.maxM2,data.maxEva.maxM3,data.maxEva.maxM4,data.maxEva.maxM5);
+					$("#evaluateScoreList").append(
+							"<tr><td>" + data.evaluateResult.student.stuSchNum
+									+ "</td><td>"
+									+ data.evaluateResult.student.stuName
+									+ "</td><td class='M1'>"
+									+ data.evaluateResult.m1
+									+ "</td><td class='M2'>"
+									+ data.evaluateResult.m2
+									+ "</td><td class='M3'>"
+									+ data.evaluateResult.m3
+									+ "</td><td class='M4'>"
+									+ data.evaluateResult.m4
+									+ "</td><td class='M5'>"
+									+ data.evaluateResult.m5 + "</td></tr>");
+
+					radarPhoto(data.maxEva.maxM1, data.maxEva.maxM2,
+							data.maxEva.maxM3, data.maxEva.maxM4,
+							data.maxEva.maxM5);
 			});
 		}
-		
-		function radarPhoto(maxM1,maxM2,maxM3,maxM4,maxM5) {
+
+		function radarPhoto(maxM1, maxM2, maxM3, maxM4, maxM5) {
 			$(".container").css("min-height",
 					$(document).height() - 90 - 88 - 41 + "px");//container的最小高度为“浏览器当前窗口文档的高度-header高度-footer高度”
-					
+
 			//格式化表格中的数据
-			for(var i=1;i<6;i++){
-				document.getElementsByClassName("M"+i)[0].innerHTML = parseFloat(document.getElementsByClassName("M"+i)[0].innerHTML).toFixed(2);
+			for (var i = 1; i < 6; i++) {
+				document.getElementsByClassName("M" + i)[0].innerHTML = parseFloat(
+						document.getElementsByClassName("M" + i)[0].innerHTML)
+						.toFixed(2);
 			}
-			
+
 			/**
 			 * 开始绘制雷达图
 			 */
@@ -189,7 +194,7 @@
 			if (maxM5 == 0)
 				maxM5 = 1;
 			value = [ M1 / maxM1 * 100, M2 / maxM2 * 100, M3 / maxM3 * 100,
-						M4 / maxM4 * 100, M5 / maxM5 * 100 ];
+					M4 / maxM4 * 100, M5 / maxM5 * 100 ];
 			radarChart(context, 5, 240, 240, 200, 0, false, value);
 			context.strokeStyle = "#00B2EE";
 			context.lineWidth = 3;

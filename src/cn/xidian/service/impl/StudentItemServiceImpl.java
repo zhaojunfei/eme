@@ -1,5 +1,6 @@
 package cn.xidian.service.impl;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -11,8 +12,10 @@ import cn.xidian.entity.ItemEvaluatePoint;
 import cn.xidian.entity.ItemEvaluateScore;
 import cn.xidian.entity.ItemEvaluateType;
 import cn.xidian.entity.ItemFile;
+import cn.xidian.entity.PageBean;
 import cn.xidian.entity.StudentItem;
 import cn.xidian.service.StudentItemService;
+import cn.xidian.utils.PageUtils;
 
 @Component("studentItemServiceImpl")
 public class StudentItemServiceImpl implements StudentItemService {
@@ -35,8 +38,13 @@ public class StudentItemServiceImpl implements StudentItemService {
 	}
 
 	@Override
-	public List<StudentItem> selectByStuNum(String stuNum) {
-		return studentItemDao.selectByStuNum(stuNum);
+	public PageBean<StudentItem> selectByStuNum(String stuNum,Integer page) {
+		PageBean<StudentItem> siPageBean=new PageBean<StudentItem>();
+		List<StudentItem> studentItems=studentItemDao.selectByStuNum(stuNum);
+		siPageBean=PageUtils.page(page, studentItems.size());
+		List<StudentItem> items=studentItemDao.findByStuNum(stuNum,siPageBean.getBegin(),siPageBean.getLimit());
+		siPageBean.setList(items);
+		return siPageBean;
 	}
 
 	@Override
@@ -100,6 +108,10 @@ public class StudentItemServiceImpl implements StudentItemService {
 		return studentItemDao.selectItemEvaScore(id);
 	}
 
-	
+	@Override
+	public List<StudentItem> selectItemByLimitTime(String stuNum, Date startTime, Date endTime) {
+		// TODO Auto-generated method stub
+		return studentItemDao.selectItemByLimitTime(stuNum,startTime,endTime);
+	}
 
 }

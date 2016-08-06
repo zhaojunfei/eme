@@ -1,0 +1,18 @@
+@CHARSET "UTF-8";
+.input-l{
+	width:50%;
+	margin-top:8px;
+}
+.textarea-l{
+	width:90%;
+	height:80px;
+	margin-top:8px;
+}
+.top-distance{
+	margin-top:15px;
+}
+.para-indent{
+	
+	text-indent:2em;
+}
+

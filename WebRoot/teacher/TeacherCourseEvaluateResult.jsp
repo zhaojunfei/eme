@@ -64,7 +64,7 @@
 										<tbody>
 											<s:iterator value="gradeCoursePoints" var="cp">
 												<tr>
-													<td class="left"><s:property value="#cp.point.indPointNum" />.<s:property
+													<td class="left" ><s:property value="#cp.point.indPointNum" />.<s:property
 															value="#cp.point.indPointContent" /></td>
 													<td class="value"><s:property value="#cp.cursEvaValue" /></td>
 												</tr>

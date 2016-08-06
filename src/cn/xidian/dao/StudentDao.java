@@ -36,4 +36,6 @@ public interface StudentDao {
 	List<StudentCourse> selectStuAllGradesById(Integer id);
 
 	EvaluateResult selectEvaluateResult(Integer stuId, String schoolYear);
+	
+	List<StudentCourse> findStuCoursesByStuId(Integer id,Integer begin,Integer limit);
 }

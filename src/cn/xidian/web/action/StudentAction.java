@@ -1,7 +1,10 @@
 package cn.xidian.web.action;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedList;
@@ -11,6 +14,8 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.poi.hwpf.HWPFDocument;
+import org.apache.poi.hwpf.usermodel.Range;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.interceptor.RequestAware;
 import org.springframework.context.annotation.Scope;
@@ -20,6 +25,7 @@ import cn.xidian.entity.ItemEvaluatePoint;
 import cn.xidian.entity.ItemEvaluateScore;
 import cn.xidian.entity.ItemEvaluateType;
 import cn.xidian.entity.ItemFile;
+import cn.xidian.entity.PageBean;
 import cn.xidian.entity.Student;
 import cn.xidian.entity.StudentActivity;
 import cn.xidian.entity.StudentCourse;
@@ -52,10 +58,11 @@ public class StudentAction extends ActionSupport implements RequestAware {
 	private StudentActivity activity;
 	private Integer actId;
 	// 参与项目及获奖
-	private List<StudentItem> items = new LinkedList<StudentItem>();// 社会实践
 	private List<ItemFile> itemFiles = new LinkedList<ItemFile>();
 	private StudentItem item;
 	private Integer itemId;
+	private static Integer itemid;
+	private PageBean<StudentItem> siPageBean;
 	// 成绩查询
 	private String year;
 	private String term;
@@ -64,7 +71,7 @@ public class StudentAction extends ActionSupport implements RequestAware {
 	private File[] file;
 	private String[] fileFileName;
 	private List<ItemFile> allFile;
-	
+
 	// 学生项目的管理
 	private List<ItemEvaluateType> itemEvaluateTypes;
 	private List<ItemEvaluatePoint> itemEvaluatePoints;
@@ -72,10 +79,12 @@ public class StudentAction extends ActionSupport implements RequestAware {
 	private ItemEvaluateType itemEvaluateType;
 	private ItemEvaluatePoint itemEvaluatePoint;
 	private ItemEvaluateScore itemEvaluateScore;
-	
-	//学生评估管理
+
+	// 学生评估管理
 	private List<StudentCourse> studentCourses;
-	
+	private PageBean<StudentCourse> pageBean;
+	private Integer page;
+
 	Map<String, Object> session = ActionContext.getContext().getSession();
 	User tUser = (User) session.get("tUser");
 
@@ -210,8 +219,48 @@ public class StudentAction extends ActionSupport implements RequestAware {
 
 	/* 学生参与项目及获奖 */
 	public String selectItem() {
+
 		String schNum = tUser.getSchNum();
-		items = studentItemService.selectByStuNum(schNum);
+		if (page == null) {
+			page = 1;
+		}
+		siPageBean=studentItemService.selectByStuNum(schNum,page);
+		/*items = studentItemService.selectByStuNum(schNum);*/
+		return "student";
+	}
+
+	public String createword() {
+		item = studentItemService.selectItemInfo(itemid);
+		String realpath = "";
+		realpath = ServletActionContext.getServletContext().getRealPath("export\\ITEM.doc");
+		System.out.println(realpath);
+		try {
+			InputStream is = new FileInputStream(realpath);
+			HWPFDocument doc = new HWPFDocument(is);
+			Range range = doc.getRange();
+			// 把range范围内的${reportDate}替换为当前的日期
+			range.replaceText("${xiangmubianhao}", item.getItemNum());
+			range.replaceText("${xiangmumingcheng}", item.getItemName());
+			range.replaceText("${zhubandanwei}", item.getItemUnit());
+			range.replaceText("${xiangmuleibie}", item.getItemEvaluateType().getItemEvaTypeName());
+			range.replaceText("${jiangxiangdengji}", item.getItemEvaluateScore().getItemEvaScoreName());
+			range.replaceText("${pinjiazhibiao}", item.getItemEvaluatePoint().getItemEvaPointName());
+			range.replaceText("${xiangmubiaozhangduixiang}", item.getItemPrizeObject());
+			range.replaceText("${xiangmucanyujuese}", item.getItemRole());
+			range.replaceText("${shenhezhuangtai}", item.getItemState());
+			range.replaceText("${shenhedefen}", item.getItemScore());
+			range.replaceText("${shenheyijian}", item.getNote());
+			String filepath = ServletActionContext.getServletContext().getRealPath("exportword\\321.doc");
+			OutputStream os = new FileOutputStream(filepath);
+			System.out.println(filepath);
+			// 把doc输出到输出流中
+			doc.write(os);
+			is.close();
+			os.close();
+			request.put("Message", "导出成功！");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		return "student";
 	}
 
@@ -246,8 +295,8 @@ public class StudentAction extends ActionSupport implements RequestAware {
 	public String addItem() throws Exception {
 		item.setItemState("待审核");
 		item.setNote("无");
-		item.setItemScore("0");	
-		Date date=new Date();
+		item.setItemScore("0");
+		Date date = new Date();
 		item.setItemSubmitDate(date);
 		String schNum = tUser.getSchNum();
 		s = studentService.selectInfBySchNum(schNum);
@@ -271,14 +320,13 @@ public class StudentAction extends ActionSupport implements RequestAware {
 			savedir.getParentFile().mkdirs();
 		for (int i = 0; i < file.length; i++) {
 			ItemFile itemFile = new ItemFile();// 实例化ItemFile
+			int random = (int) (1 + Math.random() * 10);
+			char c = (char) (int) (Math.random() * 26 + 97);
 			String suffix = fileFileName[i].substring(fileFileName[i].lastIndexOf(".") + 1);
-			int random=(int)(1+Math.random()*10);
-			char c=(char)(int)(Math.random()*26+97);
-			File savefile = new File(savedir, fileNewName + '_' + c +random +'.'+suffix);
+			File savefile = new File(savedir, fileNewName + '_' + c + random + '.' + suffix);
 			FileUtils.copyFile(file[i], savefile);
 			itemFile.setFileName(fileFileName[i]);
-			itemFile.setSaveFileName(fileNewName + '_' +c+ random+'.'+suffix);
-			System.out.println((int)(1+Math.random()*10));
+			itemFile.setSaveFileName(fileNewName + '_' + c + random + '.' + suffix);
 			itemFile.setStudentItem(item);
 			itemFile.setFileType(suffix);
 			studentItemService.saveAttachment(itemFile);
@@ -299,29 +347,37 @@ public class StudentAction extends ActionSupport implements RequestAware {
 
 	// 查看学生获奖情况详情
 	public String selectItemInfo() {
+		itemid = itemId;
 		allFile = studentItemService.selectItemFile(itemId);
 		item = studentItemService.selectItemInfo(itemId);
-		itemEvaluateType=studentItemService.selectItemEvaType(item.getItemEvaluateType().getItemEvaTypeId());
-		itemEvaluatePoint=studentItemService.selectItemEvaPoint(item.getItemEvaluatePoint().getItemEvaPointId());
-		itemEvaluateScore=studentItemService.selectItemEvaScore(item.getItemEvaluateScore().getItemEvaScoreId());
+		itemEvaluateType = studentItemService.selectItemEvaType(item.getItemEvaluateType().getItemEvaTypeId());
+		itemEvaluatePoint = studentItemService.selectItemEvaPoint(item.getItemEvaluatePoint().getItemEvaPointId());
+		itemEvaluateScore = studentItemService.selectItemEvaScore(item.getItemEvaluateScore().getItemEvaScoreId());
 		return "student";
 	}
 
-	
 	// 在学生项目添加时显示项目类别下拉框
 	public String selectItemEvaType() {
 		itemEvaluateTypes = studentItemService.selectItemEvaTypes();
-		itemEvaluatePoints=studentItemService.selectItemEvaPoints(1);
-		itemEvaluateScores=studentItemService.selectItemEvaScoresByPointId(1);
+		itemEvaluatePoints = studentItemService.selectItemEvaPoints(1);
+		itemEvaluateScores = studentItemService.selectItemEvaScoresByPointId(1);
 		return "student";
 	}
-	//查询学生成绩
-		public String selectStuAllGradesById() {
-			String schNum = tUser.getSchNum();
-			s=studentService.selectInfBySchNum(schNum);
-			studentCourses=studentService.selectStuAllGradesById(s.getStuId());
-			return "student";
+
+	// 查询学生成绩
+	public String selectStuAllGradesById() {
+		String schNum = tUser.getSchNum();
+		s = studentService.selectInfBySchNum(schNum);
+		if (page==null) {
+			page = 1;
 		}
+		pageBean = studentService.selectStuAllGradesById(s.getStuId(), page);
+		System.out.println("daxiao" + pageBean.getList().size());
+		/*
+		 * studentCourses=studentService.selectStuAllGradesById(s.getStuId());
+		 */
+		return "student";
+	}
 
 	public Student getS() {
 		return s;
@@ -402,15 +458,7 @@ public class StudentAction extends ActionSupport implements RequestAware {
 	public void setActivity(StudentActivity activity) {
 		this.activity = activity;
 	}
-
-	public List<StudentItem> getItems() {
-		return items;
-	}
-
-	public void setItems(List<StudentItem> items) {
-		this.items = items;
-	}
-
+	
 	public StudentItem getItem() {
 		return item;
 	}
@@ -557,6 +605,30 @@ public class StudentAction extends ActionSupport implements RequestAware {
 
 	public void setStudentCourses(List<StudentCourse> studentCourses) {
 		this.studentCourses = studentCourses;
+	}
+
+	public PageBean<StudentCourse> getPageBean() {
+		return pageBean;
+	}
+
+	public void setPageBean(PageBean<StudentCourse> pageBean) {
+		this.pageBean = pageBean;
+	}
+
+	public Integer getPage() {
+		return page;
+	}
+
+	public void setPage(Integer page) {
+		this.page = page;
+	}
+
+	public PageBean<StudentItem> getSiPageBean() {
+		return siPageBean;
+	}
+
+	public void setSiPageBean(PageBean<StudentItem> siPageBean) {
+		this.siPageBean = siPageBean;
 	}
 
 }

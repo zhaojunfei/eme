@@ -95,10 +95,10 @@
 						<div class="div-major-inf">
 							<h5>机械设计制造及其自动化专业的培养目标为：</h5>
 							<p class="major-inf-content">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;旨在培养满足创新型国家发展需要、基础知识厚实、
-								工程践能力强、有组织能力和国际视野的机械领域创新型人才，能从事机械设计制造及自动化领域中的设计制造、科学研究、应用开发、运行管理和经营销售等方面能力的机电一体化复合型高级人才。</p>
+								工程实践能力强、有组织能力和国际视野的机械领域创新型人才，能从事机械设计制造及自动化领域中的设计制造、科学研究、应用开发、运行管理和经营销售等方面能力的机电一体化复合型高级人才。</p>
 							<p class="major-inf-content">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;通过3-5年实际工作的锻炼，期望达到：</p>
 							<p class="major-inf-content">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;（1）良好的社会责任感、职业道德水准和敬精神，有意愿能力服务国家社会；</p>
-							<p class="major-inf-content">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;（2）较强的工程创新能力，成为科研院所及企事业单位中坚量和务骨干；</p>
+							<p class="major-inf-content">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;（2）较强的工程创新能力，成为科研院所及企事业单位中坚力量和业务骨干；</p>
 							<p class="major-inf-content">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;（3）能够独立承担复杂机电产品和装备的设计、制造、测试、研发等工作；</p>
 							<p class="major-inf-content">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;（4）能够在团队协作中作为初级领导或者重要成员有效地发挥作用；</p>
 							<p class="major-inf-content">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;（5）具有广阔的国际视野，能够通过继续教育或其他学习途径拓展自己的知识或能力。</p>

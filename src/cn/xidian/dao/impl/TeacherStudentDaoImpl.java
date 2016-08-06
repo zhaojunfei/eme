@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import javax.annotation.Resource;
+import javax.swing.Spring;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -74,7 +75,7 @@ public class TeacherStudentDaoImpl implements TeacherStudentDao {
 				if (i != clazzs.size() - 1) {
 					sb.append(element.getClaId() + ",");
 					i++;
-				}else{
+				} else {
 					sb.append(element.getClaId());
 				}
 			}
@@ -120,31 +121,31 @@ public class TeacherStudentDaoImpl implements TeacherStudentDao {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<EvaluateResult> selectSummaryEva(Integer claId, String schoolYear) {
+	public Integer selectSummaryEva(Integer claId, String schoolYear) {
 		// TODO Auto-generated method stub
-		String sql="from EvaluateResult where claId=? and schoolYear=? ";
-		Query query=currentSession().createQuery(sql);
+		String sql = "from EvaluateResult where claId=? and schoolYear=? ";
+		Query query = currentSession().createQuery(sql);
 		query.setInteger(0, claId);
 		query.setString(1, schoolYear);
-		List<EvaluateResult> evaluateResults=query.list();
-		return evaluateResults;
+		List<EvaluateResult> evaluateResults = query.list();
+		return evaluateResults.size();
 	}
 
 	@Override
 	public Clazz selectClazzById(Integer id) {
 		// TODO Auto-generated method stub
-		String sql="from Clazz where claId=?";
-		Query query=currentSession().createQuery(sql);
+		String sql = "from Clazz where claId=?";
+		Query query = currentSession().createQuery(sql);
 		query.setInteger(0, id);
-		Clazz clazz=(Clazz) query.uniqueResult();
+		Clazz clazz = (Clazz) query.uniqueResult();
 		return clazz;
 	}
 
 	@Override
 	public boolean deleteEvas(Integer claId, String schoolYear) {
 		// TODO Auto-generated method stub
-		String sql="delete from EvaluateResult  where claId=? and schoolYear=?";
-		Query query=currentSession().createQuery(sql);
+		String sql = "delete from EvaluateResult  where claId=? and schoolYear=?";
+		Query query = currentSession().createQuery(sql);
 		query.setInteger(0, claId);
 		query.setString(1, schoolYear);
 		query.executeUpdate();
@@ -155,33 +156,70 @@ public class TeacherStudentDaoImpl implements TeacherStudentDao {
 	@Override
 	public List<StudentCourse> selectStuGrades(Integer stuId, String schoolYear) {
 		// TODO Auto-generated method stub
-		String sql="from StudentCourse where stuId=? and schoolYear=?";
-		Query query=currentSession().createQuery(sql);
+		String sql = "from StudentCourse where stuId=? and schoolYear=?";
+		Query query = currentSession().createQuery(sql);
 		query.setInteger(0, stuId);
 		query.setString(1, schoolYear);
-		List<StudentCourse> studentCourses=query.list();
+		List<StudentCourse> studentCourses = query.list();
 		return studentCourses;
 	}
 
 	@Override
 	public EvaluateResult selectEvaluateResultById(Integer id) {
 		// TODO Auto-generated method stub
-		String sql="from EvaluateResult where evaluateResultId=?";
-		Query query=currentSession().createQuery(sql);
+		String sql = "from EvaluateResult where evaluateResultId=?";
+		Query query = currentSession().createQuery(sql);
 		query.setInteger(0, id);
-		EvaluateResult evaluateResult=(EvaluateResult) query.uniqueResult();
+		EvaluateResult evaluateResult = (EvaluateResult) query.uniqueResult();
 		return evaluateResult;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public EvaluateResult selectMaxEva(String schoolYear,Integer i) {
+	public EvaluateResult selectMaxEva(String schoolYear, Integer i) {
 		// TODO Auto-generated method stub
-		String sql1="from EvaluateResult where schoolYear=? order by M"+i+" desc";
-		Query query=currentSession().createQuery(sql1);
+		String sql1 = "from EvaluateResult where schoolYear=? order by M" + i + " desc";
+		Query query = currentSession().createQuery(sql1);
 		query.setString(0, schoolYear);
-		List<EvaluateResult> evaluateResults=query.list();
-		System.out.println(evaluateResults.get(0).getM1());
+		List<EvaluateResult> evaluateResults = query.list();
 		return evaluateResults.get(0);
+	}
+
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public Integer findCountCid(Integer claId) {
+		// TODO Auto-generated method stub
+		String sql = "from EvaluateResult where claId=?";
+		Query query = currentSession().createQuery(sql);
+		query.setInteger(0, claId);
+		List<EvaluateResult> evaluateResults = query.list();
+
+		return evaluateResults.size();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<EvaluateResult> findByPageCid(Integer claId,String schoolYear, Integer begin, Integer limit) {
+		// TODO Auto-generated method stub
+		String sql="from EvaluateResult where claId=? and schoolYear=?";
+		Query query=currentSession().createQuery(sql).setFirstResult(begin).setMaxResults(limit);
+		query.setInteger(0, claId);
+		query.setString(1, schoolYear);
+		List<EvaluateResult> evaluateResults=query.list();
+		return evaluateResults;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<StudentCourse> findStuGradesByPage(Integer stuId, String schoolYear, Integer begin, Integer limit) {
+		// TODO Auto-generated method stub
+		String sql = "from StudentCourse where stuId=? and schoolYear=?";
+		Query query = currentSession().createQuery(sql).setFirstResult(begin).setMaxResults(limit);
+		query.setInteger(0, stuId);
+		query.setString(1, schoolYear);
+		List<StudentCourse> studentCourses = query.list();
+		return studentCourses;
 	}
 
 }

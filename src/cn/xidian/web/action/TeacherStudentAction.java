@@ -1,7 +1,12 @@
 package cn.xidian.web.action;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -9,6 +14,9 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
+import org.apache.poi.hwpf.HWPFDocument;
+import org.apache.poi.hwpf.usermodel.Range;
+import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.interceptor.RequestAware;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -23,9 +31,11 @@ import cn.xidian.entity.ItemEvaluateScore;
 import cn.xidian.entity.ItemEvaluateType;
 import cn.xidian.entity.ItemFile;
 import cn.xidian.entity.MaxEva;
+import cn.xidian.entity.PageBean;
 import cn.xidian.entity.Student;
 import cn.xidian.entity.StudentCourse;
 import cn.xidian.entity.StudentItem;
+import cn.xidian.entity.Survey;
 import cn.xidian.entity.Teacher;
 import cn.xidian.entity.User;
 import cn.xidian.exception.StudentExistsException;
@@ -33,6 +43,7 @@ import cn.xidian.exception.StudentNotExistException;
 import cn.xidian.service.AdminStudentService;
 import cn.xidian.service.ClazzService;
 import cn.xidian.service.StudentItemService;
+import cn.xidian.service.SurveyService;
 import cn.xidian.service.TeacherService;
 import cn.xidian.service.TeacherStudentService;
 import cn.xidian.web.bean.AdminStuLimits;
@@ -51,16 +62,17 @@ public class TeacherStudentAction extends ActionSupport implements RequestAware 
 	private List<ItemFile> allFile;
 	private StudentItem item;
 	private Integer itemId;
+	private static Integer itemid;
 	private List<Clazz> allClazz;
-
 	private AdminStuLimits limits;
 	private Teacher teacher;
-
 	// 学生评估汇总添加
 	private EvaluateResult evaluateResult;
 	private Integer evaluateResultId;
 	private MaxEva maxEva;
 	private String schoolYear;
+	private Integer claId;
+	private Integer page;
 	/* 上传头像 */
 	private String uploadUrl;
 	private File file;
@@ -69,6 +81,11 @@ public class TeacherStudentAction extends ActionSupport implements RequestAware 
 	private ItemEvaluateType itemEvaluateType;
 	private ItemEvaluatePoint itemEvaluatePoint;
 	private ItemEvaluateScore itemEvaluateScore;
+	private PageBean<StudentItem> siPageBean;
+
+	// 调查问卷添加
+	private Survey survey;
+	private Integer surveyId;
 
 	private Map<String, Object> request;
 	Map<String, Object> session = ActionContext.getContext().getSession();
@@ -101,6 +118,13 @@ public class TeacherStudentAction extends ActionSupport implements RequestAware 
 	@Resource(name = "teacherServiceImpl")
 	public void setTeacherService(TeacherService teacherService) {
 		this.teacherService = teacherService;
+	}
+
+	private SurveyService surveyService;
+
+	@Resource(name = "surveyServiceImpl")
+	public void set(SurveyService surveyService) {
+		this.surveyService = surveyService;
 	}
 
 	private ClazzService clazzService;
@@ -144,7 +168,11 @@ public class TeacherStudentAction extends ActionSupport implements RequestAware 
 		session.put("stuSchNum", schNum);
 		s = adminStudentService.selectStudentBySchNum(schNum);
 		setAllClazz(clazzService.findAllCla());
-		setItems(adminStudentService.selectStuItemsBySchNum(schNum));
+		if (page == null) {
+			page = 1;
+		}
+		siPageBean = studentItemService.selectByStuNum(schNum, page);
+		/* setItems(adminStudentService.selectStuItemsBySchNum(schNum)); */
 		return "teacher";
 	}
 
@@ -176,6 +204,7 @@ public class TeacherStudentAction extends ActionSupport implements RequestAware 
 
 	// 查看学生获奖情况详情
 	public String selectItemInfo() {
+		itemid = itemId;
 		allFile = studentItemService.selectItemFile(itemId);
 		item = studentItemService.selectItemInfo(itemId);
 		itemEvaluateType = studentItemService.selectItemEvaType(item.getItemEvaluateType().getItemEvaTypeId());
@@ -184,10 +213,45 @@ public class TeacherStudentAction extends ActionSupport implements RequestAware 
 		return "teacher";
 	}
 
+	public String CreateWord() {
+		item = studentItemService.selectItemInfo(itemid);
+		String realpath = "";
+		realpath = ServletActionContext.getServletContext().getRealPath("export\\ITEM.doc");
+		System.out.println(realpath);
+		try {
+			InputStream is = new FileInputStream(realpath);
+			HWPFDocument doc = new HWPFDocument(is);
+			Range range = doc.getRange();
+			// 把range范围内的${reportDate}替换为当前的日期
+			range.replaceText("${xiangmubianhao}", item.getItemNum());
+			range.replaceText("${xiangmumingcheng}", item.getItemName());
+			range.replaceText("${zhubandanwei}", item.getItemUnit());
+			range.replaceText("${xiangmuleibie}", item.getItemEvaluateType().getItemEvaTypeName());
+			range.replaceText("${jiangxiangdengji}", item.getItemEvaluateScore().getItemEvaScoreName());
+			range.replaceText("${pinjiazhibiao}", item.getItemEvaluatePoint().getItemEvaPointName());
+			range.replaceText("${xiangmubiaozhangduixiang}", item.getItemPrizeObject());
+			range.replaceText("${xiangmucanyujuese}", item.getItemRole());
+			range.replaceText("${shenhezhuangtai}", item.getItemState());
+			range.replaceText("${shenhedefen}", item.getItemScore());
+			range.replaceText("${shenheyijian}", item.getNote());
+			String filepath = ServletActionContext.getServletContext().getRealPath("exportword\\321.doc");
+			OutputStream os = new FileOutputStream(filepath);
+			System.out.println(filepath);
+			// 把doc输出到输出流中
+			doc.write(os);
+			is.close();
+			os.close();
+			request.put("Message", "导出成功！");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return "student";
+	}
+
 	// 班主任评价学生获奖项目
 	public String judgeStuItem() {
 		schNum = session.get("stuSchNum").toString();
-
 		boolean isSuccess = adminStudentService.judgeStuItem(item);
 		if (isSuccess) {
 			request.put("Message", "审核成功");
@@ -249,7 +313,30 @@ public class TeacherStudentAction extends ActionSupport implements RequestAware 
 
 	public String selectEvaluateResultById() {
 		evaluateResult = teacherStudentService.selectEvaluateResultById(evaluateResultId);
-		maxEva=teacherStudentService.selectMaxEva(schoolYear);
+		maxEva = teacherStudentService.selectMaxEva(schoolYear);
+		return "teacher";
+	}
+
+	/*
+	 * public String selectStusEvaResults() { PageBean<EvaluateResult>
+	 * pageBean=teacherStudentService.findByPageCid(claId,page);//根据一级分类查询带分页的商品
+	 * //将PageBean存入到值栈中
+	 * ActionContext.getContext().getValueStack().set("pageBean", pageBean);
+	 * return "teacher"; }
+	 */
+
+	public String createSurvey() {
+		Date createTime = new Date();
+		survey.setCreateTime(createTime);
+		survey.setState(0);
+		boolean isSuccess=surveyService.createSurvey(survey);
+		if (isSuccess) {
+			request.put("Message", "创建成功！请设计问卷内容！");
+		} else {
+			request.put("Message", "创建失败！");
+		}
+		surveyId=survey.getSurveyId();
+		System.out.println("数据是" + survey.getSurveyId());
 		return "teacher";
 	}
 
@@ -427,6 +514,47 @@ public class TeacherStudentAction extends ActionSupport implements RequestAware 
 
 	public void setSchoolYear(String schoolYear) {
 		this.schoolYear = schoolYear;
+	}
+
+	public Integer getClaId() {
+		return claId;
+	}
+
+	public void setClaId(Integer claId) {
+		this.claId = claId;
+	}
+
+	public Integer getPage() {
+		return page;
+	}
+
+	public void setPage(Integer page) {
+		this.page = page;
+	}
+
+	public PageBean<StudentItem> getSiPageBean() {
+		return siPageBean;
+	}
+
+	public void setSiPageBean(PageBean<StudentItem> siPageBean) {
+		this.siPageBean = siPageBean;
+	}
+
+	public Survey getSurvey() {
+		return survey;
+	}
+
+	public void setSurvey(Survey survey) {
+		this.survey = survey;
+	}
+
+
+	public Integer getSurveyId() {
+		return surveyId;
+	}
+
+	public void setSurveyId(Integer surveyId) {
+		this.surveyId = surveyId;
 	}
 
 }

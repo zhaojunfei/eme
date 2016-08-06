@@ -193,4 +193,15 @@ public class StudentDaoImpl implements StudentDao {
 		EvaluateResult evaluateResult=(EvaluateResult) query.uniqueResult();
 		return evaluateResult;
 	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<StudentCourse> findStuCoursesByStuId(Integer id, Integer begin, Integer limit) {
+		// TODO Auto-generated method stub
+		String sql="from StudentCourse where stuId=?";
+		Query query=currentSession().createQuery(sql).setFirstResult(begin).setMaxResults(limit);
+		query.setInteger(0, id);
+		List<StudentCourse> studentCourses=query.list();
+		return studentCourses;
+	}
 }

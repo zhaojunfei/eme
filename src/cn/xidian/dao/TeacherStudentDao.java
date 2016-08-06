@@ -24,15 +24,21 @@ public interface TeacherStudentDao {
 
 	boolean addEvaScore(EvaluateResult evaluateResult);
 
-	List<EvaluateResult> selectSummaryEva(Integer claId, String schoolYear);
+	Integer selectSummaryEva(Integer claId, String schoolYear);
 
 	Clazz selectClazzById(Integer id);
-	
+
 	boolean deleteEvas(Integer claId, String schoolYear);
-	
+
 	List<StudentCourse> selectStuGrades(Integer stuId, String schoolYear);
-	
+
 	EvaluateResult selectEvaluateResultById(Integer id);
-	
-	EvaluateResult selectMaxEva(String schoolYear,Integer i);
+
+	EvaluateResult selectMaxEva(String schoolYear, Integer i);
+
+	Integer findCountCid(Integer claId);
+
+	List<EvaluateResult> findByPageCid(Integer claId, String schoolYear, Integer begin, Integer limit);
+
+	List<StudentCourse> findStuGradesByPage(Integer stuId, String schoolYear, Integer begin, Integer limit);
 }

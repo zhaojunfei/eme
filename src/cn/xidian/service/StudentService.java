@@ -1,8 +1,8 @@
 package cn.xidian.service;
 
-import java.util.List;
 
 import cn.xidian.entity.EvaluateResult;
+import cn.xidian.entity.PageBean;
 import cn.xidian.entity.Student;
 import cn.xidian.entity.StudentCourse;
 
@@ -18,7 +18,7 @@ public interface StudentService {
 	
 	boolean modifyPassword(String schNum,String pwd);
 
-	List<StudentCourse> selectStuAllGradesById(Integer id);
+	PageBean<StudentCourse> selectStuAllGradesById(Integer id,Integer page);
 	
 	EvaluateResult selectEvaluateResult(Integer stuId,String schoolYear);
 }

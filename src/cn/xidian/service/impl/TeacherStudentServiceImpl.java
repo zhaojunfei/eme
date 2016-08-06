@@ -12,9 +12,11 @@ import cn.xidian.dao.TeacherStudentDao;
 import cn.xidian.entity.Clazz;
 import cn.xidian.entity.EvaluateResult;
 import cn.xidian.entity.MaxEva;
+import cn.xidian.entity.PageBean;
 import cn.xidian.entity.Student;
 import cn.xidian.entity.StudentCourse;
 import cn.xidian.service.TeacherStudentService;
+import cn.xidian.utils.PageUtils;
 import cn.xidian.web.bean.AdminStuLimits;
 
 @Component
@@ -52,7 +54,7 @@ public class TeacherStudentServiceImpl implements TeacherStudentService {
 	}
 
 	@Override
-	public List<EvaluateResult> selectSummaryEva(Integer claId, String schoolYear) {
+	public Integer selectSummaryEva(Integer claId, String schoolYear) {
 		// TODO Auto-generated method stub
 		return teacherStudentDao.selectSummaryEva(claId,schoolYear);
 	}
@@ -92,6 +94,29 @@ public class TeacherStudentServiceImpl implements TeacherStudentService {
 		eva.setMaxM4(teacherStudentDao.selectMaxEva(schoolYear,4).getM4());
 		eva.setMaxM5(teacherStudentDao.selectMaxEva(schoolYear,5).getM5());
 		return eva;
+	}
+
+	@Override
+	public PageBean<EvaluateResult> findByPageCid(Integer claId,String schoolYear, Integer page) {
+		// TODO Auto-generated method stub
+		PageBean<EvaluateResult> pageBean= new PageBean<EvaluateResult>();
+		int totalCount=0;
+		totalCount = teacherStudentDao.selectSummaryEva(claId, schoolYear);
+		pageBean=PageUtils.page(page, totalCount);
+		List<EvaluateResult> list=teacherStudentDao.findByPageCid(claId,schoolYear,pageBean.getBegin(), pageBean.getLimit());
+		pageBean.setList(list);
+		return pageBean;
+	}
+
+	@Override
+	public PageBean<StudentCourse> selectStuGradesByPage(Integer stuId, String schoolYear, Integer page) {
+		// TODO Auto-generated method stub
+		PageBean<StudentCourse> pageBean=new PageBean<StudentCourse>();
+		List<StudentCourse> studentCourses=teacherStudentDao.selectStuGrades(stuId, schoolYear);
+		pageBean=PageUtils.page(page, studentCourses.size());
+		List<StudentCourse> list=teacherStudentDao.findStuGradesByPage(stuId,schoolYear,pageBean.getBegin(), pageBean.getLimit());
+		pageBean.setList(list);
+		return pageBean;
 	}
 
 	

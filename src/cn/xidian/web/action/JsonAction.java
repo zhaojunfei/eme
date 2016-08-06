@@ -1,13 +1,17 @@
 package cn.xidian.web.action;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.List;
+import java.util.Map;
+
 import javax.annotation.Resource;
 
 import org.apache.struts2.interceptor.RequestAware;
+import org.apache.struts2.json.annotations.JSON;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -19,6 +23,7 @@ import cn.xidian.entity.EvaluateResult;
 import cn.xidian.entity.ItemEvaluatePoint;
 import cn.xidian.entity.ItemEvaluateScore;
 import cn.xidian.entity.MaxEva;
+import cn.xidian.entity.PageBean;
 import cn.xidian.entity.Student;
 import cn.xidian.entity.StudentCourse;
 import cn.xidian.entity.StudentItem;
@@ -45,7 +50,6 @@ public class JsonAction extends ActionSupport implements RequestAware {
 	private StudentItemService studentItemService;
 	private Clazz cla;
 	private String schoolYear;
-	private List<EvaluateResult> evaluateResults;
 	private EvaluateResult evaluateResult;
 	private Integer size;
 	private List<StudentCourse> studentCourses;
@@ -53,6 +57,17 @@ public class JsonAction extends ActionSupport implements RequestAware {
 	private MaxEva maxEva;
 	private Date startTime;
 	private Date endTime;
+	private String start;
+	private String end;
+	private Date date1;
+	private Date date2;
+	private Date date3;
+	private Double average;
+	private Integer page;
+	private PageBean<EvaluateResult> pageBean;
+	private PageBean<StudentCourse> pbStuCours;
+	private PageBean<StudentItem> siPageBean;
+	private String stuNum;
 
 	Map<String, Object> session = ActionContext.getContext().getSession();
 	User tUser = (User) session.get("tUser");
@@ -92,14 +107,23 @@ public class JsonAction extends ActionSupport implements RequestAware {
 	}
 
 	public String evaluateSummaryByClazz() {
-		
-		System.out.println(startTime);
-		System.out.println(endTime);
-		
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		start = simpleDateFormat.format(startTime);
+		end = simpleDateFormat.format(endTime);
+		try {
+			date1 = simpleDateFormat.parse(start);
+			date2 = simpleDateFormat.parse(end);
+			Calendar calendar = new GregorianCalendar();
+			calendar.setTime(date2);
+			calendar.add(calendar.DATE, 1);// 把日期往后增加一天.整数往后推,负数往前移动
+			date3 = calendar.getTime(); // 这个时间就是日期往后推一天的结果
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		stus = teacherStudentService.selectChargeStus(clazz);
 		cla = teacherStudentService.selectClazzById(clazz);
-		evaluateResults = teacherStudentService.selectSummaryEva(clazz, schoolYear);
-		size = evaluateResults.size();
+		size = teacherStudentService.selectSummaryEva(clazz, schoolYear);
 		if (size != 0) {
 			teacherStudentService.deleteEvas(clazz, schoolYear);
 		}
@@ -112,7 +136,7 @@ public class JsonAction extends ActionSupport implements RequestAware {
 			EvaluateResult evaluateResult = new EvaluateResult();
 			String sch = element.getStuSchNum();
 			M2 += countGrade(element, schoolYear);
-			items = studentItemService.selectByStuNum(sch);
+			items = studentItemService.selectItemByLimitTime(sch, date1, date3);
 			for (StudentItem st : items) {
 				switch (st.getItemEvaluateType().getItemEvaTypeId()) {
 				case 1:
@@ -142,14 +166,14 @@ public class JsonAction extends ActionSupport implements RequestAware {
 			evaluateResult.setClazz(cla);
 			evaluateResult.setStudent(element);
 			teacherStudentService.addEvaScore(evaluateResult);
-
 		}
 		return "list";
 	}
 
 	public String selectSummaryEva() {
-		evaluateResults = teacherStudentService.selectSummaryEva(clazz, schoolYear);
-		size = evaluateResults.size();
+		pageBean = teacherStudentService.findByPageCid(clazz, schoolYear, page);// 根据一级分类查询带分页的商品
+		// 将PageBean存入到值栈中
+		ActionContext.getContext().getValueStack().set("pageBean", pageBean);
 		return "list";
 	}
 
@@ -163,7 +187,12 @@ public class JsonAction extends ActionSupport implements RequestAware {
 			allCredit += st.getCourse().getCursCredit();
 			allCreditAndScore += st.getCourse().getCursCredit() * st.getFinEvaValue();
 		}
-		Double average = allCreditAndScore / allCredit;
+
+		if (allCredit == 0.0) {
+			average = allCreditAndScore / 1.00;
+		} else {
+			average = allCreditAndScore / allCredit;
+		}
 		return average;
 	}
 
@@ -171,9 +200,9 @@ public class JsonAction extends ActionSupport implements RequestAware {
 		String schNum = tUser.getSchNum();
 		s = studentService.selectInfBySchNum(schNum);
 		if (schoolYear.equals("-")) {
-			studentCourses = studentService.selectStuAllGradesById(s.getStuId());
+			pbStuCours = (studentService.selectStuAllGradesById(s.getStuId(), page));
 		} else {
-			studentCourses = teacherStudentService.selectStuGrades(s.getStuId(), schoolYear);
+			pbStuCours = teacherStudentService.selectStuGradesByPage(s.getStuId(), schoolYear, page);
 		}
 		return "list";
 	}
@@ -186,6 +215,25 @@ public class JsonAction extends ActionSupport implements RequestAware {
 		return "list";
 	}
 
+	public String selectItem() {
+		String schNum;
+		if (stuNum == null) {
+			schNum = tUser.getSchNum();
+		} else {
+			schNum = stuNum;
+		}
+		if (page == null) {
+			page = 1;
+		}
+		siPageBean = studentItemService.selectByStuNum(schNum, page);
+		return "list";
+	}
+
+	/*
+	 * public String selectItem1() { if (page == null) { page = 1; }
+	 * siPageBean=studentItemService.selectByStuNum(stuNum,page); return "list";
+	 * }
+	 */
 	public List<ItemEvaluateScore> getItemEvaluateScores() {
 		return itemEvaluateScores;
 	}
@@ -280,14 +328,6 @@ public class JsonAction extends ActionSupport implements RequestAware {
 		this.cla = cla;
 	}
 
-	public List<EvaluateResult> getEvaluateResults() {
-		return evaluateResults;
-	}
-
-	public void setEvaluateResults(List<EvaluateResult> evaluateResults) {
-		this.evaluateResults = evaluateResults;
-	}
-
 	public Integer getSize() {
 		return size;
 	}
@@ -344,6 +384,44 @@ public class JsonAction extends ActionSupport implements RequestAware {
 		this.endTime = endTime;
 	}
 
-	
+	public Integer getPage() {
+		return page;
+	}
+
+	public void setPage(Integer page) {
+		this.page = page;
+	}
+
+	public PageBean<EvaluateResult> getPageBean() {
+		return pageBean;
+	}
+
+	public void setPageBean(PageBean<EvaluateResult> pageBean) {
+		this.pageBean = pageBean;
+	}
+
+	public PageBean<StudentCourse> getPbStuCours() {
+		return pbStuCours;
+	}
+
+	public void setPbStuCours(PageBean<StudentCourse> pbStuCours) {
+		this.pbStuCours = pbStuCours;
+	}
+
+	public PageBean<StudentItem> getSiPageBean() {
+		return siPageBean;
+	}
+
+	public void setSiPageBean(PageBean<StudentItem> siPageBean) {
+		this.siPageBean = siPageBean;
+	}
+
+	public String getStuNum() {
+		return stuNum;
+	}
+
+	public void setStuNum(String stuNum) {
+		this.stuNum = stuNum;
+	}
 
 }

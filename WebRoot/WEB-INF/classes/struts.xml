@@ -140,10 +140,12 @@
 				<param name="contentType">application/octet-stream;charset=utf-8</param>
 			</result>
 		</action>
+
 		<!-- 测试 -->
 
 		<action name="Json_*" class="JsonAction" method="{1}">
 			<result name="list" type="json"></result>
+
 		</action>
 	</package>
 

@@ -78,7 +78,9 @@
 									</tr>
 								</tbody>
 							</table>
-
+							<a href="Student_Award_Info_CreateWord">导出表格</a>
+							<a href="FileDown_ExportFile?fileName=导出文档">下载</a>
+							
 							<table class="table table-bordered">
 								<thead>
 									<tr>

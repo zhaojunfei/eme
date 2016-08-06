@@ -1,5 +1,6 @@
 package cn.xidian.dao.impl;
 
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -173,4 +174,28 @@ public class StudentItemDaoImpl implements StudentItemDao {
 		return itemEvaluateScore;
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<StudentItem> selectItemByLimitTime(String stuNum, Date startTime, Date endTime) {
+		// TODO Auto-generated method stub
+		List<StudentItem> items = new LinkedList<StudentItem>();
+		String sql = "from StudentItem where stuId=(select stuId from Student as stuId where stuSchNum=? and isDelete=1) and itemSubmitDate between ? and ?";
+		Query query = currentSession().createQuery(sql);
+		query.setString(0, stuNum);
+		query.setDate(1,startTime);
+		query.setDate(2, endTime);
+		items.addAll(query.list());
+		return items;
+		
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<StudentItem> findByStuNum(String schNum, Integer begin, Integer limit) {
+		// TODO Auto-generated method stub
+		String sql="from StudentItem where stuId=(select stuId from Student as stuId where stuSchNum=? and isDelete=1)";
+		Query query=currentSession().createQuery(sql).setFirstResult(begin).setMaxResults(limit);
+		query.setString(0, schNum);
+		return query.list();
+	}
 }

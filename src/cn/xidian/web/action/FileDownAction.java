@@ -36,6 +36,23 @@ public class FileDownAction extends ActionSupport implements RequestAware {
 		return request;
 	}
 
+	public String exportfile() throws Exception {
+//		String downFileName = new String(saveFileName.getBytes("ISO8859-1"),
+//		"utf-8");
+		
+		fileInput = ServletActionContext.getServletContext().getResourceAsStream("export//ITEM.doc");
+		request.put("Message", "下载成功！");
+		return "success";
+			}
+	public String ExportFile() throws Exception {
+//		String downFileName = new String(saveFileName.getBytes("ISO8859-1"),
+//		"utf-8");
+		
+		fileInput = ServletActionContext.getServletContext().getResourceAsStream("export//ITEM.doc");
+		request.put("Message", "下载成功！");
+		return "success";
+			}
+
 	public void setRequest(Map<String, Object> request) {
 		this.request = request;
 	}

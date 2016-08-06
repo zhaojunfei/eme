@@ -9,9 +9,11 @@ import org.springframework.stereotype.Component;
 
 import cn.xidian.dao.StudentDao;
 import cn.xidian.entity.EvaluateResult;
+import cn.xidian.entity.PageBean;
 import cn.xidian.entity.Student;
 import cn.xidian.entity.StudentCourse;
 import cn.xidian.service.StudentService;
+import cn.xidian.utils.PageUtils;
 import cn.xidian.utils.ServiceUtils;
 
 @Component
@@ -63,9 +65,13 @@ public class StudentServiceImpl implements StudentService {
 	}
 
 	@Override
-	public List<StudentCourse> selectStuAllGradesById(Integer id) {
+	public PageBean<StudentCourse> selectStuAllGradesById(Integer id,Integer page) {
 		// TODO Auto-generated method stub
-		return studentDao.selectStuAllGradesById(id);
+		List<StudentCourse> studentCourses=studentDao.selectStuAllGradesById(id);
+		PageBean<StudentCourse> pageBean=PageUtils.page(page, studentCourses.size());
+		List<StudentCourse> studentCourses2=studentDao.findStuCoursesByStuId(id,pageBean.getBegin(),pageBean.getLimit());
+		pageBean.setList(studentCourses2);
+		return pageBean;
 	}
 
 	@Override

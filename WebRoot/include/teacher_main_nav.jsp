@@ -31,6 +31,7 @@
 							<li><a href="TeacherCourse_Manager_0_excute">课程评价查询</a></li>
 							<li><a href="TeacherCourse_Manager_1_selectAllPoints">专业达成评价</a></li>
 							<li><a href="TeacherCourse_Manager_2_excute">学年达成度查询</a></li>
+							<li><a href="TeacherStudent_Survey_1_selectChargeStus">问卷调查设计</a></li>
 						</ul>
 					</li>
 					</s:if>
@@ -40,8 +41,7 @@
 						<a href="#" class="dropdown-toggle" data-toggle="dropdown">学生管理&nbsp;</a>
 						<ul class="dropdown-menu">
 							<li><a href="TeacherStudent_List_1_selectChargeStus">学生项目管理评估</a></li>
-							<li><a href="TeacherStudent_Eva_Summary_selectChargeStus">学生项目评估汇总</a></li>
-							
+							<li><a href="TeacherStudent_Eva_Summary_selectChargeStus">学生项目评估汇总</a></li>	
 						</ul>
 					</li>
 					</s:if>

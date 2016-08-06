@@ -51,26 +51,29 @@
 										</s:iterator>
 									</select><br>
 								</div>
-								<div style="margin-top: 10px">
+								<div style="margin-top: 15px">
 									<span class="text-size">评定学年：</span><input type="text"
 										name="startSchoolYear" id="startSchoolYear"
-										style="width: 40px" onchange="changeEndYear(this)"
+										class="year-width" onChange="changeEndYear(this)"
 										onFocus="WdatePicker(WdatePicker({lang:'zh-cn',dateFmt:'yyyy',readOnly:'true'})) ">
 									<span class="text-size ">至</span>&nbsp;&nbsp;<input type="text"
-										name="endSchoolYear" id="endSchoolYear" style="width: 40px"
+										name="endSchoolYear" id="endSchoolYear"  class="year-width"
 										readOnly> <br>
 								</div>
-								<div style="margin-top: 10px">
+								<div>
 									<span class="text-size">提交时间限制：</span> <input type="date"
-										pattern="yyyy-MM-dd" style="width: 135px" id="startTime"
-										name="startTime"><span class="text-size left-distance">至</span>&nbsp;&nbsp;
-									<input type="date" id="endTime" name="endTime"
-										pattern="yyyy-MM-dd" style="width: 135px">&nbsp;&nbsp;&nbsp;&nbsp;
-									<input type="button" id="evaSummary" class="btn left-distance"
-										value="评估汇总" onclick="isEmpity(this)">
+										id="startTime" name="startTime" pattern="yyyy-MM-dd"
+										class="date-width"><span
+										class="text-size left-distance">至</span>&nbsp;&nbsp; <input
+										type="date" id="endTime" name="endTime" pattern="yyyy-MM-dd"
+										class="date-width">&nbsp;&nbsp;&nbsp;&nbsp; <input
+										type="button" id="evaSummary" class="btn left-distance btn-bottom"
+										value="评估汇总" 
+										onclick="isEmpity(this)">
 								</div>
 							</div>
 						</div>
+						<hr/>
 						<div class="div-inf-tbl" style="margin-top: 100px">
 							<div>
 
@@ -110,9 +113,15 @@
 										</tr>
 									</thead>
 									<tbody id="evaluateScoreList1">
-
 									</tbody>
 								</table>
+								<div>
+									<input type=button class="btn btn-bottom" onclick="upPage()" id="upPage"
+										value="上一页">&nbsp;&nbsp;<span id="page" ></span>&nbsp;&nbsp;<input type="button"  class="btn btn-bottom"
+										 onclick="downPage()" id="downPage" value="下一页"><span class="left-distance">共&nbsp;&nbsp;<span
+										id="totalPage"></span>&nbsp;&nbsp;页
+									</span>
+								</div>
 							</div>
 						</div>
 					</div>
@@ -154,8 +163,11 @@
 				var clazz = $("#stuSchClazz").val();
 				var startSchoolYear = $("#startSchoolYear").val();
 				var endSchoolYear = $("#endSchoolYear").val();
-				if (clazz == "" || startSchoolYear == "" || endSchoolYear == "") {
-					alert("请选择班级或学年！");
+				var startTime = $("#startTime").val();
+				var endTime = $("#endTime").val();
+				if (clazz == "" || startSchoolYear == "" || endSchoolYear == ""
+						|| startTime == "" || endTime == "") {
+					alert("请选择班级、学年、评估时间段！");
 				} else {
 					summaryEva();
 				}
@@ -167,12 +179,28 @@
 				if (clazz == "" || startSchoolYear == "" || endSchoolYear == "") {
 					alert("请选择班级或学年！");
 				} else {
-					selectSummaryEva();
+					selectSummaryEva(1);
 				}
 			}
 
 		}
-
+		function upPage() {
+			var page = parseInt($("#page").html());
+			if (page == 1) {
+				alert("这已经是第一页！");
+			} else {
+				selectSummaryEva(page - 1);
+			}
+		}
+		function downPage() {
+			var totalPage = parseInt($("#totalPage").html());
+			var page = parseInt($("#page").html());
+			if (page == totalPage) {
+				alert("这已经是最后一页！");
+			} else {
+				selectSummaryEva(page + 1);
+			}
+		}
 		//对学生项目进行汇总
 		function summaryEva() {
 			var clazz = $("#stuSchClazz").val();
@@ -187,29 +215,37 @@
 				schoolYear : schoolYear,
 				startTime : startTime,
 				endTime : endTime
+			}, function(data) {
+				alert("评估成功！");
 			});
 		}
 		//查找学生项目评定结果，并显示在页面的表格中
-		function selectSummaryEva() {
+		function selectSummaryEva(page) {
 			var clazz = $("#stuSchClazz1").val();
 			var startSchoolYear = $("#startSchoolYear1").val();
 			var endSchoolYear = $("#endSchoolYear1").val();
 			var schoolYear = startSchoolYear + "-" + endSchoolYear;
+			/* if (page == "") {
+				page = 1;
+			} */
 			$("#evaluateScoreList tbody").html("");
 			$
 					.getJSON(
 							"Json_selectSummaryEva",
 							{
 								clazz : clazz,
-								schoolYear : schoolYear
+								schoolYear : schoolYear,
+								page : page
 							},
 							function(data) {
-								if (data.evaluateResults.length == "0") {
+								$("#page").html(data.pageBean.page);
+								$("#totalPage").html(data.pageBean.totalPage);
+								if (data.pageBean.list.length == "0") {
 									alert("未找到相关数据！");
 								} else {
 									$
 											.each(
-													data.evaluateResults,
+													data.pageBean.list,
 													function(i, value) {
 														$("#evaluateScoreList")
 																.append(

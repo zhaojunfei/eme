@@ -19,6 +19,8 @@
 <link rel="stylesheet" href="css/common.css" />
 <link rel="stylesheet" href="css/teacher_information.css" />
 <link rel="stylesheet" href="css/student_information.css" />
+<link rel="stylesheet" href="css/teacher_information.css" />
+<link rel="stylesheet" href="css/teaching_management.css" />
 
 </head>
 
@@ -42,7 +44,7 @@
 									<tbody>
 										<tr>
 											<td>学号</td>
-											<td><s:property value="s.stuSchNum" /></td>
+											<td id="stuSchNum"><s:property value="s.stuSchNum" /></td>
 											<td>姓名</td>
 											<td><s:property value="s.stuName" /></td>
 											<td class="img-stu" rowspan=4><img
@@ -101,7 +103,7 @@
 										</tr>
 									</thead>
 									<tbody>
-										<s:iterator value="items" var="i">
+										<s:iterator value="siPageBean.list" var="i">
 											<tr>
 												<td><s:property value="#i.itemNum" /></td>
 												<td><s:property value="#i.itemName" /></td>
@@ -113,6 +115,15 @@
 										</s:iterator>
 									</tbody>
 								</table>
+								<div>
+									<input type=button class="btn btn-bottom" onclick="upPage()"
+										id="upPage" value="上一页">&nbsp;&nbsp;<span id="page"><s:property
+											value="siPageBean.page" /></span>&nbsp;&nbsp;<input type="button"
+										class="btn btn-bottom" onclick="downPage()" id="downPage"
+										value="下一页"><span class="left-distance">共&nbsp;&nbsp;<span
+										id="totalPage"><s:property value="siPageBean.totalPage" /></span>&nbsp;&nbsp;页
+									</span> 
+								</div>
 							</div>
 							<div class="div-inf-tbl">
 								<h5>自我介绍</h5>
@@ -163,6 +174,59 @@
 			$(".container").css("min-height",
 					$(document).height() - 90 - 88 - 41 + "px");//container的最小高度为“浏览器当前窗口文档的高度-header高度-footer高度”
 		});
+		
+		function upPage() {
+			var page = parseInt($("#page").html());
+			if (page == 1) {
+				alert("这已经是第一页！");
+			} else {
+				selectStudentItems(page - 1);
+			}
+		}
+		function downPage() {
+			var totalPage = parseInt($("#totalPage").html());
+			var page = parseInt($("#page").html());
+			if (page == totalPage) {
+				alert("这已经是最后一页！");
+			} else {
+				selectStudentItems(page + 1);
+			}
+		}
+
+		function selectStudentItems(page) {
+			var stuSchNum=$("#stuSchNum").html();
+			$("#itemStuList tbody").html("");
+			$
+					.getJSON(
+							"Json_selectItem",
+							{
+								page : page,
+								stuNum:stuSchNum
+							},
+							function(data) {
+								$("#page").html(data.siPageBean.page);
+								$("#totalPage").html(data.siPageBean.totalPage);
+								$
+										.each(
+												data.siPageBean.list,
+												function(i, value) {
+
+													$("#itemStuList")
+															.append(
+																	"<tr><td>"
+																			+ value.itemNum
+																			+ "</td><td>"
+																			+ value.itemName
+																			+ "</td><td>"
+																			+ value.itemState
+																			+ "</td><td>"
+																			+ value.itemScore
+																			+ "</td><td><a href='TeacherStudent_Item_1_selectItemInfo?itemId="
+																			+ value.stuItemId
+																			+ "'>详情审核</a></td></tr>");
+												});
+							});
+		}
 	</script>
 </body>
 </html>

@@ -662,9 +662,18 @@ h5 {
 }
 
 .left-distance {
-	margin-left: 20px
+	margin-left: 15px
 }
 
 .left {
 	text-align:left !important;
+}
+.btn-bottom{
+	margin-bottom:25px;
+}
+.year-width{
+	width:40px;
+}
+.date-width{
+	width:135px;
 }

@@ -1,5 +1,6 @@
 package cn.xidian.dao;
 
+import java.util.Date;
 import java.util.List;
 
 import cn.xidian.entity.ItemEvaluatePoint;
@@ -35,7 +36,11 @@ public interface StudentItemDao {
 	ItemEvaluateType selectItemEvaType(Integer id);
 
 	ItemEvaluatePoint selectItemEvaPoint(Integer id);
-	
+
 	ItemEvaluateScore selectItemEvaScore(Integer id);
+
+	List<StudentItem> selectItemByLimitTime(String stuNum, Date startTime, Date endTime);
+
+	List<StudentItem> findByStuNum(String schNum, Integer begin, Integer limit);
 
 }

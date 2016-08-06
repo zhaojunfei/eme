@@ -1,11 +1,13 @@
 package cn.xidian.service;
 
+import java.util.Date;
 import java.util.List;
 
 import cn.xidian.entity.ItemEvaluatePoint;
 import cn.xidian.entity.ItemEvaluateScore;
 import cn.xidian.entity.ItemEvaluateType;
 import cn.xidian.entity.ItemFile;
+import cn.xidian.entity.PageBean;
 import cn.xidian.entity.StudentItem;
 
 public interface StudentItemService {
@@ -16,7 +18,7 @@ public interface StudentItemService {
 
 	boolean add(StudentItem item);
 
-	List<StudentItem> selectByStuNum(String stuNum);
+	PageBean<StudentItem> selectByStuNum(String stuNum,Integer page);
 
 	boolean saveAttachment(ItemFile itemFile);
 
@@ -31,8 +33,10 @@ public interface StudentItemService {
 	List<ItemEvaluateScore> selectItemEvaScoresByPointId(Integer id);
 
 	ItemEvaluateType selectItemEvaType(Integer id);
-	
+
 	ItemEvaluatePoint selectItemEvaPoint(Integer id);
-	
+
 	ItemEvaluateScore selectItemEvaScore(Integer id);
+
+	List<StudentItem> selectItemByLimitTime(String stuNum, Date startTime, Date endTime);
 }
