@@ -43,6 +43,7 @@
 								<div class="div-inf">
 									<div id="div-content"></div>
 								</div>
+								<input type="submit" class="btn" name="submit" id="submit" value="提交" onclick="linksel()">
 							</form>
 							<input type="button" name="addQues" value="添  加" class="btn"
 								onclick="addQuestion()">
