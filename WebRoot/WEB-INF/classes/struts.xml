@@ -68,6 +68,10 @@
 			<result name="adminStudentDetail" type="chain">AdminStudent_Information_1_selectStudentBySchNum
 			</result>
 		</action>
+		<action name="TeacherStudent_*_*_*" class="TeacherStudentAction"
+			method="{3}">
+			<result name="teacher">/teacher/TeacherStudent{1}{2}.jsp</result>
+		</action>
 		<action name="AdminCourse_*_*_*" class="AdminCourseAction"
 			method="{3}">
 			<result name="adminCourseList" type="chain">AdminCourse_List_1_selectAllCurs

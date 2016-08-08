@@ -33,27 +33,7 @@
 							<label>创建全新问卷</label>
 						</div>
 						<div class="div-inf-tbl">
-							<div>
-								<label class="text-size" style="margin-left: 40%"><s:property
-										value="survey.surveyId" /> <s:property value="survey.title" /></label>
-								<label class="text-size top-distance para-indent"><s:property
-										value="survey.discribe" /></label>
-							</div>
-							<form action="TeacherStudent_Survey_3_addQuestion" method="post"
-								class="form-horizontal" onsubmit="javascript:return isEmpty()">
-								<div class="div-inf">
-									<div id="div-content"></div>
-								</div>
-								<input type="hidden" name="survey.surveyId"
-									value="<s:property
-										value="survey.surveyId" />">
-								<input type="date" name="survey.startTime" id="startTime">至 <input
-									type="date" name="survey.endTime" id="endTime"> <input type="submit"
-									class="btn" name="submit" id="submit" value="提交"
-									onclick="linksel()">
-							</form>
-							<input type="button" name="addQues" id="1" value="单  选"
-								class="btn" onclick="addQuestion(this)">
+							
 						</div>
 					</div>
 				</div>

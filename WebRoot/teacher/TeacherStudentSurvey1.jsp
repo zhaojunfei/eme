@@ -42,8 +42,10 @@
 									class="text-size top-distance">问卷描述</label>
 								<textarea class="textarea-l" id="text-content"
 									name="survey.discribe"></textarea>
-								<br> <input type="submit" class="btn top-distance"
-									name="submit" id="submit" value="创建问卷">
+								<label class="text-size top-distance">问卷发起单位</label><input type="text"
+									class="input-l" name="survey.sponsor" id="input-sponsor"><br>
+								<input type="submit" class="btn top-distance" name="submit"
+									id="submit" value="创建问卷">
 							</form>
 						</div>
 					</div>
@@ -70,12 +72,12 @@
 		function isEmpty() {
 			var title = $("#input-title").val();
 			var content = $("#text-content").val();
-			if (title.trim().length != 0
-					&& content.trim().length != 0) {
+			var sponsor = $("#input-sponsor").val();
+			if (title.trim().length != 0 && content.trim().length != 0 && sponsor.trim().length != 0) {
 				return true;
-			}else{
+			} else {
 				alert("输入框不能为空！");
-				 return false;
+				return false;
 			}
 		}
 	</script>

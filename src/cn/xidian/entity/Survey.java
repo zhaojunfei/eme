@@ -5,17 +5,24 @@ import java.util.Date;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
 @Table(name = "survey")
 public class Survey {
-	private Integer surveyId;
-	private String title;
-	private String discribe;
-	private Date createTime;
-	private Integer state;
-	private String remark;
+	private Integer surveyId;//问卷Id
+	private String title;//问卷标题
+	private String discribe;//问卷大致描述
+	private Date createTime;//问卷创建时间
+	private Date startTime;//问卷开始时间
+	private Date endTime;//问卷截至时间
+	private String sponsor;//问卷发起单位
+	private Integer state;//问卷状态
+	private Teacher teacher;//问卷创建人
+	private String remark;//问卷备注
+	private Integer sumNum;//问卷被做了几次
 
 	@Id
 	@GeneratedValue
@@ -26,11 +33,10 @@ public class Survey {
 	public void setSurveyId(Integer surveyId) {
 		this.surveyId = surveyId;
 	}
-	
+
 	public String getTitle() {
 		return title;
 	}
-
 
 	public void setTitle(String title) {
 		this.title = title;
@@ -66,6 +72,48 @@ public class Survey {
 
 	public void setRemark(String remark) {
 		this.remark = remark;
+	}
+
+	public Date getEndTime() {
+		return endTime;
+	}
+
+	public void setEndTime(Date endTime) {
+		this.endTime = endTime;
+	}
+
+	public String getSponsor() {
+		return sponsor;
+	}
+
+	public void setSponsor(String sponsor) {
+		this.sponsor = sponsor;
+	}
+
+	@ManyToOne
+	@JoinColumn(name="tchrId")
+	public Teacher getTeacher() {
+		return teacher;
+	}
+
+	public void setTeacher(Teacher teacher) {
+		this.teacher = teacher;
+	}
+
+	public Date getStartTime() {
+		return startTime;
+	}
+
+	public void setStartTime(Date startTime) {
+		this.startTime = startTime;
+	}
+
+	public Integer getSumNum() {
+		return sumNum;
+	}
+
+	public void setSumNum(Integer sumNum) {
+		this.sumNum = sumNum;
 	}
 
 }

@@ -15,6 +15,7 @@ import cn.xidian.entity.MaxEva;
 import cn.xidian.entity.PageBean;
 import cn.xidian.entity.Student;
 import cn.xidian.entity.StudentCourse;
+import cn.xidian.entity.SurveyQuestion;
 import cn.xidian.service.TeacherStudentService;
 import cn.xidian.utils.PageUtils;
 import cn.xidian.web.bean.AdminStuLimits;
@@ -119,7 +120,4 @@ public class TeacherStudentServiceImpl implements TeacherStudentService {
 		return pageBean;
 	}
 
-	
-
-	
 }

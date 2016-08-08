@@ -9,6 +9,7 @@ import cn.xidian.entity.MaxEva;
 import cn.xidian.entity.PageBean;
 import cn.xidian.entity.Student;
 import cn.xidian.entity.StudentCourse;
+import cn.xidian.entity.SurveyQuestion;
 import cn.xidian.web.bean.AdminStuLimits;
 
 
@@ -37,4 +38,6 @@ public interface TeacherStudentService {
 	PageBean<EvaluateResult> findByPageCid(Integer claId,String schoolYear,Integer page);
 	
 	PageBean<StudentCourse> selectStuGradesByPage(Integer stuId,String schoolYear,Integer page);
+
+	
 }
