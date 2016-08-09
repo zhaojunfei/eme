@@ -31,7 +31,7 @@
 							<li><a href="TeacherCourse_Manager_0_excute">课程评价查询</a></li>
 							<li><a href="TeacherCourse_Manager_1_selectAllPoints">专业达成评价</a></li>
 							<li><a href="TeacherCourse_Manager_2_excute">学年达成度查询</a></li>
-							<li><a href="TeacherStudent_Survey_1_selectChargeStus">问卷调查设计</a></li>
+							<li><a href="TeacherStudent_Survey_List_selectAllSurveys">问卷调查设计</a></li>
 						</ul>
 					</li>
 					</s:if>

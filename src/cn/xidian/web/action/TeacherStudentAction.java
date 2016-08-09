@@ -88,6 +88,9 @@ public class TeacherStudentAction extends ActionSupport implements RequestAware 
 	private Survey survey;
 	private Integer surveyId;
 	private List<SurveyQuestion> qs;
+	private List<Survey> surveys; 
+	private PageBean<Survey> suPageBean;
+	
 
 	private Map<String, Object> request;
 	Map<String, Object> session = ActionContext.getContext().getSession();
@@ -330,7 +333,6 @@ public class TeacherStudentAction extends ActionSupport implements RequestAware 
 	public String createSurvey() {
 		String tchrSchNum = tUser.getSchNum();
 		teacher=teacherService.selectInfBySchNum(tchrSchNum);
-		System.out.println(schNum);
 		Date createTime = new Date();
 		survey.setCreateTime(createTime);
 		survey.setState(0);
@@ -353,6 +355,17 @@ public class TeacherStudentAction extends ActionSupport implements RequestAware 
 		} else {
 			request.put("Message", "问卷创建失败！");
 		}
+		return "teacher";
+	}
+	
+	public String selectAllSurveys(){
+		String tchrSchNum = tUser.getSchNum();
+		teacher=teacherService.selectInfBySchNum(tchrSchNum);
+		if (page==null) {
+			page = 1;
+		}
+		suPageBean=surveyService.selectAllSurveys(teacher,page);
+		System.out.println("测试"+suPageBean.getList().size());
 		return "teacher";
 	}
 	
@@ -580,5 +593,21 @@ public class TeacherStudentAction extends ActionSupport implements RequestAware 
 	public void setQs(List<SurveyQuestion> qs) {
 		this.qs = qs;
 	}
+
+	public List<Survey> getSurveys() {
+		return surveys;
+	}
+
+	public void setSurveys(List<Survey> surveys) {
+		this.surveys = surveys;
+	}
+	public PageBean<Survey> getSuPageBean() {
+		return suPageBean;
+	}
+
+	public void setSuPageBean(PageBean<Survey> suPageBean) {
+		this.suPageBean = suPageBean;
+	}
+
 
 }

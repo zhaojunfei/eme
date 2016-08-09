@@ -34,26 +34,35 @@
 						</div>
 						<div class="div-inf-tbl">
 							<div>
-								<label class="text-size" style="margin-left: 40%"><s:property
-										value="survey.surveyId" /> <s:property value="survey.title" /></label>
-								<label class="text-size top-distance para-indent"><s:property
-										value="survey.discribe" /></label>
+								<h3 class="title_center"><s:property
+										value="survey.title" /></h3> <p
+									class="top-distance para-indent"><s:property
+										value="survey.discribe" /></p> <p
+									class="top-distance para-indent align_right"><s:property
+										value="survey.sponsor" />发</p>
 							</div>
+							<hr class="red_line"/>
 							<form action="TeacherStudent_Survey_3_addQuestion" method="post"
 								class="form-horizontal" onsubmit="javascript:return isEmpty()">
 								<div class="div-inf">
-									<div id="div-content"></div>
+									<div id="div-content" class="top-distance"></div>
 								</div>
-								<input type="hidden" name="survey.surveyId"
-									value="<s:property
+								<div class="submit_top">
+									<input type="hidden" name="survey.surveyId"
+										value="<s:property
 										value="survey.surveyId" />">
-								<input type="date" name="survey.startTime" id="startTime">至 <input
-									type="date" name="survey.endTime" id="endTime"> <input type="submit"
-									class="btn" name="submit" id="submit" value="提交"
-									onclick="linksel()">
+									<input type="date" name="survey.startTime" id="startTime">至
+									<input type="date" name="survey.endTime" id="endTime">
+									<input type="submit" class="btn" name="submit" id="submit"
+										value="提交" onclick="linksel()">
+								</div>
 							</form>
 							<input type="button" name="addQues" id="1" value="单  选"
-								class="btn" onclick="addQuestion(this)">
+								class="btn" onclick="addQuestion(this)"> <input
+								type="button" name="addQues" id="2" value="多  选" class="btn"
+								onclick="addQuestion(this)"><input type="button"
+								name="addQues" id="3" value="文字题" class="btn"
+								onclick="addQuestion(this)">
 						</div>
 					</div>
 				</div>

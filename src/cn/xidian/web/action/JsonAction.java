@@ -27,9 +27,13 @@ import cn.xidian.entity.PageBean;
 import cn.xidian.entity.Student;
 import cn.xidian.entity.StudentCourse;
 import cn.xidian.entity.StudentItem;
+import cn.xidian.entity.Survey;
+import cn.xidian.entity.Teacher;
 import cn.xidian.entity.User;
 import cn.xidian.service.StudentItemService;
 import cn.xidian.service.StudentService;
+import cn.xidian.service.SurveyService;
+import cn.xidian.service.TeacherService;
 import cn.xidian.service.TeacherStudentService;
 
 @SuppressWarnings("serial")
@@ -68,6 +72,10 @@ public class JsonAction extends ActionSupport implements RequestAware {
 	private PageBean<StudentCourse> pbStuCours;
 	private PageBean<StudentItem> siPageBean;
 	private String stuNum;
+	
+	//問卷添加
+	private Teacher teacher;
+	private PageBean<Survey> suPageBean;
 
 	Map<String, Object> session = ActionContext.getContext().getSession();
 	User tUser = (User) session.get("tUser");
@@ -84,6 +92,20 @@ public class JsonAction extends ActionSupport implements RequestAware {
 		this.studentService = studentService;
 	}
 
+	private SurveyService surveyService;
+
+	@Resource(name = "surveyServiceImpl")
+	public void set(SurveyService surveyService) {
+		this.surveyService = surveyService;
+	}
+	
+	TeacherService teacherService;
+
+	@Resource(name = "teacherServiceImpl")
+	public void setTeacherService(TeacherService teacherService) {
+		this.teacherService = teacherService;
+	}
+	
 	private TeacherStudentService teacherStudentService;
 
 	@Resource(name = "teacherStudentServiceImpl")
@@ -234,6 +256,14 @@ public class JsonAction extends ActionSupport implements RequestAware {
 	 * siPageBean=studentItemService.selectByStuNum(stuNum,page); return "list";
 	 * }
 	 */
+
+	public String selectSurveys() {
+		String tchrSchNum = tUser.getSchNum();
+		teacher=teacherService.selectInfBySchNum(tchrSchNum);
+		suPageBean=surveyService.selectAllSurveys(teacher,page);
+		return "list";
+	}
+
 	public List<ItemEvaluateScore> getItemEvaluateScores() {
 		return itemEvaluateScores;
 	}
@@ -422,6 +452,22 @@ public class JsonAction extends ActionSupport implements RequestAware {
 
 	public void setStuNum(String stuNum) {
 		this.stuNum = stuNum;
+	}
+
+	public PageBean<Survey> getSuPageBean() {
+		return suPageBean;
+	}
+
+	public void setSuPageBean(PageBean<Survey> suPageBean) {
+		this.suPageBean = suPageBean;
+	}
+
+	public Teacher getTeacher() {
+		return teacher;
+	}
+
+	public void setTeacher(Teacher teacher) {
+		this.teacher = teacher;
 	}
 
 }
