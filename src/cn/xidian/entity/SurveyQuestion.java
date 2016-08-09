@@ -13,6 +13,7 @@ public class SurveyQuestion {
 	private Integer questionId;
 	private String content;
 	private Integer type;
+	private String selectors;
 	private String remark;
 	private Survey survey;
 
@@ -59,5 +60,16 @@ public class SurveyQuestion {
 	public void setSurvey(Survey survey) {
 		this.survey = survey;
 	}
+
+	public String getSelectors() {
+		return selectors;
+	}
+
+	public void setSelectors(String selectors) {
+		this.selectors = selectors;
+	}
+
+	
+
 
 }

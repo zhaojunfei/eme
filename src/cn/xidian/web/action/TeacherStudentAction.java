@@ -36,6 +36,7 @@ import cn.xidian.entity.Student;
 import cn.xidian.entity.StudentCourse;
 import cn.xidian.entity.StudentItem;
 import cn.xidian.entity.Survey;
+import cn.xidian.entity.SurveyQuestion;
 import cn.xidian.entity.Teacher;
 import cn.xidian.entity.User;
 import cn.xidian.exception.StudentExistsException;
@@ -86,6 +87,7 @@ public class TeacherStudentAction extends ActionSupport implements RequestAware 
 	// 调查问卷添加
 	private Survey survey;
 	private Integer surveyId;
+	private List<SurveyQuestion> qs;
 
 	private Map<String, Object> request;
 	Map<String, Object> session = ActionContext.getContext().getSession();
@@ -326,9 +328,13 @@ public class TeacherStudentAction extends ActionSupport implements RequestAware 
 	 */
 
 	public String createSurvey() {
+		String tchrSchNum = tUser.getSchNum();
+		teacher=teacherService.selectInfBySchNum(tchrSchNum);
+		System.out.println(schNum);
 		Date createTime = new Date();
 		survey.setCreateTime(createTime);
 		survey.setState(0);
+		survey.setTeacher(teacher);
 		boolean isSuccess=surveyService.createSurvey(survey);
 		if (isSuccess) {
 			request.put("Message", "创建成功！请设计问卷内容！");
@@ -340,6 +346,16 @@ public class TeacherStudentAction extends ActionSupport implements RequestAware 
 		return "teacher";
 	}
 
+	public String addQuestion(){
+		boolean isSuccess=surveyService.addQuestion(qs,survey);
+		if (isSuccess) {
+			request.put("Message", "问卷创建成功！！");
+		} else {
+			request.put("Message", "问卷创建失败！");
+		}
+		return "teacher";
+	}
+	
 	public List<Student> getStudents() {
 		return students;
 	}
@@ -555,6 +571,14 @@ public class TeacherStudentAction extends ActionSupport implements RequestAware 
 
 	public void setSurveyId(Integer surveyId) {
 		this.surveyId = surveyId;
+	}
+
+	public List<SurveyQuestion> getQs() {
+		return qs;
+	}
+
+	public void setQs(List<SurveyQuestion> qs) {
+		this.qs = qs;
 	}
 
 }

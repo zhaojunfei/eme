@@ -10,13 +10,13 @@ import javax.persistence.Table;
 @Entity
 @Table(name="surveyselector")
 public class SurveySelector {
-private Integer selectorId;
-private Integer selectorNum;
-private String content;
-private String remark;
-private SurveyQuestion surveyQuestion;
-private Survey survey;
-
+private Integer selectorId;//选项ID
+private Integer selectorNum;//第几题
+private String content;//选项内容
+private Integer sumNum;//选择该选项的共有多少个
+private String remark;//选项备注
+private SurveyQuestion surveyQuestion;//选项属于哪一个问题
+private Survey survey;//选项属于哪一个问卷
 
 @Id
 @GeneratedValue
@@ -61,6 +61,12 @@ public Survey getSurvey() {
 }
 public void setSurvey(Survey survey) {
 	this.survey = survey;
+}
+public Integer getSumNum() {
+	return sumNum;
+}
+public void setSumNum(Integer sumNum) {
+	this.sumNum = sumNum;
 }
 
 
