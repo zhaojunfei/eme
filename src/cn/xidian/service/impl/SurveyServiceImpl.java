@@ -10,13 +10,14 @@ import javax.annotation.Resource;
 import org.springframework.stereotype.Component;
 
 import cn.xidian.dao.SurveyDao;
-import cn.xidian.entity.CourseSpecificContent;
+
 import cn.xidian.entity.PageBean;
-import cn.xidian.entity.StudentCourse;
+
 import cn.xidian.entity.Survey;
 import cn.xidian.entity.SurveyQuestion;
 import cn.xidian.entity.SurveySelector;
 import cn.xidian.entity.Teacher;
+import cn.xidian.entity.TextAnswer;
 import cn.xidian.service.SurveyService;
 import cn.xidian.utils.PageUtils;
 
@@ -54,9 +55,10 @@ public class SurveyServiceImpl implements SurveyService {
 			for (int i = 0; i < chrstr.length; i++) {
 				SurveySelector surveySelector = new SurveySelector();
 				surveySelector.setContent(chrstr[i]);
-				surveySelector.setSelectorNum(i+1);
+				surveySelector.setSelectorNum(i + 1);
 				surveySelector.setSurvey(survey);
 				surveySelector.setSurveyQuestion(sq);
+				surveySelector.setSumNum(0);
 				surveyDao.addSelector(surveySelector);
 			}
 		}
@@ -64,12 +66,54 @@ public class SurveyServiceImpl implements SurveyService {
 	}
 
 	@Override
-	public PageBean<Survey> selectAllSurveys(Teacher teacher,Integer page) {
+	public PageBean<Survey> selectAllSurveys(Teacher teacher, Integer page) {
 		// TODO Auto-generated method stub
-		List<Survey> surveys=surveyDao.selectAllSurveys(teacher);
-		PageBean<Survey> pageBean=PageUtils.page(page, surveys.size());
-		List<Survey> s=surveyDao.findSurveys(teacher,pageBean.getBegin(),pageBean.getLimit());
+		List<Survey> surveys = surveyDao.selectAllSurveys(teacher);
+		PageBean<Survey> pageBean = PageUtils.page(page, surveys.size());
+		List<Survey> s = surveyDao.findSurveys(teacher, pageBean.getBegin(), pageBean.getLimit());
 		pageBean.setList(s);
 		return pageBean;
+	}
+
+	@Override
+	public Survey selectSurveyById(Integer surveyId) {
+		// TODO Auto-generated method stub
+		return surveyDao.selectSurveyById(surveyId);
+	}
+
+	@Override
+	public List<SurveyQuestion> selectQuestionBysurveyId(Integer surveyId) {
+		// TODO Auto-generated method stub
+		return surveyDao.selectQuestionBysurveyId(surveyId);
+	}
+
+	@Override
+	public boolean addSurveyDone(List<SurveySelector> surveySelectors, List<TextAnswer> textAnswers, Integer surveyId) {
+		// TODO Auto-generated method stub
+		Iterator<SurveySelector> itqs = surveySelectors.iterator();
+		while (itqs.hasNext()) {
+			SurveySelector sq = new SurveySelector();
+			sq = itqs.next();
+			String[] chrstr = sq.getRemark().split("#");
+			for (int i = 1; i < chrstr.length; i++) {
+				surveyDao.updateSelectorNum(surveyId, Integer.parseInt(chrstr[0]), Integer.parseInt(chrstr[i]));
+			}
+		}
+
+		Iterator<TextAnswer> itta = textAnswers.iterator();
+		while (itta.hasNext()) {
+			String str = itta.next().getRemark();
+			TextAnswer ta = new TextAnswer();
+			Survey survey = new Survey();
+			SurveyQuestion surveyQuestion = new SurveyQuestion();
+			survey=surveyDao.selectSurveyById(surveyId);
+			surveyQuestion=surveyDao.selectQuestionById(Integer.parseInt(str.substring(0, str.indexOf("#"))));
+			ta.setAnswerContent(str.substring(str.indexOf("#")+1,str.length()));
+			ta.setSurvey(survey);
+			ta.setSurveyQuestion(surveyQuestion);
+			surveyDao.addTextAnswer(ta);
+
+		}
+		return true;
 	}
 }

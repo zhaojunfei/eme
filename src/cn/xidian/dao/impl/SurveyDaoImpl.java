@@ -15,6 +15,7 @@ import cn.xidian.entity.Survey;
 import cn.xidian.entity.SurveyQuestion;
 import cn.xidian.entity.SurveySelector;
 import cn.xidian.entity.Teacher;
+import cn.xidian.entity.TextAnswer;
 
 @Component("surveyDaoImpl")
 public class SurveyDaoImpl implements SurveyDao{
@@ -83,6 +84,58 @@ public class SurveyDaoImpl implements SurveyDao{
 		query.setInteger(0, teacher.getTchrId());
 		List<Survey> surveys=query.list();
 		return surveys;
+	}
+
+	@Override
+	public Survey selectSurveyById(Integer surveyId) {
+		// TODO Auto-generated method stub
+		String sql="from Survey where surveyId=?";
+		Query query=currentSession().createQuery(sql);
+		query.setInteger(0, surveyId);
+		Survey survey=new Survey();
+		survey=(Survey) query.uniqueResult();
+		return survey;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<SurveyQuestion> selectQuestionBysurveyId(Integer surveyId) {
+		// TODO Auto-generated method stub
+		String sql="from SurveyQuestion where surveyId=?";
+		Query query=currentSession().createQuery(sql);
+		query.setInteger(0, surveyId);
+		List<SurveyQuestion> surveyQuestions=query.list();
+		return surveyQuestions;
+	}
+
+	@Override
+	public boolean updateSelectorNum(Integer surveyId, Integer questionId, Integer selectorNum) {
+		// TODO Auto-generated method stub
+		String sql="update SurveySelector  set sumNum=sumNum +'1' where surveyId=? and questionId=? and selectorNum=?";
+		Query query=currentSession().createQuery(sql);
+		query.setInteger(0, surveyId);
+		query.setInteger(1, questionId);
+		query.setInteger(2, selectorNum);
+		query.executeUpdate();
+		return true;
+	}
+
+	@Override
+	public SurveyQuestion selectQuestionById(Integer questionId) {
+		// TODO Auto-generated method stub
+		String sql="from SurveyQuestion where questionId=?";
+		Query query=currentSession().createQuery(sql);
+		query.setInteger(0, questionId);
+		SurveyQuestion surveyQuestion=new SurveyQuestion();
+		surveyQuestion=(SurveyQuestion) query.uniqueResult();
+		return surveyQuestion;
+	}
+
+	@Override
+	public boolean addTextAnswer(TextAnswer textAnswer) {
+		// TODO Auto-generated method stub
+		currentSession().save(textAnswer);
+		return true;
 	}
 
 }

@@ -39,10 +39,11 @@
 									class="top-distance para-indent"><s:property
 										value="survey.discribe" /></p> <p
 									class="top-distance para-indent align_right"><s:property
-										value="survey.sponsor" />发</p>
+										value="survey.sponsor" /></p>
 							</div>
-							<hr class="red_line"/>
-							<form action="TeacherStudent_Survey_3_addQuestion" method="post"
+							<hr/>
+							<form action="TeacherStudent_Survey_3_selectSurveyById?surveyId=<s:property
+										value="survey.surveyId" />" method="post"
 								class="form-horizontal" onsubmit="javascript:return isEmpty()">
 								<div class="div-inf">
 									<div id="div-content" class="top-distance"></div>

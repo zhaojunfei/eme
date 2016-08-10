@@ -42,7 +42,7 @@ function addQuestion(obj) {
 				+ quesNum
 				+ "'><input type='text'  placeholder='选项'  class='ST"
 				+ quesNum
-				+ "'><image id='"
+				+ " left_distance'><image id='"
 				+ quesNum
 				+ "' name='"
 				+ obj.id
@@ -58,7 +58,7 @@ function addQuestion(obj) {
 				+ quesNum
 				+ "'><input type='text'  placeholder='选项'   class='ST"
 				+ quesNum
-				+ "'><image id='"
+				+ " left_distance'><image id='"
 				+ quesNum
 				+ "' name='"
 				+ obj.id
@@ -87,7 +87,7 @@ function addQuestion(obj) {
 				+ quesNum + "'></div><div class='selector" + quesNum
 				+ " selector-style'><textarea  placeholder='请填写内容'  class='ST"
 				+ quesNum
-				+ "' class='small_img' id='AST"
+				+ " left_distance' style='width:72%;height:100px' readonly></textarea><input type='hidden' id='AST"
 				+ quesNum + "'><input type='hidden' id='QT" + quesNum
 				+ "'></div></div>";
 	}
@@ -120,7 +120,7 @@ function addSelector(obj) {
 			+ obj.id
 			+ "'><input type='text'  placeholder='选项'  class='ST"
 			+ obj.id
-			+ "'><image id='"
+			+ " left_distance'><image id='"
 			+ obj.id
 			+ "' name='"
 			+ obj.name
@@ -155,7 +155,7 @@ function delQuestion(obj) {
 		$("#ques" + k + "").find("#sel" + k + "").attr("id", "sel" + j + "");// <div>该div包含了所有的选项，修改该div的id,该id的作用是在添加单个选项时找到添加的位置
 		$("#ques" + k + "").find(".selector" + k + "").attr("class",
 				"selector" + j + " selector-style");// <div>单个选项的div，修改该div的class，该class暂无用处
-		$("#ques" + k + "").find(".ST" + k + "").attr("class", "ST" + j + "");// <input
+		$("#ques" + k + "").find(".ST" + k + "").attr("class", "ST" + j + " left_distance");// <input
 		// type='text'>修改选项的文本的类，该类的作用时在最终组合选项内容时使用
 		$("#ques" + k + "").find("img").attr("id", "" + j + "");// <img>修改图片的id,id的作用是，在点击添加图片时可以获得该题是第几道题
 		$("#ques" + k + "").find(".image" + k + "").attr("name",
@@ -199,7 +199,6 @@ function linksel() {
 			}
 		}
 		document.getElementById("AST" + j + "").value = selContent;
-		alert(selContent);
 	}
 }
 

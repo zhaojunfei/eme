@@ -45,7 +45,7 @@
 .red_line {
 	height: 3px;
 	border: none;
-	border-top: 3px double red;
+	border-top: 3px double ;
 }
 
 .small_img {
@@ -57,4 +57,10 @@
 }
 .align_right{
 	text-align:right;
+}
+.left_distance{
+	margin-left:10px;
+}
+.li_style{
+	list-style-type:none; 
 }
