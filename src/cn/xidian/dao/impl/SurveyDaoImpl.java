@@ -1,5 +1,6 @@
 package cn.xidian.dao.impl;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -13,6 +14,7 @@ import cn.xidian.dao.SurveyDao;
 import cn.xidian.entity.Survey;
 import cn.xidian.entity.SurveyQuestion;
 import cn.xidian.entity.SurveySelector;
+import cn.xidian.entity.Teacher;
 
 @Component("surveyDaoImpl")
 public class SurveyDaoImpl implements SurveyDao{
@@ -59,6 +61,28 @@ public class SurveyDaoImpl implements SurveyDao{
 		// TODO Auto-generated method stub
 		currentSession().save(surveySelector);
 		return true;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Survey> selectAllSurveys(Teacher teacher) {
+		// TODO Auto-generated method stub
+		String sql="from Survey where tchrId=?";
+		Query query=currentSession().createQuery(sql);
+		query.setInteger(0, teacher.getTchrId());
+		List<Survey> surveys=query.list();
+		return surveys;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Survey> findSurveys(Teacher teacher, Integer begin, Integer limit) {
+		// TODO Auto-generated method stub
+		String sql="from Survey where tchrId=? order by surveyId desc";
+		Query query=currentSession().createQuery(sql).setFirstResult(begin).setMaxResults(limit);
+		query.setInteger(0, teacher.getTchrId());
+		List<Survey> surveys=query.list();
+		return surveys;
 	}
 
 }

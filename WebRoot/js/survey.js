@@ -6,81 +6,129 @@ function showDel(obj) {
 function hideDel(obj) {
 	$(obj).find("img").css('visibility', 'hidden');
 }
-
 // 创建问题
 function addQuestion(obj) {
-
+	var qType = null;
+	if (obj.id == 1) {
+		qType = "radio";
+	} else if (obj.id == 2) {
+		qType = "checkbox";
+	} else if (obj.id == 3) {
+		qType = "textarea";
+	}
 	var ques = document.getElementsByClassName("ques").length; // 已有多少个问题
 	var quesNum = ques + 1; // 当前问题的序号
-	// 创建问题和前两个选项
-	var div1 = document.createElement("div");
-	div1.setAttribute("class", "control-group");
-	div1.innerHTML += "<div class='ques' id='ques"
-			+ quesNum
-			+ "'><div onmouseover='showDel(this)' onmouseout='hideDel(this)'><span id='Q"
-			+ quesNum
-			+ "'>Q"
-			+ quesNum
-			+ ":</span><input type='text' id='quesname"
-			+ quesNum
-			+ "' class='input-long question-style' placeholder='问卷题目'><image id='"
-			+ quesNum
-			+ "' style='width:20px;height:20px;margin-left:10px;cursor:pointer;visibility:hidden'  src='img/delquest.gif'  alt='删除' onclick='delQuestion(this)' ></div><div id='sel"
-			+ quesNum
-			+ "'><div onmouseover='showDel(this)' onmouseout='hideDel(this)' class='selector"
-			+ quesNum
-			+ " selector-style'><input type='radio'  name='S"
-			+ quesNum
-			+ "'><input type='text'  placeholder='选项'  class='ST"
-			+ quesNum
-			+ "'><image id='"
-			+ quesNum
-			+ "' style='width:10px;height:10px;margin-left:10px;cursor:pointer;visibility:hidden'  src='img/addsel.png'  alt='添加' onclick='addSelector(this)' ><image class='image"
-			+ quesNum
-			+ "' name='image"
-			+ quesNum
-			+ "' style='width:10px;height:10px;margin-left:10px;cursor:pointer;visibility:hidden'  src='img/delsel.gif'  alt='删除' onclick='delSelector(this)' ></div><div onmouseover='showDel(this)' onmouseout='hideDel(this)' class='selector"
-			+ quesNum
-			+ " selector-style'><input type='radio'  name='S"
-			+ quesNum
-			+ "'><input type='text'  placeholder='选项'   class='ST"
-			+ quesNum
-			+ "'><image id='"
-			+ quesNum
-			+ "' style='width:10px;height:10px;margin-left:10px;cursor:pointer;visibility:hidden'  src='img/addsel.png'  alt='添加' onclick='addSelector(this)' ><image class='image"
-			+ quesNum
-			+ "' name='image"
-			+ quesNum
-			+ "' style='width:10px;height:10px;margin-left:10px;cursor:pointer;visibility:hidden' src='img/delsel.gif' alt='删除' onclick='delSelector(this)'></div></div><div><input type='hidden' id='AST"
-			+ quesNum + "'><input type='hidden' id='QT" + quesNum
-			+ "'></div></div>";
+	if (obj.id == 1 || obj.id == 2) {
+		// 创建问题和前两个选项
+		var div1 = document.createElement("div");
+		div1.setAttribute("class", "control-group");
+		div1.innerHTML += "<div class='ques' id='ques"
+				+ quesNum
+				+ "'><div onmouseover='showDel(this)' onmouseout='hideDel(this)'><span id='Q"
+				+ quesNum
+				+ "'>Q"
+				+ quesNum
+				+ ":</span><input type='text' id='quesname"
+				+ quesNum
+				+ "' class='input-long question-style' placeholder='问卷题目'><image id='"
+				+ quesNum
+				+ "' class='small_img'  src='img/delquest.gif'  alt='删除' onclick='delQuestion(this)' ></div><div id='sel"
+				+ quesNum
+				+ "'><div onmouseover='showDel(this)' onmouseout='hideDel(this)' class='selector"
+				+ quesNum
+				+ " selector-style'><input type='"
+				+ qType
+				+ "'  name='S"
+				+ quesNum
+				+ "'><input type='text'  placeholder='选项'  class='ST"
+				+ quesNum
+				+ "'><image id='"
+				+ quesNum
+				+ "' name='"
+				+ obj.id
+				+ "' class='small_img'  src='img/addsel.png'  alt='添加' onclick='addSelector(this)' ><image class='image"
+				+ quesNum
+				+ " small_img' name='image"
+				+ quesNum
+				+ "'  src='img/delsel.gif'  alt='删除' onclick='delSelector(this)' ></div><div onmouseover='showDel(this)' onmouseout='hideDel(this)' class='selector"
+				+ quesNum
+				+ " selector-style'><input type='"
+				+ qType
+				+ "'  name='S"
+				+ quesNum
+				+ "'><input type='text'  placeholder='选项'   class='ST"
+				+ quesNum
+				+ "'><image id='"
+				+ quesNum
+				+ "' name='"
+				+ obj.id
+				+ "' class='small_img'  src='img/addsel.png'  alt='添加' onclick='addSelector(this)' ><image class='image"
+				+ quesNum
+				+ " small_img' name='image"
+				+ quesNum
+				+ "'  src='img/delsel.gif' alt='删除' onclick='delSelector(this)'></div></div><div><input type='hidden' id='AST"
+				+ quesNum + "'><input type='hidden' id='QT" + quesNum
+				+ "'></div></div>";
+	}
+	if (obj.id == 3) {
+		var div1 = document.createElement("div");
+		div1.setAttribute("class", "control-group");
+		div1.innerHTML += "<div class='ques' id='ques"
+				+ quesNum
+				+ "'><div onmouseover='showDel(this)' onmouseout='hideDel(this)'><span id='Q"
+				+ quesNum
+				+ "'>Q"
+				+ quesNum
+				+ ":</span><input type='text' id='quesname"
+				+ quesNum
+				+ "' class='input-long question-style' placeholder='问卷题目'><image id='"
+				+ quesNum
+				+ "' class='small_img'  src='img/delquest.gif'  alt='删除' onclick='delQuestion(this)' ></div><div id='sel"
+				+ quesNum + "'></div><div class='selector" + quesNum
+				+ " selector-style'><textarea  placeholder='请填写内容'  class='ST"
+				+ quesNum
+				+ "' class='small_img' id='AST"
+				+ quesNum + "'><input type='hidden' id='QT" + quesNum
+				+ "'></div></div>";
+	}
+
 	var section = document.createElement("section");
 	section.appendChild(div1);
 	var div = document.getElementById("div-content");
 	div.appendChild(section);
 	// 创建问题和前两个选项结束
-	document.getElementById("QT" + quesNum + "").value = obj.id;
+	document.getElementById("QT" + quesNum + "").value = obj.id;// 1代表单选，2代表多选，3代表文本问题
 }
 
 // 添加单个选项
 function addSelector(obj) {
 	// 添加选项
+	var qType = null;
+	if (obj.name == 1) {
+		qType = "radio";
+	} else if (obj.name == 2) {
+		qType = "checkbox";
+	}
 	var div = document.getElementById("sel" + obj.id);
 	var div1 = document.createElement("div");
 	div1.setAttribute("class", "selector" + obj.id + " selector-style");
 	div1.setAttribute("onmouseover", "showDel(this)");
 	div1.setAttribute("onmouseout", "hideDel(this)");
-	div1.innerHTML = "<input type='radio' name='S"
+	div1.innerHTML = "<input type='"
+			+ qType
+			+ "' name='S"
 			+ obj.id
 			+ "'><input type='text'  placeholder='选项'  class='ST"
 			+ obj.id
 			+ "'><image id='"
 			+ obj.id
-			+ "' style='width:10px;height:10px;margin-left:10px;cursor:pointer;visibility:hidden'  src='img/addsel.png'  alt='添加' onclick='addSelector(this)' ><image class='image"
+			+ "' name='"
+			+ obj.name
+			+ "' class='small_img'  src='img/addsel.png'  alt='添加' onclick='addSelector(this)' ><image class='image"
 			+ obj.id
-			+ "' name='image"
+			+ " small_img' name='image"
 			+ obj.id
-			+ "' style='width:10px;height:10px;margin-left:10px;cursor:pointer;visibility:hidden' src='img/delsel.gif' alt='删除' onclick='delSelector(this)'>";
+			+ "'  src='img/delsel.gif' alt='删除' onclick='delSelector(this)'>";
 	div.appendChild(div1);
 }
 // 删除单个选项
@@ -151,6 +199,7 @@ function linksel() {
 			}
 		}
 		document.getElementById("AST" + j + "").value = selContent;
+		alert(selContent);
 	}
 }
 
@@ -177,10 +226,10 @@ function isEmpty() {
 	if (startTime == "" || endTime == "") {
 		alert("请选择开始和结束时间！");
 		return false;
-	}else{
+	} else {
 		var date1 = new Date(startTime);
 		var date2 = new Date(endTime);
-		if(date1.getTime()>date2.getTime()){
+		if (date1.getTime() > date2.getTime()) {
 			alert("结束时间应大于开始时间！");
 			return false;
 		}

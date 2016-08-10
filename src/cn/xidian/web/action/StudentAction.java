@@ -372,7 +372,6 @@ public class StudentAction extends ActionSupport implements RequestAware {
 			page = 1;
 		}
 		pageBean = studentService.selectStuAllGradesById(s.getStuId(), page);
-		System.out.println("daxiao" + pageBean.getList().size());
 		/*
 		 * studentCourses=studentService.selectStuAllGradesById(s.getStuId());
 		 */

@@ -1,24 +1,60 @@
 @CHARSET "UTF-8";
-.input-l{
-	width:50%;
-	margin-top:8px;
+
+.input-l {
+	width: 50%;
+	margin-top: 8px;
 }
-.textarea-l{
-	width:90%;
-	height:80px;
-	margin-top:8px;
+
+.textarea-l {
+	width: 90%;
+	height: 80px;
+	margin-top: 8px;
 }
-.top-distance{
-	margin-top:15px;
+
+.top-distance {
+	margin-top: 15px;
 }
-.para-indent{
-	
-	text-indent:2em;
+
+.para-indent {
+	font-size: 16px;
+	text-indent: 2em;
+	line-height: 1.5;
 }
-.selector-style{
-	margin-top:10px;
-	margin-left:35px;
+
+.selector-style {
+	margin-top: 10px;
+	margin-left: 35px;
 }
-.question-style{
-	margin-left:10px;
+
+.question-style {
+	margin-left: 10px;
+}
+
+.submit_top {
+	margin-top: 60px;
+}
+
+.right-distance {
+	margin-left: 70%;
+}
+
+.title_center {
+	text-align: center;
+}
+
+.red_line {
+	height: 3px;
+	border: none;
+	border-top: 3px double red;
+}
+
+.small_img {
+	width: 15px;
+	height: 15px;
+	margin-left: 10px;
+	cursor: pointer;
+	visibility: hidden;
+}
+.align_right{
+	text-align:right;
 }
