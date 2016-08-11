@@ -46,9 +46,10 @@
 							</div>
 							<hr />
 							<form
-								action="TeacherStudent_Survey_List_addSurveyDone?surveyId=<s:property
+								action="TeacherStudent_Survey_Result_addSurveyDone?surveyId=<s:property
 										value="survey.surveyId" />"
-								method="post" class="form-horizontal">
+								method="post" class="form-horizontal"
+								onsubmit="javascript:return isEmpty()">
 								<s:iterator value="surveyQuestions" var="sq" status="status">
 									<ul class="question-style top-distance">
 										<label>Q<s:property value="%{#status.count}" />： <s:property
@@ -81,7 +82,7 @@
 													name="<s:property value="%{#status.count}" />"
 													placeholder='请填写内容' class='textarea left_distance'
 													style='width: 72%; height: 100px'></textarea></li>
-											<input type="text" class="textAnswer"
+											<input type="hidden" class="textAnswer"
 												id="text<s:property value="%{#status.count}" />"
 												value="<s:property value="#sq.questionId" />">
 										</s:if>
@@ -91,13 +92,11 @@
 								<%-- <input type="text" name="survey.surveyId"
 									value="<s:property value="survey.surveyId" />">
 								<!-- 获取问卷的ID --> --%>
-
 								<input type="submit" class="btn" value="提交问卷"
 									onclick="linkSelSubmit()">
 							</form>
 						</div>
-						<input type="button" class="btn" value="提交"
-							onclick="linkSelSubmit()">
+						<input type="submit" class="btn" value="提交问卷" onclick="isEmpty()">
 					</div>
 				</div>
 			</div>
@@ -140,10 +139,12 @@
 
 			//获取文字问题的内容
 			var texts = document.getElementsByClassName("textarea");
-			alert(texts.length);
 			for (var m = 0; m < texts.length; m++) {
-				document.getElementById("text" + texts[m].name + "").value += "#"
-						+ texts[m].value;
+				if (texts[m].value.trim() != "") {
+					document.getElementById("text" + texts[m].name + "").value += "#"
+							+ texts[m].value;
+				}
+
 			}
 			//设置选择题name属性
 			var selected = document.getElementsByClassName("selected");
@@ -158,6 +159,29 @@
 						+ "].remark");
 			}
 
+		}
+
+		function isEmpty() {
+			var selected = document.getElementsByClassName("selected");
+			for (var k = 0; k < selected.length; k++) {
+				if (selected[k].value.indexOf('#') < 0) {
+					var num=selected[k].id.substr(5,selected[k].id.length);
+					alert("第"+num+"题未做！请将问卷填写完整！");
+					return false;
+				}
+
+			}
+			//设置文本问题的name属性
+			var textAnswer = document.getElementsByClassName("textAnswer");
+			for (var n = 0; n < textAnswer.length; n++) {
+				if (textAnswer[n].value.indexOf('#') < 0) {
+					var num=textAnswer[n].id.substr(4,textAnswer[n].id.length);
+					alert("第"+num+"题未做！请将问卷填写完整！");
+					return false;
+				}
+
+			}
+			return true;
 		}
 	</script>
 </body>

@@ -4,6 +4,7 @@ import java.util.List;
 
 import cn.xidian.entity.Survey;
 import cn.xidian.entity.SurveyQuestion;
+import cn.xidian.entity.SurveyReplyer;
 import cn.xidian.entity.SurveySelector;
 import cn.xidian.entity.Teacher;
 import cn.xidian.entity.TextAnswer;
@@ -31,4 +32,10 @@ public interface SurveyDao {
 	SurveyQuestion selectQuestionById(Integer questionId);
 	
 	boolean addTextAnswer(TextAnswer textAnswer);
+	
+	boolean updateSurveySumById(Integer surveyId);
+	
+	boolean addSurveyReplyer(SurveyReplyer surveyReplyer);
+	
+	List<SurveySelector> selectSurveySelectors(Integer surveyId, Integer questionId);
 }

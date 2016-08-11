@@ -37,6 +37,7 @@
 						<div class="div-inf-tbl">
 							<div class="div-tchr-detail">
 								<a class="btn" href="teacher/TeacherStudentSurvey1.jsp">创建问卷</a>
+								<a class="btn" href="teacher/TeacherStudentSurveyResult.jsp">查看结果</a>
 								<table class="table table-bordered table-condensed"
 									id="surveyList">
 									<thead>
@@ -60,6 +61,9 @@
 												<td><s:property value="#s.sponsor" /></td>
 												<td><a
 													href="TeacherStudent_Survey_3_selectSurveyById?surveyId=<s:property value="#s.surveyId" />">详情</a>
+												</td>
+												<td><a
+													href="TeacherStudent_Survey_Result_selectSurveyById?surveyId=<s:property value="#s.surveyId" />">详情</a>
 												</td>
 											</tr>
 										</s:iterator>
@@ -144,6 +148,8 @@
 																				+ "</td><td>"
 																				+ value.sponsor
 																				+ "</td><td><a href='TeacherStudent_Survey_3_selectSurveyById?surveyId="
+																				+ value.surveyId
+																				+ "'>详情</a></td>td><a href='TeacherStudent_Survey_Result_selectSurveyById?surveyId="
 																				+ value.surveyId
 																				+ "'>详情</a></td></tr>");
 													});

@@ -26,6 +26,7 @@ import com.opensymphony.xwork2.ActionSupport;
 
 import cn.xidian.entity.Clazz;
 import cn.xidian.entity.EvaluateResult;
+import cn.xidian.entity.Identity;
 import cn.xidian.entity.ItemEvaluatePoint;
 import cn.xidian.entity.ItemEvaluateScore;
 import cn.xidian.entity.ItemEvaluateType;
@@ -37,6 +38,7 @@ import cn.xidian.entity.StudentCourse;
 import cn.xidian.entity.StudentItem;
 import cn.xidian.entity.Survey;
 import cn.xidian.entity.SurveyQuestion;
+import cn.xidian.entity.SurveyReplyer;
 import cn.xidian.entity.SurveySelector;
 import cn.xidian.entity.Teacher;
 import cn.xidian.entity.TextAnswer;
@@ -46,6 +48,7 @@ import cn.xidian.exception.StudentNotExistException;
 import cn.xidian.service.AdminStudentService;
 import cn.xidian.service.ClazzService;
 import cn.xidian.service.StudentItemService;
+import cn.xidian.service.StudentService;
 import cn.xidian.service.SurveyService;
 import cn.xidian.service.TeacherService;
 import cn.xidian.service.TeacherStudentService;
@@ -95,6 +98,7 @@ public class TeacherStudentAction extends ActionSupport implements RequestAware 
 	private List<SurveyQuestion> surveyQuestions;
 	private List<SurveySelector> surveySelectors;
 	private List<TextAnswer> textAnswers;
+	private Student student;
 
 	private Map<String, Object> request;
 	Map<String, Object> session = ActionContext.getContext().getSession();
@@ -127,6 +131,13 @@ public class TeacherStudentAction extends ActionSupport implements RequestAware 
 	@Resource(name = "teacherServiceImpl")
 	public void setTeacherService(TeacherService teacherService) {
 		this.teacherService = teacherService;
+	}
+
+	private StudentService studentService;
+
+	@Resource(name = "studentServiceImpl")
+	public void setStudentService(StudentService studentService) {
+		this.studentService = studentService;
 	}
 
 	private SurveyService surveyService;
@@ -342,6 +353,7 @@ public class TeacherStudentAction extends ActionSupport implements RequestAware 
 		survey.setCreateTime(createTime);
 		survey.setState(0);
 		survey.setTeacher(teacher);
+		survey.setSumNum(0);
 		boolean isSuccess = surveyService.createSurvey(survey);
 		if (isSuccess) {
 			request.put("Message", "创建成功！请设计问卷内容！");
@@ -379,13 +391,34 @@ public class TeacherStudentAction extends ActionSupport implements RequestAware 
 	// 查看问卷
 	public String selectSurveyById() {
 		survey = surveyService.selectSurveyById(surveyId);
-		surveyQuestions=surveyService.selectQuestionBysurveyId(surveyId);
-		System.out.println("问题个数"+surveyQuestions.size());
+		surveyQuestions = surveyService.selectQuestionBysurveyId(surveyId);
 		return "teacher";
 	}
 
-	public String  addSurveyDone() {
-		boolean isSuccess=surveyService.addSurveyDone(surveySelectors,textAnswers,surveyId);
+	public String addSurveyDone() {
+		// 存储问卷者信息
+		if (tUser != null) {
+			String userRole = tUser.getIdentity().toString();
+			survey = surveyService.selectSurveyById(surveyId);
+			SurveyReplyer surveyReplyer = new SurveyReplyer();
+			Date replyTime = new Date();// 做問卷的时间
+			if (userRole == "TEACHER") {
+				String tchrSchNum = tUser.getSchNum();
+				teacher = teacherService.selectInfBySchNum(tchrSchNum);
+				surveyReplyer.setTeacher(teacher);
+			} else if (userRole == "STUDENT") {
+				String stuSchNum = tUser.getSchNum();
+				student = studentService.selectInfBySchNum(stuSchNum);
+				surveyReplyer.setStudent(student);
+			}
+			surveyReplyer.setSurvey(survey);
+			surveyReplyer.setReplyTime(replyTime);
+			surveyService.addSurveyReplyer(surveyReplyer);
+		}
+
+		// 存储问卷选择结果
+		boolean isSuccess = surveyService.addSurveyDone(surveySelectors, textAnswers, survey);
+		
 		if (isSuccess) {
 			request.put("Message", "提交成功！！");
 		} else {
@@ -393,6 +426,7 @@ public class TeacherStudentAction extends ActionSupport implements RequestAware 
 		}
 		return "teacher";
 	}
+
 	public List<Student> getStudents() {
 		return students;
 	}

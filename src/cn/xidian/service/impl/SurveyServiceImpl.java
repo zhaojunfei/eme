@@ -15,6 +15,7 @@ import cn.xidian.entity.PageBean;
 
 import cn.xidian.entity.Survey;
 import cn.xidian.entity.SurveyQuestion;
+import cn.xidian.entity.SurveyReplyer;
 import cn.xidian.entity.SurveySelector;
 import cn.xidian.entity.Teacher;
 import cn.xidian.entity.TextAnswer;
@@ -88,32 +89,45 @@ public class SurveyServiceImpl implements SurveyService {
 	}
 
 	@Override
-	public boolean addSurveyDone(List<SurveySelector> surveySelectors, List<TextAnswer> textAnswers, Integer surveyId) {
+	public boolean addSurveyDone(List<SurveySelector> surveySelectors, List<TextAnswer> textAnswers, Survey survey) {
 		// TODO Auto-generated method stub
+		//给问卷添加次数
+		surveyDao.updateSurveySumById(survey.getSurveyId());
+		//存储选择题的答案结果
 		Iterator<SurveySelector> itqs = surveySelectors.iterator();
 		while (itqs.hasNext()) {
 			SurveySelector sq = new SurveySelector();
 			sq = itqs.next();
 			String[] chrstr = sq.getRemark().split("#");
 			for (int i = 1; i < chrstr.length; i++) {
-				surveyDao.updateSelectorNum(surveyId, Integer.parseInt(chrstr[0]), Integer.parseInt(chrstr[i]));
+				surveyDao.updateSelectorNum(survey.getSurveyId(), Integer.parseInt(chrstr[0]), Integer.parseInt(chrstr[i]));
 			}
 		}
 
+		//存储文本问题的答案
 		Iterator<TextAnswer> itta = textAnswers.iterator();
 		while (itta.hasNext()) {
 			String str = itta.next().getRemark();
-			TextAnswer ta = new TextAnswer();
-			Survey survey = new Survey();
+			TextAnswer ta = new TextAnswer();	
 			SurveyQuestion surveyQuestion = new SurveyQuestion();
-			survey=surveyDao.selectSurveyById(surveyId);
 			surveyQuestion=surveyDao.selectQuestionById(Integer.parseInt(str.substring(0, str.indexOf("#"))));
 			ta.setAnswerContent(str.substring(str.indexOf("#")+1,str.length()));
 			ta.setSurvey(survey);
 			ta.setSurveyQuestion(surveyQuestion);
 			surveyDao.addTextAnswer(ta);
-
 		}
 		return true;
+	}
+
+	@Override
+	public boolean addSurveyReplyer(SurveyReplyer surveyReplyer) {
+		// TODO Auto-generated method stub
+		return surveyDao.addSurveyReplyer(surveyReplyer);
+	}
+
+	@Override
+	public List<SurveySelector> selectSurveySelectors(Integer surveyId, Integer questionId) {
+		// TODO Auto-generated method stub
+		return surveyDao.selectSurveySelectors(surveyId,questionId);
 	}
 }

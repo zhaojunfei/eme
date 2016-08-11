@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 import cn.xidian.dao.SurveyDao;
 import cn.xidian.entity.Survey;
 import cn.xidian.entity.SurveyQuestion;
+import cn.xidian.entity.SurveyReplyer;
 import cn.xidian.entity.SurveySelector;
 import cn.xidian.entity.Teacher;
 import cn.xidian.entity.TextAnswer;
@@ -136,6 +137,35 @@ public class SurveyDaoImpl implements SurveyDao{
 		// TODO Auto-generated method stub
 		currentSession().save(textAnswer);
 		return true;
+	}
+
+	@Override
+	public boolean updateSurveySumById(Integer surveyId) {
+		// TODO Auto-generated method stub
+		String sql="update Survey set sumNum=sumNum+'1' where surveyId=?";
+		Query query=currentSession().createQuery(sql);
+		query.setInteger(0, surveyId);
+		query.executeUpdate();
+		return true;
+	}
+
+	@Override
+	public boolean addSurveyReplyer(SurveyReplyer surveyReplyer) {
+		// TODO Auto-generated method stub
+		currentSession().save(surveyReplyer);
+		return true;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<SurveySelector> selectSurveySelectors(Integer surveyId, Integer questionId) {
+		// TODO Auto-generated method stub
+		String sql="from SurveySelector where surveyId=? and questionId=?";
+		Query query=currentSession().createQuery(sql);
+		query.setInteger(0, surveyId);
+		query.setInteger(1, questionId);
+		List<SurveySelector> surveySelectors=query.list();
+		return surveySelectors;
 	}
 
 }

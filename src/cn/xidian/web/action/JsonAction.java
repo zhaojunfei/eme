@@ -28,6 +28,7 @@ import cn.xidian.entity.Student;
 import cn.xidian.entity.StudentCourse;
 import cn.xidian.entity.StudentItem;
 import cn.xidian.entity.Survey;
+import cn.xidian.entity.SurveySelector;
 import cn.xidian.entity.Teacher;
 import cn.xidian.entity.User;
 import cn.xidian.service.StudentItemService;
@@ -72,10 +73,14 @@ public class JsonAction extends ActionSupport implements RequestAware {
 	private PageBean<StudentCourse> pbStuCours;
 	private PageBean<StudentItem> siPageBean;
 	private String stuNum;
-	
-	//問卷添加
+
+	// 問卷添加
 	private Teacher teacher;
 	private PageBean<Survey> suPageBean;
+	private List<SurveySelector> surveySelectors;
+	private Integer surveyId;
+	private Integer questionId;
+	private String[] sels;
 
 	Map<String, Object> session = ActionContext.getContext().getSession();
 	User tUser = (User) session.get("tUser");
@@ -98,14 +103,14 @@ public class JsonAction extends ActionSupport implements RequestAware {
 	public void set(SurveyService surveyService) {
 		this.surveyService = surveyService;
 	}
-	
+
 	TeacherService teacherService;
 
 	@Resource(name = "teacherServiceImpl")
 	public void setTeacherService(TeacherService teacherService) {
 		this.teacherService = teacherService;
 	}
-	
+
 	private TeacherStudentService teacherStudentService;
 
 	@Resource(name = "teacherStudentServiceImpl")
@@ -259,8 +264,13 @@ public class JsonAction extends ActionSupport implements RequestAware {
 
 	public String selectSurveys() {
 		String tchrSchNum = tUser.getSchNum();
-		teacher=teacherService.selectInfBySchNum(tchrSchNum);
-		suPageBean=surveyService.selectAllSurveys(teacher,page);
+		teacher = teacherService.selectInfBySchNum(tchrSchNum);
+		suPageBean = surveyService.selectAllSurveys(teacher, page);
+		return "list";
+	}
+
+	public String selectSurveyResult() {
+		surveySelectors=surveyService.selectSurveySelectors(surveyId,questionId);
 		return "list";
 	}
 
@@ -468,6 +478,38 @@ public class JsonAction extends ActionSupport implements RequestAware {
 
 	public void setTeacher(Teacher teacher) {
 		this.teacher = teacher;
+	}
+
+	public List<SurveySelector> getSurveySelectors() {
+		return surveySelectors;
+	}
+
+	public void setSurveySelectors(List<SurveySelector> surveySelectors) {
+		this.surveySelectors = surveySelectors;
+	}
+
+	public Integer getSurveyId() {
+		return surveyId;
+	}
+
+	public void setSurveyId(Integer surveyId) {
+		this.surveyId = surveyId;
+	}
+
+	public Integer getQuestionId() {
+		return questionId;
+	}
+
+	public void setQuestionId(Integer questionId) {
+		this.questionId = questionId;
+	}
+
+	public String[] getSels() {
+		return sels;
+	}
+
+	public void setSels(String[] sels) {
+		this.sels = sels;
 	}
 
 }
