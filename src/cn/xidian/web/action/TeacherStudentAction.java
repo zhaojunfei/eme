@@ -26,6 +26,7 @@ import com.opensymphony.xwork2.ActionSupport;
 
 import cn.xidian.entity.Clazz;
 import cn.xidian.entity.EvaluateResult;
+import cn.xidian.entity.Identity;
 import cn.xidian.entity.ItemEvaluatePoint;
 import cn.xidian.entity.ItemEvaluateScore;
 import cn.xidian.entity.ItemEvaluateType;
@@ -37,13 +38,17 @@ import cn.xidian.entity.StudentCourse;
 import cn.xidian.entity.StudentItem;
 import cn.xidian.entity.Survey;
 import cn.xidian.entity.SurveyQuestion;
+import cn.xidian.entity.SurveyReplyer;
+import cn.xidian.entity.SurveySelector;
 import cn.xidian.entity.Teacher;
+import cn.xidian.entity.TextAnswer;
 import cn.xidian.entity.User;
 import cn.xidian.exception.StudentExistsException;
 import cn.xidian.exception.StudentNotExistException;
 import cn.xidian.service.AdminStudentService;
 import cn.xidian.service.ClazzService;
 import cn.xidian.service.StudentItemService;
+import cn.xidian.service.StudentService;
 import cn.xidian.service.SurveyService;
 import cn.xidian.service.TeacherService;
 import cn.xidian.service.TeacherStudentService;
@@ -88,9 +93,12 @@ public class TeacherStudentAction extends ActionSupport implements RequestAware 
 	private Survey survey;
 	private Integer surveyId;
 	private List<SurveyQuestion> qs;
-	private List<Survey> surveys; 
+	private List<Survey> surveys;
 	private PageBean<Survey> suPageBean;
-	
+	private List<SurveyQuestion> surveyQuestions;
+	private List<SurveySelector> surveySelectors;
+	private List<TextAnswer> textAnswers;
+	private Student student;
 
 	private Map<String, Object> request;
 	Map<String, Object> session = ActionContext.getContext().getSession();
@@ -123,6 +131,13 @@ public class TeacherStudentAction extends ActionSupport implements RequestAware 
 	@Resource(name = "teacherServiceImpl")
 	public void setTeacherService(TeacherService teacherService) {
 		this.teacherService = teacherService;
+	}
+
+	private StudentService studentService;
+
+	@Resource(name = "studentServiceImpl")
+	public void setStudentService(StudentService studentService) {
+		this.studentService = studentService;
 	}
 
 	private SurveyService surveyService;
@@ -330,26 +345,29 @@ public class TeacherStudentAction extends ActionSupport implements RequestAware 
 	 * return "teacher"; }
 	 */
 
+	// 创建问卷
 	public String createSurvey() {
 		String tchrSchNum = tUser.getSchNum();
-		teacher=teacherService.selectInfBySchNum(tchrSchNum);
+		teacher = teacherService.selectInfBySchNum(tchrSchNum);
 		Date createTime = new Date();
 		survey.setCreateTime(createTime);
 		survey.setState(0);
 		survey.setTeacher(teacher);
-		boolean isSuccess=surveyService.createSurvey(survey);
+		survey.setSumNum(0);
+		boolean isSuccess = surveyService.createSurvey(survey);
 		if (isSuccess) {
 			request.put("Message", "创建成功！请设计问卷内容！");
 		} else {
 			request.put("Message", "创建失败！");
 		}
-		surveyId=survey.getSurveyId();
+		surveyId = survey.getSurveyId();
 		System.out.println("数据是" + survey.getSurveyId());
 		return "teacher";
 	}
 
-	public String addQuestion(){
-		boolean isSuccess=surveyService.addQuestion(qs,survey);
+	// 添加问卷问题
+	public String addQuestion() {
+		boolean isSuccess = surveyService.addQuestion(qs, survey);
 		if (isSuccess) {
 			request.put("Message", "问卷创建成功！！");
 		} else {
@@ -357,18 +375,58 @@ public class TeacherStudentAction extends ActionSupport implements RequestAware 
 		}
 		return "teacher";
 	}
-	
-	public String selectAllSurveys(){
+
+	// 查找问卷，形成列表
+	public String selectAllSurveys() {
 		String tchrSchNum = tUser.getSchNum();
-		teacher=teacherService.selectInfBySchNum(tchrSchNum);
-		if (page==null) {
+		teacher = teacherService.selectInfBySchNum(tchrSchNum);
+		if (page == null) {
 			page = 1;
 		}
-		suPageBean=surveyService.selectAllSurveys(teacher,page);
-		System.out.println("测试"+suPageBean.getList().size());
+		suPageBean = surveyService.selectAllSurveys(teacher, page);
+		System.out.println("测试" + suPageBean.getList().size());
 		return "teacher";
 	}
-	
+
+	// 查看问卷
+	public String selectSurveyById() {
+		survey = surveyService.selectSurveyById(surveyId);
+		surveyQuestions = surveyService.selectQuestionBysurveyId(surveyId);
+		return "teacher";
+	}
+
+	public String addSurveyDone() {
+		// 存储问卷者信息
+		if (tUser != null) {
+			String userRole = tUser.getIdentity().toString();
+			survey = surveyService.selectSurveyById(surveyId);
+			SurveyReplyer surveyReplyer = new SurveyReplyer();
+			Date replyTime = new Date();// 做問卷的时间
+			if (userRole == "TEACHER") {
+				String tchrSchNum = tUser.getSchNum();
+				teacher = teacherService.selectInfBySchNum(tchrSchNum);
+				surveyReplyer.setTeacher(teacher);
+			} else if (userRole == "STUDENT") {
+				String stuSchNum = tUser.getSchNum();
+				student = studentService.selectInfBySchNum(stuSchNum);
+				surveyReplyer.setStudent(student);
+			}
+			surveyReplyer.setSurvey(survey);
+			surveyReplyer.setReplyTime(replyTime);
+			surveyService.addSurveyReplyer(surveyReplyer);
+		}
+
+		// 存储问卷选择结果
+		boolean isSuccess = surveyService.addSurveyDone(surveySelectors, textAnswers, survey);
+		
+		if (isSuccess) {
+			request.put("Message", "提交成功！！");
+		} else {
+			request.put("Message", "提交失败！");
+		}
+		return "teacher";
+	}
+
 	public List<Student> getStudents() {
 		return students;
 	}
@@ -577,7 +635,6 @@ public class TeacherStudentAction extends ActionSupport implements RequestAware 
 		this.survey = survey;
 	}
 
-
 	public Integer getSurveyId() {
 		return surveyId;
 	}
@@ -601,6 +658,7 @@ public class TeacherStudentAction extends ActionSupport implements RequestAware 
 	public void setSurveys(List<Survey> surveys) {
 		this.surveys = surveys;
 	}
+
 	public PageBean<Survey> getSuPageBean() {
 		return suPageBean;
 	}
@@ -609,5 +667,28 @@ public class TeacherStudentAction extends ActionSupport implements RequestAware 
 		this.suPageBean = suPageBean;
 	}
 
+	public List<SurveyQuestion> getSurveyQuestions() {
+		return surveyQuestions;
+	}
+
+	public void setSurveyQuestions(List<SurveyQuestion> surveyQuestions) {
+		this.surveyQuestions = surveyQuestions;
+	}
+
+	public List<SurveySelector> getSurveySelectors() {
+		return surveySelectors;
+	}
+
+	public void setSurveySelectors(List<SurveySelector> surveySelectors) {
+		this.surveySelectors = surveySelectors;
+	}
+
+	public List<TextAnswer> getTextAnswers() {
+		return textAnswers;
+	}
+
+	public void setTextAnswers(List<TextAnswer> textAnswers) {
+		this.textAnswers = textAnswers;
+	}
 
 }

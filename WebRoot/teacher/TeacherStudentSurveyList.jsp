@@ -35,7 +35,9 @@
 							<label>问卷列表</label>
 						</div>
 						<div class="div-inf-tbl">
-								<div class="div-tchr-detail">
+							<div class="div-tchr-detail">
+								<a class="btn" href="teacher/TeacherStudentSurvey1.jsp">创建问卷</a>
+								<a class="btn" href="teacher/TeacherStudentSurveyResult.jsp">查看结果</a>
 								<table class="table table-bordered table-condensed"
 									id="surveyList">
 									<thead>
@@ -51,24 +53,31 @@
 										<s:iterator value="suPageBean.list" var="s">
 											<tr>
 												<td><s:property value="#s.title" /></td>
-												<td><s:property value="%{getText('{0,date,yyyy-MM-dd}',{#s.createTime})}" /></td>
-												<td><s:if test="#s.state==0">待发布</s:if><s:if test="#s.state==1">已发布</s:if><s:if test="#s.state==2">已结束</s:if></td>
-												<td><s:property value="#s.stuPhone" /></td>
-												<td><a>详情</a>
+												<td><s:property
+														value="%{getText('{0,date,yyyy-MM-dd}',{#s.createTime})}" /></td>
+												<td><s:if test="#s.state==0">待发布</s:if>
+													<s:if test="#s.state==1">已发布</s:if>
+													<s:if test="#s.state==2">已结束</s:if></td>
+												<td><s:property value="#s.sponsor" /></td>
+												<td><a
+													href="TeacherStudent_Survey_3_selectSurveyById?surveyId=<s:property value="#s.surveyId" />">详情</a>
+												</td>
+												<td><a
+													href="TeacherStudent_Survey_Result_selectSurveyById?surveyId=<s:property value="#s.surveyId" />">详情</a>
 												</td>
 											</tr>
 										</s:iterator>
 									</tbody>
 								</table>
 								<div>
-										<input type=button class="btn btn-bottom" onclick="upPage()"
-											id="upPage" value="上一页">&nbsp;&nbsp;<span id="page"><s:property
-												value="suPageBean.page" /></span>&nbsp;&nbsp;<input type="button"
-											class="btn btn-bottom" onclick="downPage()" id="downPage"
-											value="下一页"><span class="left-distance">共&nbsp;&nbsp;<span
-											id="totalPage"><s:property value="suPageBean.totalPage" /></span>&nbsp;&nbsp;页
-										</span>
-									</div>
+									<input type=button class="btn btn-bottom" onclick="upPage()"
+										id="upPage" value="上一页">&nbsp;&nbsp;<span id="page"><s:property
+											value="suPageBean.page" /></span>&nbsp;&nbsp;<input type="button"
+										class="btn btn-bottom" onclick="downPage()" id="downPage"
+										value="下一页"><span class="left-distance">共&nbsp;&nbsp;<span
+										id="totalPage"><s:property value="suPageBean.totalPage" /></span>&nbsp;&nbsp;页
+									</span>
+								</div>
 							</div>
 						</div>
 					</div>
@@ -92,41 +101,61 @@
 			$(".container").css("min-height",
 					$(document).height() - 90 - 88 - 41 + "px");//container的最小高度为“浏览器当前窗口文档的高度-header高度-footer高度”
 		});
-		
-		function selectSurveys(page) {
-	
-			$("#surveyList tbody").html("");
-			$.getJSON("Json_selectSurveys", {
-				page : page
-			}, function(data) {
-				$("#page").html(data.suPageBean.page);
-				$("#totalPage").html(data.suPageBean.totalPage);
-				if (data.suPageBean.list.length == 0) {
-					alert("未找到相关数据！");
-				} else {
-					$.each(data.suPageBean.list, function(i, value) {
-						var str = value.createTime.substr(0, value.createTime.indexOf('T'));
-						var state="";
-						switch(value.state){
-						case 0:
-							state="待发布";
-							break;
-						case 1:
-							state="已发布";
-							break;
-						case 2:
-							state="已结束";
-						}
-						$("#surveyList").append(
-								"<tr><td>" + value.title+ "</td><td>"
-										+ str + "</td><td>"
-										+ state + "</td><td>"
-										+ value.sponsor
-										+ "</td><td><a>详情</a></td></tr>");
-					});
-				}
 
-			});
+		function selectSurveys(page) {
+
+			$("#surveyList tbody").html("");
+			$
+					.getJSON(
+							"Json_selectSurveys",
+							{
+								page : page
+							},
+							function(data) {
+								$("#page").html(data.suPageBean.page);
+								$("#totalPage").html(data.suPageBean.totalPage);
+								if (data.suPageBean.list.length == 0) {
+									alert("未找到相关数据！");
+								} else {
+									$
+											.each(
+													data.suPageBean.list,
+													function(i, value) {
+														var str = value.createTime
+																.substr(
+																		0,
+																		value.createTime
+																				.indexOf('T'));
+														var state = "";
+														switch (value.state) {
+														case 0:
+															state = "待发布";
+															break;
+														case 1:
+															state = "已发布";
+															break;
+														case 2:
+															state = "已结束";
+														}
+														$("#surveyList")
+																.append(
+																		"<tr><td>"
+																				+ value.title
+																				+ "</td><td>"
+																				+ str
+																				+ "</td><td>"
+																				+ state
+																				+ "</td><td>"
+																				+ value.sponsor
+																				+ "</td><td><a href='TeacherStudent_Survey_3_selectSurveyById?surveyId="
+																				+ value.surveyId
+																				+ "'>详情</a></td>td><a href='TeacherStudent_Survey_Result_selectSurveyById?surveyId="
+																				+ value.surveyId
+																				+ "'>详情</a></td></tr>");
+													});
+								}
+
+							});
 		}
 		function upPage() {
 			var page = parseInt($("#page").html());

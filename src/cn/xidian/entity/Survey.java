@@ -19,7 +19,7 @@ public class Survey {
 	private Date startTime;//问卷开始时间
 	private Date endTime;//问卷截至时间
 	private String sponsor;//问卷发起单位
-	private Integer state;//问卷状态
+	private Integer state;//问卷状态0表示待发布，1表示已发布，2表示已结束，3表示已删除
 	private Teacher teacher;//问卷创建人
 	private String remark;//问卷备注
 	private Integer sumNum;//问卷被做了几次
