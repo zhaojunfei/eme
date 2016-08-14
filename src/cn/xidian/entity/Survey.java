@@ -8,6 +8,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 @Entity
 @Table(name = "survey")
@@ -19,10 +21,11 @@ public class Survey {
 	private Date startTime;//问卷开始时间
 	private Date endTime;//问卷截至时间
 	private String sponsor;//问卷发起单位
-	private Integer state;//问卷状态0表示待发布，1表示已发布，2表示已结束，3表示已删除
+	private Integer state;//问卷状态0表示待发布，1表示已发布，2表示已结束
 	private Teacher teacher;//问卷创建人
 	private String remark;//问卷备注
 	private Integer sumNum;//问卷被做了几次
+	private Integer delState;//问卷是否删除0表示已删除，1表示未删除
 
 	@Id
 	@GeneratedValue
@@ -73,7 +76,7 @@ public class Survey {
 	public void setRemark(String remark) {
 		this.remark = remark;
 	}
-
+	@Temporal(TemporalType.DATE)
 	public Date getEndTime() {
 		return endTime;
 	}
@@ -99,7 +102,7 @@ public class Survey {
 	public void setTeacher(Teacher teacher) {
 		this.teacher = teacher;
 	}
-
+	@Temporal(TemporalType.DATE)
 	public Date getStartTime() {
 		return startTime;
 	}
@@ -114,6 +117,14 @@ public class Survey {
 
 	public void setSumNum(Integer sumNum) {
 		this.sumNum = sumNum;
+	}
+
+	public Integer getDelState() {
+		return delState;
+	}
+
+	public void setDelState(Integer delState) {
+		this.delState = delState;
 	}
 
 }

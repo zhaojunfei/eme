@@ -34,17 +34,20 @@
 						</div>
 						<div class="div-inf-tbl">
 							<div>
-								<h3 class="title_center"><s:property
-										value="survey.title" /></h3> <p
-									class="top-distance para-indent"><s:property
-										value="survey.discribe" /></p> <p
-									class="top-distance para-indent align_right"><s:property
-										value="survey.sponsor" /></p>
+								<h3 class="title_center">
+									<s:property value="survey.title" />
+								</h3>
+								<p class="top-distance para-indent">
+									<s:property value="survey.discribe" />
+								</p>
+								<p class="top-distance para-indent align_right">
+									<s:property value="survey.sponsor" />
+								</p>
 							</div>
-							<hr/>
-							<form action="TeacherStudent_Survey_3_selectSurveyById?surveyId=<s:property
-										value="survey.surveyId" />" method="post"
-								class="form-horizontal" onsubmit="javascript:return isEmpty()">
+							<hr />
+							<form action="TeacherStudent_Survey_List_addQuestion"
+								method="post" class="form-horizontal"
+								onsubmit="javascript:return isEmpty()">
 								<div class="div-inf">
 									<div id="div-content" class="top-distance"></div>
 								</div>
@@ -52,20 +55,27 @@
 									<input type="hidden" name="survey.surveyId"
 										value="<s:property
 										value="survey.surveyId" />">
-									<input type="date" name="survey.startTime" id="startTime">至
-									<input type="date" name="survey.endTime" id="endTime">
-									<input type="submit" class="btn" name="submit" id="submit"
-										value="提交" onclick="linksel()">
+									<span>问卷有效时间：</span> 
+									<input type="date" name="survey.startTime" id="startTime" />至
+									<input type="date" name="survey.endTime" id="endTime" /> <input
+										type="submit" class="btn" name="submit" id="submit"
+										value="保    存" onclick="linksel()" style="margin-left: 30px">
 								</div>
 							</form>
-							<input type="button" name="addQues" id="1" value="单  选"
-								class="btn" onclick="addQuestion(this)"> <input
-								type="button" name="addQues" id="2" value="多  选" class="btn"
-								onclick="addQuestion(this)"><input type="button"
-								name="addQues" id="3" value="文字题" class="btn"
-								onclick="addQuestion(this)">
+						</div>
+						<hr>
+						<div class="selectdiv_style">
+							<div style="margin-left: 15%">
+								<input type="button" name="addQues" id="1" value="单  选"
+									class="btn select_style" onclick="addQuestion(this)">
+								<input type="button" name="addQues" id="2" value="多  选"
+									class="btn select_style" onclick="addQuestion(this)"><input
+									type="button" name="addQues" id="3" value="文字题"
+									class="btn select_style" onclick="addQuestion(this)">
+							</div>
 						</div>
 					</div>
+
 				</div>
 			</div>
 		</div>
@@ -74,6 +84,7 @@
 	<script type="text/javascript" src="js/jquery1.12.1.js"></script>
 	<script type="text/javascript" src="js/bootstrap.js"></script>
 	<script type="text/javascript" src="js/survey.js"></script>
+	<script src="js/My97DatePickerBeta/My97DatePicker/WdatePicker.js"></script>
 	<script type="text/javascript">
 		var msg = "${requestScope.Message}";
 		if (msg != "") {

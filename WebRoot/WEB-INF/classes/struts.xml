@@ -71,6 +71,10 @@
 		<action name="TeacherStudent_*_*_*" class="TeacherStudentAction"
 			method="{3}">
 			<result name="teacher">/teacher/TeacherStudent{1}{2}.jsp</result>
+			<result name="teacherStudentSurveyList" type="redirect">TeacherStudent_Survey_List_selectAllSurveys
+			</result>
+					<result name="surveyDone" type="redirect">TeacherStudent_Survey_List_selectAllSurveys
+			</result>	
 		</action>
 		<action name="AdminCourse_*_*_*" class="AdminCourseAction"
 			method="{3}">

@@ -26,16 +26,20 @@ public interface SurveyDao {
 	Survey selectSurveyById(Integer surveyId);
 
 	List<SurveyQuestion> selectQuestionBysurveyId(Integer surveyId);
-	
-	boolean updateSelectorNum(Integer surveyId,Integer questionId,Integer selectorNum);
-	
+
+	boolean updateSelectorNum(Integer surveyId, Integer questionId, Integer selectorNum);
+
 	SurveyQuestion selectQuestionById(Integer questionId);
-	
+
 	boolean addTextAnswer(TextAnswer textAnswer);
-	
+
 	boolean updateSurveySumById(Integer surveyId);
-	
+
 	boolean addSurveyReplyer(SurveyReplyer surveyReplyer);
-	
+
 	List<SurveySelector> selectSurveySelectors(Integer surveyId, Integer questionId);
+
+	boolean publishSurvey(Integer surveyId);
+
+	boolean deleteSurvey(Integer surveyId);
 }

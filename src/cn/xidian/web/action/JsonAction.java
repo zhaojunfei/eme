@@ -261,7 +261,7 @@ public class JsonAction extends ActionSupport implements RequestAware {
 	 * siPageBean=studentItemService.selectByStuNum(stuNum,page); return "list";
 	 * }
 	 */
-
+	// 翻页查找问卷列表
 	public String selectSurveys() {
 		String tchrSchNum = tUser.getSchNum();
 		teacher = teacherService.selectInfBySchNum(tchrSchNum);
@@ -269,8 +269,20 @@ public class JsonAction extends ActionSupport implements RequestAware {
 		return "list";
 	}
 
+	// 发布问卷
+	public String publishSurvey() {
+		surveyService.publishSurvey(surveyId);
+		return "list";
+	}
+
+	// 查找问卷结果
 	public String selectSurveyResult() {
-		surveySelectors=surveyService.selectSurveySelectors(surveyId,questionId);
+		surveySelectors = surveyService.selectSurveySelectors(surveyId, questionId);
+		return "list";
+	}
+
+	public String deleteSurvey() {
+		surveyService.deleteSurvey(surveyId);
 		return "list";
 	}
 

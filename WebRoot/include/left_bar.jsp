@@ -1,6 +1,6 @@
 <%@page contentType="text/html"%>
 <%@page pageEncoding="UTF-8"%>
-<div class="span3 leftDiv">
+<div class="span3 leftDiv" >
 	<div class="div-content-white-bgr div-link">
 		<h5>快速链接</h5>
 		<ul>
