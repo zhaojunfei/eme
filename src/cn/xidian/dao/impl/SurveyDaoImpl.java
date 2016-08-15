@@ -188,4 +188,25 @@ public class SurveyDaoImpl implements SurveyDao{
 		return true;
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Survey> selectStuSurveys(String role) {
+		// TODO Auto-generated method stub
+		String sql="from Survey where delState=1 and state=1 order by surveyId desc";
+		Query query=currentSession().createQuery(sql);
+		List<Survey> surveys=query.list();
+		return surveys;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Survey> findStuSurveys(String role, Integer begin, Integer limit) {
+		// TODO Auto-generated method stub
+		
+		String sql="from Survey where delState=1 and state=1 order by surveyId desc";
+		Query query=currentSession().createQuery(sql).setFirstResult(begin).setMaxResults(limit);
+		List<Survey> surveys=query.list();
+		return surveys;
+	}
+
 }

@@ -106,6 +106,8 @@
 			<result name="stuItemList" type="chain">Student_Award_1_selectItem
 			</result>
 			<result name="false" type="chain">Major___selectMajorInf</result>
+				<result name="surveyDone" type="redirect">Student_Survey_List1_selectSurveys
+			</result>	
 		</action>
 		<!-- student相关完 -->
 

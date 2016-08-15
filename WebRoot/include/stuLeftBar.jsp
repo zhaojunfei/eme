@@ -16,6 +16,8 @@
 			</li>
 			<li><img src="img/png-link.png" /><a href="Student_Performance_1_excute">课程成绩</a>
 			</li>
+			<li><img src="img/png-link.png" /><a href="Student_Survey_List1_selectSurveys">问卷调查</a>
+			</li>
 		</ul>
 	</div>
 	<div class="div-content-white-bgr div-link">

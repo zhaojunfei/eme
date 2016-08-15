@@ -10,23 +10,23 @@
 <html>
 <head>
 <base href="<%=basePath%>">
-<title>问卷调查设计</title>
+
+<title>学生基本信息</title>
 <meta charset="UTF-8">
 <link rel="stylesheet" href="css/bootstrap.css" />
 <link rel="stylesheet" href="css/bootstrap-responsive.css" />
 <link rel="stylesheet" href="css/common.css" />
 <link rel="stylesheet" href="css/survey.css" />
-
-
+<link rel="stylesheet" href="css/student_information.css" />
 </head>
 
 <body>
 	<%@ include file="/include/header.jsp"%>
-	<%@ include file="/include/teacher_main_nav.jsp"%>
+	<%@ include file="/include/student_main_nav.jsp"%>
 	<div class="content">
 		<div class="container">
 			<div class="row">
-				<%@ include file="/include/tchrLeftBar.jsp"%>
+				<%@ include file="/include/stuLeftBar.jsp"%>
 				<div class="span9">
 					<div class="span9 div-content-white-bgr">
 						<div class="div-inf-bar">
@@ -47,7 +47,7 @@
 							</div>
 							<hr />
 							<form
-								action="TeacherStudent_Survey_List_addSurveyDone?surveyId=<s:property
+								action="Student_Survey_List1_addSurveyDone?surveyId=<s:property
 										value="survey.surveyId" />"
 								method="post" class="form-horizontal"
 								onsubmit="javascript:return isEmpty()">
@@ -88,14 +88,12 @@
 												value="<s:property value="#sq.questionId" />">
 										</s:if>
 									</ul>
-
 								</s:iterator>
 								<%-- <input type="text" name="survey.surveyId"
 									value="<s:property value="survey.surveyId" />">
 								<!-- 获取问卷的ID --> --%>
-								<!-- <input type="submit" class="btn" value="提交问卷"
-									onclick="linkSelSubmit()">   -->
-								<div class="top-distance">
+
+								<div class="top-distance" >
 									<span>问卷有效日期：</span><input type="text" name="startTime"
 										style="width: 100px;" readonly id="startTime"
 										value="<s:property  value="%{getText('{0,date,yyyy-MM-dd}',{survey.startTime})}"/>">至<input
@@ -103,12 +101,11 @@
 										id="endTime"
 										value="<s:property  value="%{getText('{0,date,yyyy-MM-dd}',{survey.endTime})}"/>">
 								</div>
+								<div class="top-distance" style="text-align:right">
+									<input type="submit" class="btn top-distance" style="text-align:center"
+										value="提交问卷" onclick="linkSelSubmit()">
+								</div>
 							</form>
-							<input type="button" class="btn" name="publish" id="publish"
-								value="发    布"
-								onclick="publishSurvey(<s:property value="survey.surveyId" />)">
-								<s:if test="survey.state!=1"><a href="TeacherStudent_Survey_Modify_selectSurveyById?surveyId=<s:property value="survey.surveyId" />" class="btn"  id="modify"
-								>编    辑</a></s:if>
 						</div>
 					</div>
 				</div>
@@ -118,15 +115,7 @@
 	<%@ include file="/include/footer.jsp"%>
 	<script type="text/javascript" src="js/jquery1.12.1.js"></script>
 	<script type="text/javascript" src="js/bootstrap.js"></script>
-	<script type="text/javascript" src="js/survey.js"></script>
-	<script type="text/javascript">
-		var msg = "${requestScope.Message}";
-		if (msg != "") {
-			alert(msg);
-		}
-	<%request.removeAttribute("Message");%>
-		//显示后将request里的Message清空，防止回退时重复显示。
-
+	<script>
 		$(function() {
 			$(".container").css("min-height",
 					$(document).height() - 90 - 88 - 41 + "px");//container的最小高度为“浏览器当前窗口文档的高度-header高度-footer高度”
@@ -173,13 +162,13 @@
 			}
 
 		}
-//判断是否把问卷填写完整
+		//判断是否把问卷填写完整
 		function isEmpty() {
 			var selected = document.getElementsByClassName("selected");
 			for (var k = 0; k < selected.length; k++) {
 				if (selected[k].value.indexOf('#') < 0) {
-					var num=selected[k].id.substr(5,selected[k].id.length);
-					alert("第"+num+"题未做！请将问卷填写完整！");
+					var num = selected[k].id.substr(5, selected[k].id.length);
+					alert("第" + num + "题未做！请将问卷填写完整！");
 					return false;
 				}
 
@@ -188,8 +177,9 @@
 			var textAnswer = document.getElementsByClassName("textAnswer");
 			for (var n = 0; n < textAnswer.length; n++) {
 				if (textAnswer[n].value.indexOf('#') < 0) {
-					var num=textAnswer[n].id.substr(4,textAnswer[n].id.length);
-					alert("第"+num+"题未做！请将问卷填写完整！");
+					var num = textAnswer[n].id.substr(4,
+							textAnswer[n].id.length);
+					alert("第" + num + "题未做！请将问卷填写完整！");
 					return false;
 				}
 
@@ -197,12 +187,12 @@
 			return true;
 		}
 		//发布问卷
-		function publishSurvey(surveyId){
-			$.getJSON("Json_publishSurvey",{
-				surveyId :surveyId
-			},function(data){
+		function publishSurvey(surveyId) {
+			$.getJSON("Json_publishSurvey", {
+				surveyId : surveyId
+			}, function(data) {
 				alert("发布成功");
-				});
+			});
 		}
 	</script>
 </body>

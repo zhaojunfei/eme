@@ -31,4 +31,6 @@ public interface SurveyService {
 	boolean publishSurvey(Integer surveyId);
 	
 	boolean deleteSurvey(Integer surveyId);
+	
+	PageBean<Survey> selectStuSurveys(String role,Integer page);
 }

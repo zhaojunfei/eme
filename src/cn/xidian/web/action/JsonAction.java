@@ -281,8 +281,14 @@ public class JsonAction extends ActionSupport implements RequestAware {
 		return "list";
 	}
 
+	// 删除问卷
 	public String deleteSurvey() {
 		surveyService.deleteSurvey(surveyId);
+		return "list";
+	}
+
+	public String selectStuSurveys() {
+		suPageBean = surveyService.selectStuSurveys("",page);
 		return "list";
 	}
 

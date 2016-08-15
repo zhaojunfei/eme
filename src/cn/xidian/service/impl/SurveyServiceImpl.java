@@ -41,13 +41,14 @@ public class SurveyServiceImpl implements SurveyService {
 	@Override
 	public boolean addQuestion(List<SurveyQuestion> qs, Survey survey) {
 		// TODO Auto-generated method stub
-		/*Calendar calendar = new GregorianCalendar();
-		calendar.setTime(survey.getEndTime());
-		System.out.println("修改前"+calendar.getTime());
-		calendar.add(calendar.HOUR_OF_DAY, 24);// 把日期往后增加一天.整数往后推,负数往前移动
-		System.out.println("修改后"+calendar.getTime());
-		survey.setEndTime(calendar.getTime()); // 这个时间就是日期往后推一天的结果
-*/		surveyDao.updateSurvey(survey);
+		/*
+		 * Calendar calendar = new GregorianCalendar();
+		 * calendar.setTime(survey.getEndTime());
+		 * System.out.println("修改前"+calendar.getTime());
+		 * calendar.add(calendar.HOUR_OF_DAY, 24);// 把日期往后增加一天.整数往后推,负数往前移动
+		 * System.out.println("修改后"+calendar.getTime());
+		 * survey.setEndTime(calendar.getTime()); // 这个时间就是日期往后推一天的结果
+		 */ surveyDao.updateSurvey(survey);
 		Iterator<SurveyQuestion> itqs = qs.iterator();
 		while (itqs.hasNext()) {
 			SurveyQuestion sq = new SurveyQuestion();
@@ -93,31 +94,35 @@ public class SurveyServiceImpl implements SurveyService {
 	@Override
 	public boolean addSurveyDone(List<SurveySelector> surveySelectors, List<TextAnswer> textAnswers, Survey survey) {
 		// TODO Auto-generated method stub
-		//给问卷添加次数
+		// 给问卷添加次数
 		surveyDao.updateSurveySumById(survey.getSurveyId());
-		//存储选择题的答案结果
+		// 存储选择题的答案结果
 		Iterator<SurveySelector> itqs = surveySelectors.iterator();
 		while (itqs.hasNext()) {
 			SurveySelector sq = new SurveySelector();
 			sq = itqs.next();
 			String[] chrstr = sq.getRemark().split("#");
 			for (int i = 1; i < chrstr.length; i++) {
-				surveyDao.updateSelectorNum(survey.getSurveyId(), Integer.parseInt(chrstr[0]), Integer.parseInt(chrstr[i]));
+				surveyDao.updateSelectorNum(survey.getSurveyId(), Integer.parseInt(chrstr[0]),
+						Integer.parseInt(chrstr[i]));
 			}
 		}
 
-		//存储文本问题的答案
-		Iterator<TextAnswer> itta = textAnswers.iterator();
-		while (itta.hasNext()) {
-			String str = itta.next().getRemark();
-			TextAnswer ta = new TextAnswer();	
-			SurveyQuestion surveyQuestion = new SurveyQuestion();
-			surveyQuestion=surveyDao.selectQuestionById(Integer.parseInt(str.substring(0, str.indexOf("#"))));
-			ta.setAnswerContent(str.substring(str.indexOf("#")+1,str.length()));
-			ta.setSurvey(survey);
-			ta.setSurveyQuestion(surveyQuestion);
-			surveyDao.addTextAnswer(ta);
+		// 存储文本问题的答案
+		if (textAnswers.size() != 0) {
+			Iterator<TextAnswer> itta = textAnswers.iterator();
+			while (itta.hasNext()) {
+				String str = itta.next().getRemark();
+				TextAnswer ta = new TextAnswer();
+				SurveyQuestion surveyQuestion = new SurveyQuestion();
+				surveyQuestion = surveyDao.selectQuestionById(Integer.parseInt(str.substring(0, str.indexOf("#"))));
+				ta.setAnswerContent(str.substring(str.indexOf("#") + 1, str.length()));
+				ta.setSurvey(survey);
+				ta.setSurveyQuestion(surveyQuestion);
+				surveyDao.addTextAnswer(ta);
+			}
 		}
+
 		return true;
 	}
 
@@ -130,7 +135,7 @@ public class SurveyServiceImpl implements SurveyService {
 	@Override
 	public List<SurveySelector> selectSurveySelectors(Integer surveyId, Integer questionId) {
 		// TODO Auto-generated method stub
-		return surveyDao.selectSurveySelectors(surveyId,questionId);
+		return surveyDao.selectSurveySelectors(surveyId, questionId);
 	}
 
 	@Override
@@ -142,7 +147,17 @@ public class SurveyServiceImpl implements SurveyService {
 	@Override
 	public boolean deleteSurvey(Integer surveyId) {
 		// TODO Auto-generated method stub
-		
+
 		return surveyDao.deleteSurvey(surveyId);
+	}
+
+	@Override
+	public PageBean<Survey> selectStuSurveys(String role, Integer page) {
+		// TODO Auto-generated method stub
+		List<Survey> surveys = surveyDao.selectStuSurveys(role);
+		PageBean<Survey> pageBean = PageUtils.page(page, surveys.size());
+		List<Survey> s = surveyDao.findStuSurveys(role, pageBean.getBegin(), pageBean.getLimit());
+		pageBean.setList(s);
+		return pageBean;
 	}
 }
