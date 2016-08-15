@@ -48,34 +48,53 @@
 							<hr />
 							<s:iterator value="surveyQuestions" var="sq" status="status">
 								<div onmouseover='showDel(this)' onmouseout='hideDel(this)'>
-									<ul class="question-style top-distance">
-										<label>Q<s:property value="%{#status.count}" />： <s:property
-												value="#sq.content" /><input type="button"  class="btn hideElement"
-											onclick="chart(this)"
-											name="<s:property value="#sq.questionId" />" 
-											value="查看"><input type="button" 
-											onclick="hidePie(this)"
-											name="<s:property value="#sq.questionId" />" class="btn hideElement"
-											value="关闭"></label>
+									<div class="question-style top-distance"
+										style="display:inline-block;vertical-align:middle">
+										Q
+										<s:property value="%{#status.count}" />
+										：
+										<s:property value="#sq.content" />
+										<s:if test="#sq.type==2">
+											<span>（多选）</span>
+										</s:if>
+										<s:if test="#sq.type==1 || #sq.type==2">
+											<img class="small_img show_Pie" src="img/showPie.png"
+												onclick="showChart(this)"
+												name="<s:property value="#sq.questionId" />"
+												id="img<s:property value="#sq.questionId" />" />
+											<img class="small_img show_Pie"  src="img/showPie.png"
+												onclick="showPie(this)" style="display: none"
+												name="<s:property value="#sq.questionId" />"
+												id="image<s:property value="#sq.questionId" />" />
+											<img class="small_img"  src="img/delsel.gif"
+												onclick="hidePie(this)"
+												name="<s:property value="#sq.questionId" />" />
+										</s:if>
+									</div>
+									<ul class="question-style">
 										<s:if test="#sq.type==1||#sq.type==2">
 											<s:generator val="#sq.selectors" separator="_" id="s" />
 											<s:iterator status="st" value="#request.s" id="selector">
 												<li class="li_style selector-style"><s:if
 														test="#sq.type==1">
-														<input type="radio" class="radio"
-															name="<s:property value="%{#status.count}" />"
-															id="<s:property value="%{#st.count}" />">
+														<span class="serialNumber"
+															id="<s:property value="%{#st.count}" />"></span>
 														<span class="left_distance"><s:property
 																value="selector" /></span>
 													</s:if> <s:if test="#sq.type==2">
-														<input type="checkbox" class="checkbox"
-															name="<s:property value="%{#status.count}" />"
-															id="<s:property value="%{#st.count}" />">
+														<span class="serialNumber"
+															id="<s:property value="%{#st.count}" />"></span>
 														<span class="left_distance"><s:property
 																value="selector" /></span>
 													</s:if></li>
 											</s:iterator>
 											<!-- 获取选中的选项的selectorNum -->
+										</s:if>
+										<s:if test="#sq.type==3">
+											<li class="li_style selector-style"><textarea
+													name="<s:property value="%{#status.count}" />"
+													placeholder='请填写内容' class='textarea left_distance'
+													style='width: 72%; height: 100px' readonly></textarea></li>
 										</s:if>
 									</ul>
 									<div id="jqChart<s:property value="#sq.questionId"/>"
@@ -86,6 +105,7 @@
 						<input type="hidden" id="surveyId"
 							value="<s:property value="survey.surveyId" />">
 					</div>
+
 				</div>
 			</div>
 		</div>
@@ -105,15 +125,15 @@
 		$(function() {
 			$(".container").css("min-height",
 					$(document).height() - 90 - 88 - 41 + "px");//container的最小高度为“浏览器当前窗口文档的高度-header高度-footer高度”
+			numChangeToCode();
 		});
 	<%request.removeAttribute("Message");%>
 		//显示后将request里的Message清空，防止回退时重复显示。
 
-		function chart(obj) {
+		function showChart(obj) {
 			var surveyId = $("#surveyId").val();
 			$("#jqChart" + obj.name + "").css("display", "block");
-			$
-					.getJSON(
+			$.getJSON(
 							"Json_selectSurveyResult",
 							{
 								surveyId : surveyId,
@@ -133,11 +153,13 @@
 													selector[1] = value.sumNum;
 													arr[i] = selector;
 												});
-								test(arr, obj.name);
+								drawPie(arr, obj.name);
 							});
+			$("#img" + obj.name + "").css("display", "none");
+			$("#image" + obj.name + "").css("display", "inline");
 		}
 
-		function test(data, questionId) {
+		function drawPie(data, questionId) {
 			var background = {
 				type : 'linearGradient',
 				x0 : 0,
@@ -183,7 +205,7 @@
 										font : '15px sans-serif',
 										fillStyle : 'white'
 									},
-									explodedRadius : 20,
+									explodedRadius : 10,
 									explodedSlices : [ 5 ],
 									data : data,
 									labelsPosition : 'outside', // inside, outside
@@ -193,19 +215,31 @@
 									leaderLineStrokeStyle : 'black'
 								} ]
 							});
+			
 		}
-		
+
 		//显示图片
 		function showDel(obj) {
-			$(obj).find(".btn").css('visibility', 'visible');
+			$(obj).find("img").css('visibility', 'visible');
 		}
 		// 隐藏图片
 		function hideDel(obj) {
-			$(obj).find(".btn").css('visibility', 'hidden');
+			$(obj).find("img").css('visibility', 'hidden');
 		}
-		
-		function hidePie(obj){
+
+		function hidePie(obj) {
 			$("#jqChart" + obj.name + "").css("display", "none");
+		}
+		function showPie(obj) {
+			$("#jqChart" + obj.name + "").css("display", "block");
+		}
+		function numChangeToCode() {
+			var spans = document.getElementsByClassName("serialNumber");
+			for (var i = 0; i < spans.length; i++) {
+				spans[i].innerHTML = String
+						.fromCharCode(64 + parseInt(spans[i].id))
+						+ "  ."
+			}
 		}
 	</script>
 </body>

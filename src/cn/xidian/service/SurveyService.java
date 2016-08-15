@@ -27,4 +27,8 @@ public interface SurveyService {
 	boolean addSurveyReplyer(SurveyReplyer surveyReplyer);
 	
 	List<SurveySelector> selectSurveySelectors(Integer surveyId,Integer questionId);
+	
+	boolean publishSurvey(Integer surveyId);
+	
+	boolean deleteSurvey(Integer surveyId);
 }

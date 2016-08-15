@@ -41,7 +41,7 @@ public class SurveyDaoImpl implements SurveyDao{
 
 	@Override
 	public boolean addQuestion(SurveyQuestion sq) {
-		// TODO Auto-generated method stub
+	
 		currentSession().save(sq);
 		return true;
 	}
@@ -69,7 +69,7 @@ public class SurveyDaoImpl implements SurveyDao{
 	@Override
 	public List<Survey> selectAllSurveys(Teacher teacher) {
 		// TODO Auto-generated method stub
-		String sql="from Survey where tchrId=?";
+		String sql="from Survey where tchrId=? and delState=1 order by surveyId desc";
 		Query query=currentSession().createQuery(sql);
 		query.setInteger(0, teacher.getTchrId());
 		List<Survey> surveys=query.list();
@@ -80,7 +80,7 @@ public class SurveyDaoImpl implements SurveyDao{
 	@Override
 	public List<Survey> findSurveys(Teacher teacher, Integer begin, Integer limit) {
 		// TODO Auto-generated method stub
-		String sql="from Survey where tchrId=? order by surveyId desc";
+		String sql="from Survey where tchrId=? and delState=1 order by surveyId desc";
 		Query query=currentSession().createQuery(sql).setFirstResult(begin).setMaxResults(limit);
 		query.setInteger(0, teacher.getTchrId());
 		List<Survey> surveys=query.list();
@@ -166,6 +166,26 @@ public class SurveyDaoImpl implements SurveyDao{
 		query.setInteger(1, questionId);
 		List<SurveySelector> surveySelectors=query.list();
 		return surveySelectors;
+	}
+
+	@Override
+	public boolean publishSurvey(Integer surveyId) {
+		// TODO Auto-generated method stub
+		String sql="update Survey set state= 1 where surveyId =?";
+		Query query=currentSession().createQuery(sql);
+		query.setInteger(0, surveyId);
+		query.executeUpdate();
+		return true;
+	}
+
+	@Override
+	public boolean deleteSurvey(Integer surveyId) {
+		// TODO Auto-generated method stub
+		String sql="update Survey set delState=0 where surveyId=?";
+		Query query=currentSession().createQuery(sql);
+		query.setInteger(0, surveyId);
+		query.executeUpdate();
+		return true;
 	}
 
 }

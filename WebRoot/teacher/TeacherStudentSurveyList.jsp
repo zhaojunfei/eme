@@ -37,7 +37,6 @@
 						<div class="div-inf-tbl">
 							<div class="div-tchr-detail">
 								<a class="btn" href="teacher/TeacherStudentSurvey1.jsp">创建问卷</a>
-								<a class="btn" href="teacher/TeacherStudentSurveyResult.jsp">查看结果</a>
 								<table class="table table-bordered table-condensed"
 									id="surveyList">
 									<thead>
@@ -52,18 +51,23 @@
 									<tbody>
 										<s:iterator value="suPageBean.list" var="s">
 											<tr>
-												<td><s:property value="#s.title" /></td>
+												<td><a
+													href="TeacherStudent_Survey_3_selectSurveyById?surveyId=<s:property value="#s.surveyId" />"><s:property
+															value="#s.title" /></a></td>
 												<td><s:property
 														value="%{getText('{0,date,yyyy-MM-dd}',{#s.createTime})}" /></td>
-												<td><s:if test="#s.state==0">待发布</s:if>
-													<s:if test="#s.state==1">已发布</s:if>
+												<td id="surveyState<s:property value="#s.surveyId" />"><s:if
+														test="#s.state==0">待发布</s:if> <s:if test="#s.state==1">已发布</s:if>
 													<s:if test="#s.state==2">已结束</s:if></td>
 												<td><s:property value="#s.sponsor" /></td>
 												<td><a
-													href="TeacherStudent_Survey_3_selectSurveyById?surveyId=<s:property value="#s.surveyId" />">详情</a>
-												</td>
-												<td><a
-													href="TeacherStudent_Survey_Result_selectSurveyById?surveyId=<s:property value="#s.surveyId" />">详情</a>
+													href="TeacherStudent_Survey_Modify_selectSurveyById?surveyId=<s:property value="#s.surveyId" />">编辑</a>
+													&nbsp;<a
+													onclick="publishSurvey(<s:property value="#s.surveyId" />)">发布</a>
+													&nbsp;<a
+													href="TeacherStudent_Survey_Result_selectSurveyById?surveyId=<s:property value="#s.surveyId" />">数据</a>
+													&nbsp;<a
+													onclick="deleteSurvey(<s:property value="#s.surveyId" />)">删除</a>
 												</td>
 											</tr>
 										</s:iterator>
@@ -101,7 +105,7 @@
 			$(".container").css("min-height",
 					$(document).height() - 90 - 88 - 41 + "px");//container的最小高度为“浏览器当前窗口文档的高度-header高度-footer高度”
 		});
-
+//查找下一页或上一页问卷列表
 		function selectSurveys(page) {
 
 			$("#surveyList tbody").html("");
@@ -143,20 +147,27 @@
 																				+ value.title
 																				+ "</td><td>"
 																				+ str
-																				+ "</td><td>"
+																				+ "</td><td id='surveyId"
+																				+ value.surveyId
+																				+ "'>"
 																				+ state
 																				+ "</td><td>"
 																				+ value.sponsor
 																				+ "</td><td><a href='TeacherStudent_Survey_3_selectSurveyById?surveyId="
 																				+ value.surveyId
-																				+ "'>详情</a></td>td><a href='TeacherStudent_Survey_Result_selectSurveyById?surveyId="
+																				+ "'>编辑</a>&nbsp;&nbsp;<a onclick='publishSurvey("
 																				+ value.surveyId
-																				+ "'>详情</a></td></tr>");
+																				+ ")'>发布</a>&nbsp;&nbsp;<a href='TeacherStudent_Survey_Result_selectSurveyById?surveyId="
+																				+ value.surveyId
+																				+ "'>数据</a>&nbsp;&nbsp;<a onclick='deleteSurvey("
+																				+ value.surveyId
+																				+ ")'>删除</a></td></tr>");
 													});
 								}
 
 							});
 		}
+		//上一页
 		function upPage() {
 			var page = parseInt($("#page").html());
 			if (page == 1) {
@@ -165,6 +176,8 @@
 				selectSurveys(page - 1);
 			}
 		}
+		
+		//下一页
 		function downPage() {
 			var totalPage = parseInt($("#totalPage").html());
 			var page = parseInt($("#page").html());
@@ -173,6 +186,27 @@
 			} else {
 				selectSurveys(page + 1);
 			}
+		}
+		//发布问卷
+		function publishSurvey(surveyId){
+			$.getJSON("Json_publishSurvey",{
+				surveyId :surveyId
+			},function(data){
+				document.getElementById("surveyState"+surveyId).innerHTML="已发布";
+				alert("发布成功");
+				});
+			
+		}
+		//删除问卷
+		function deleteSurvey(surveyId){
+			$.getJSON("Json_deleteSurvey",{
+				surveyId:surveyId
+			},function(data){
+				/* document.getElementById("surveyId"+surveyId).style.display="none"; */
+				var page = parseInt($("#page").html());
+				alert("删除成功！");
+				selectSurveys(page);
+			});
 		}
 	</script>
 </body>

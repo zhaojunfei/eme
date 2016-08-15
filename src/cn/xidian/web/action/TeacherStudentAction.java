@@ -352,6 +352,7 @@ public class TeacherStudentAction extends ActionSupport implements RequestAware 
 		Date createTime = new Date();
 		survey.setCreateTime(createTime);
 		survey.setState(0);
+		survey.setDelState(1);
 		survey.setTeacher(teacher);
 		survey.setSumNum(0);
 		boolean isSuccess = surveyService.createSurvey(survey);
@@ -373,7 +374,7 @@ public class TeacherStudentAction extends ActionSupport implements RequestAware 
 		} else {
 			request.put("Message", "问卷创建失败！");
 		}
-		return "teacher";
+		return "teacherStudentSurveyList";
 	}
 
 	// 查找问卷，形成列表
@@ -424,7 +425,7 @@ public class TeacherStudentAction extends ActionSupport implements RequestAware 
 		} else {
 			request.put("Message", "提交失败！");
 		}
-		return "teacher";
+		return "surveyDone";
 	}
 
 	public List<Student> getStudents() {

@@ -161,7 +161,7 @@ function delQuestion(obj) {
 		$("#ques" + k + "").find(".image" + k + "").attr("name",
 				"image" + j + "");// <img>修改name属性，name的作用是当查找有有多少个选项的查找条件
 		$("#ques" + k + "").find(".image" + k + "").attr("class",
-				"image" + j + "");// <img>修改name属性，name的作用是当查找有有多少个选项
+				"image" + j + " small_img");// <img>修改name属性，name的作用是当查找有有多少个选项
 		$("#ques" + k + "").find("#AST" + k + "").attr("id", "AST" + j + "");// <input
 		// type='text'>
 		// 修改文本框的id,该id的作用是将组合好的选项内容放入到该文本框
@@ -200,6 +200,7 @@ function linksel() {
 		}
 		document.getElementById("AST" + j + "").value = selContent;
 	}
+	
 }
 
 function isEmpty() {
@@ -233,5 +234,6 @@ function isEmpty() {
 			return false;
 		}
 	}
+	
 	return true;
 }

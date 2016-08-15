@@ -41,11 +41,13 @@ public class SurveyServiceImpl implements SurveyService {
 	@Override
 	public boolean addQuestion(List<SurveyQuestion> qs, Survey survey) {
 		// TODO Auto-generated method stub
-		Calendar calendar = new GregorianCalendar();
+		/*Calendar calendar = new GregorianCalendar();
 		calendar.setTime(survey.getEndTime());
-		calendar.add(calendar.DATE, 1);// 把日期往后增加一天.整数往后推,负数往前移动
+		System.out.println("修改前"+calendar.getTime());
+		calendar.add(calendar.HOUR_OF_DAY, 24);// 把日期往后增加一天.整数往后推,负数往前移动
+		System.out.println("修改后"+calendar.getTime());
 		survey.setEndTime(calendar.getTime()); // 这个时间就是日期往后推一天的结果
-		surveyDao.updateSurvey(survey);
+*/		surveyDao.updateSurvey(survey);
 		Iterator<SurveyQuestion> itqs = qs.iterator();
 		while (itqs.hasNext()) {
 			SurveyQuestion sq = new SurveyQuestion();
@@ -129,5 +131,18 @@ public class SurveyServiceImpl implements SurveyService {
 	public List<SurveySelector> selectSurveySelectors(Integer surveyId, Integer questionId) {
 		// TODO Auto-generated method stub
 		return surveyDao.selectSurveySelectors(surveyId,questionId);
+	}
+
+	@Override
+	public boolean publishSurvey(Integer surveyId) {
+		// TODO Auto-generated method stub
+		return surveyDao.publishSurvey(surveyId);
+	}
+
+	@Override
+	public boolean deleteSurvey(Integer surveyId) {
+		// TODO Auto-generated method stub
+		
+		return surveyDao.deleteSurvey(surveyId);
 	}
 }

@@ -35,24 +35,30 @@
 							<label>问卷调查</label>
 						</div>
 						<div class="div-inf-tbl">
-							<div>
-								<h3 class="title_center">
-									<s:property value="survey.title" />
-								</h3>
-								<p class="top-distance para-indent">
-									<s:property value="survey.discribe" />
-								</p>
-								<p class="top-distance para-indent align_right">
-									<s:property value="survey.sponsor" />
-								</p>
-							</div>
-							<hr />
+							
 							<form
 								action="TeacherStudent_Survey_List_addSurveyDone?surveyId=<s:property
 										value="survey.surveyId" />"
 								method="post" class="form-horizontal"
 								onsubmit="javascript:return isEmpty()">
+								<div>
+								<h3 class="title_center">
+									<input type="text" 	class="input-l" name="survey.title" id="input-title" value="<s:property value="survey.title" />">
+								</h3>
+								<p class="top-distance para-indent">
+									<textarea class="textarea-l" id="text-content"
+									name="survey.discribe"><s:property value="survey.discribe" /></textarea>
+								</p>
+								<p class="top-distance para-indent align_right">
+									<input type="text"
+									class="input-l" name="survey.sponsor" id="input-sponsor" value="<s:property value="survey.sponsor" />">
+								</p>
+							</div>
+							<hr/>
 								<s:iterator value="surveyQuestions" var="sq" status="status">
+									
+									
+									
 									<ul class="question-style top-distance">
 										<label>Q<s:property value="%{#status.count}" />： <s:property
 												value="#sq.content" /></label>
