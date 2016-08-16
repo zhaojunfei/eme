@@ -73,8 +73,9 @@
 			<result name="teacher">/teacher/TeacherStudent{1}{2}.jsp</result>
 			<result name="teacherStudentSurveyList" type="redirect">TeacherStudent_Survey_List_selectAllSurveys
 			</result>
-					<result name="surveyDone" type="redirect">TeacherStudent_Survey_List_selectAllSurveys
-			</result>	
+			<result name="surveyDone" type="redirect">TeacherStudent_Survey_List_selectAllSurveys
+			</result>
+
 		</action>
 		<action name="AdminCourse_*_*_*" class="AdminCourseAction"
 			method="{3}">
@@ -106,8 +107,8 @@
 			<result name="stuItemList" type="chain">Student_Award_1_selectItem
 			</result>
 			<result name="false" type="chain">Major___selectMajorInf</result>
-				<result name="surveyDone" type="redirect">Student_Survey_List1_selectSurveys
-			</result>	
+			<result name="surveyDone" type="redirect">Student_Survey_List1_selectSurveys?message=success
+			</result>
 		</action>
 		<!-- student相关完 -->
 
@@ -133,6 +134,8 @@
 			<result name="teacherStudentDetail" type="chain">TeacherStudent_Information_1_selectStudentBySchNum
 			</result>
 			<result name="teacherStudentList" type="redirect">TeacherStudent_List_1_selectAllStus
+			</result>
+			<result name="surveyDone" type="redirect">Teacher_Survey_List1_selectTeacherSurveys?message=success
 			</result>
 			<interceptor-ref name="securityStack"></interceptor-ref>
 		</action>

@@ -43,8 +43,10 @@ public interface SurveyDao {
 	boolean publishSurvey(Integer surveyId);
 
 	boolean deleteSurvey(Integer surveyId);
-	
-	List<Survey> selectStuSurveys(String role);
-	
-	List<Survey> findStuSurveys(String role,Integer begin,Integer limit);
+
+	List<Survey> selectStuOrTchrSurveys(Integer role);
+
+	List<Survey> findStuOrTchrSurveys(Integer role, Integer begin, Integer limit);
+
+	boolean overSurvey(Integer surveyId);
 }

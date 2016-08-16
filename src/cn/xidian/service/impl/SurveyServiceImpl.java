@@ -107,9 +107,8 @@ public class SurveyServiceImpl implements SurveyService {
 						Integer.parseInt(chrstr[i]));
 			}
 		}
-
 		// 存储文本问题的答案
-		if (textAnswers.size() != 0) {
+		if (textAnswers!=null) {
 			Iterator<TextAnswer> itta = textAnswers.iterator();
 			while (itta.hasNext()) {
 				String str = itta.next().getRemark();
@@ -152,12 +151,18 @@ public class SurveyServiceImpl implements SurveyService {
 	}
 
 	@Override
-	public PageBean<Survey> selectStuSurveys(String role, Integer page) {
+	public PageBean<Survey> selectStuOrTchrSurveys(Integer role, Integer page) {
 		// TODO Auto-generated method stub
-		List<Survey> surveys = surveyDao.selectStuSurveys(role);
+		List<Survey> surveys = surveyDao.selectStuOrTchrSurveys(role);
 		PageBean<Survey> pageBean = PageUtils.page(page, surveys.size());
-		List<Survey> s = surveyDao.findStuSurveys(role, pageBean.getBegin(), pageBean.getLimit());
+		List<Survey> s = surveyDao.findStuOrTchrSurveys(role, pageBean.getBegin(), pageBean.getLimit());
 		pageBean.setList(s);
 		return pageBean;
+	}
+
+	@Override
+	public boolean overSurvey(Integer surveyId) {
+		// TODO Auto-generated method stub
+		return surveyDao.overSurvey(surveyId);
 	}
 }

@@ -42,10 +42,18 @@
 									class="text-size top-distance">问卷描述</label>
 								<textarea class="textarea-l" id="text-content"
 									name="survey.discribe"></textarea>
-								<label class="text-size top-distance">问卷发起单位</label><input type="text"
-									class="input-l" name="survey.sponsor" id="input-sponsor"><br>
-								<input type="submit" class="btn top-distance" name="submit"
-									id="submit" value="创建问卷">
+								<label class="text-size top-distance">问卷调查对象</label><select
+									class="top-distance" id="respondent" name="survey.respondent">
+									<option value="1">学生</option>
+									<option value="2">教师</option>
+									<option value="3">全体师生</option>
+								</select><br> <label class="text-size top-distance">问卷发起单位</label><input
+									type="text" class="input-l" name="survey.sponsor"
+									id="input-sponsor"><br>
+								<div class="right_align">
+									<input type="submit" class="btn top-distance" name="submit"
+										id="submit" value="创建问卷">
+								</div>
 							</form>
 						</div>
 					</div>
@@ -73,7 +81,8 @@
 			var title = $("#input-title").val();
 			var content = $("#text-content").val();
 			var sponsor = $("#input-sponsor").val();
-			if (title.trim().length != 0 && content.trim().length != 0 && sponsor.trim().length != 0) {
+			if (title.trim().length != 0 && content.trim().length != 0
+					&& sponsor.trim().length != 0) {
 				return true;
 			} else {
 				alert("输入框不能为空！");

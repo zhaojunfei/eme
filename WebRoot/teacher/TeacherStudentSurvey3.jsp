@@ -54,7 +54,7 @@
 								<s:iterator value="surveyQuestions" var="sq" status="status">
 									<ul class="question-style top-distance">
 										<label>Q<s:property value="%{#status.count}" />： <s:property
-												value="#sq.content" /></label>
+												value="#sq.content" /><s:if test="#sq.type==2">（多选）</s:if></label>
 										<s:if test="#sq.type==1||#sq.type==2">
 											<s:generator val="#sq.selectors" separator="_" id="s" />
 											<s:iterator status="st" value="#request.s" id="selector">
@@ -104,11 +104,11 @@
 										value="<s:property  value="%{getText('{0,date,yyyy-MM-dd}',{survey.endTime})}"/>">
 								</div>
 							</form>
-							<input type="button" class="btn" name="publish" id="publish"
+							<div class="right_align"><input type="button" class="btn" name="publish" id="publish"
 								value="发    布"
 								onclick="publishSurvey(<s:property value="survey.surveyId" />)">
 								<s:if test="survey.state!=1"><a href="TeacherStudent_Survey_Modify_selectSurveyById?surveyId=<s:property value="survey.surveyId" />" class="btn"  id="modify"
-								>编    辑</a></s:if>
+								>编    辑</a></s:if></div>
 						</div>
 					</div>
 				</div>
@@ -132,7 +132,7 @@
 					$(document).height() - 90 - 88 - 41 + "px");//container的最小高度为“浏览器当前窗口文档的高度-header高度-footer高度”
 		});
 
-		function linkSelSubmit() {
+		/* function linkSelSubmit() {
 			//获取选中的单选
 			var radios = document.getElementsByClassName("radio");
 			for (var i = 0; i < radios.length; i++) {
@@ -173,7 +173,7 @@
 			}
 
 		}
-//判断是否把问卷填写完整
+		//判断是否把问卷填写完整
 		function isEmpty() {
 			var selected = document.getElementsByClassName("selected");
 			for (var k = 0; k < selected.length; k++) {
@@ -195,14 +195,14 @@
 
 			}
 			return true;
-		}
+		} */
 		//发布问卷
-		function publishSurvey(surveyId){
-			$.getJSON("Json_publishSurvey",{
-				surveyId :surveyId
-			},function(data){
+		function publishSurvey(surveyId) {
+			$.getJSON("Json_publishSurvey", {
+				surveyId : surveyId
+			}, function(data) {
 				alert("发布成功");
-				});
+			});
 		}
 	</script>
 </body>

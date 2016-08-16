@@ -41,11 +41,12 @@
 									id="surveyList">
 									<thead>
 										<tr>
-											<th width="80px">题目</th>
+											<th width="100px">问卷</th>
 											<th width="80px">创建时间</th>
-											<th width="80px">状态</th>
-											<th width="80px">发起单位</th>
-											<th width="120px">操作</th>
+											<th width="60px">对象</th>
+											<th width="60px">状态</th>
+											<th width="80px">操作</th>
+											<th width="90px">操作</th>
 										</tr>
 									</thead>
 									<tbody>
@@ -56,19 +57,24 @@
 															value="#s.title" /></a></td>
 												<td><s:property
 														value="%{getText('{0,date,yyyy-MM-dd}',{#s.createTime})}" /></td>
+														<td><s:if
+														test="#s.respondent==1">学生</s:if> <s:if test="#s.respondent==2">教师</s:if>
+													<s:if test="#s.respondent==3">全体师生</s:if></td>
 												<td id="surveyState<s:property value="#s.surveyId" />"><s:if
 														test="#s.state==0">待发布</s:if> <s:if test="#s.state==1">已发布</s:if>
 													<s:if test="#s.state==2">已结束</s:if></td>
-												<td><s:property value="#s.sponsor" /></td>
+												
 												<td><a
 													href="TeacherStudent_Survey_Modify_selectSurveyById?surveyId=<s:property value="#s.surveyId" />"
-													onclick="return stop(<s:property value="#s.surveyId" />);">编辑</a>
-													&nbsp;<a
+													onclick="return stop(<s:property value="#s.surveyId" />);">编辑</a>&nbsp;&nbsp;&nbsp;&nbsp;<a
+													onclick="deleteSurvey(<s:property value="#s.surveyId" />)">删除</a></td>
+												<td><a
 													onclick="publishSurvey(<s:property value="#s.surveyId" />)">发布</a>
 													&nbsp;<a
-													href="TeacherStudent_Survey_Result_selectSurveyById?surveyId=<s:property value="#s.surveyId" />">数据</a>
+													onclick="overSurvey(<s:property value="#s.surveyId" />)">结束</a>
 													&nbsp;<a
-													onclick="deleteSurvey(<s:property value="#s.surveyId" />)">删除</a>
+													href="TeacherStudent_Survey_Result_selectSurveyById?surveyId=<s:property value="#s.surveyId" />">数据</a>
+													
 												</td>
 											</tr>
 										</s:iterator>
@@ -103,6 +109,7 @@
 		//显示后将request里的Message清空，防止回退时重复显示。
 
 		$(function() {
+			alert(message);
 			$(".container").css("min-height",
 					$(document).height() - 90 - 88 - 41 + "px");//container的最小高度为“浏览器当前窗口文档的高度-header高度-footer高度”
 		});
@@ -142,29 +149,42 @@
 														case 2:
 															state = "已结束";
 														}
+														var respondent="";
+														switch (value.respondent) {
+														case 1:
+															respondent = "学生";
+															break;
+														case 2:
+															respondent = "教师";
+															break;
+														case 3:
+															respondent = "全体师生";
+														}
 														$("#surveyList")
 																.append(
 																		"<tr><td><a href='TeacherStudent_Survey_3_selectSurveyById?surveyId="
 																				+ value.surveyId
 																				+ "'>"+value.title+"</a></td><td>"
 																				+ str
+																				+ "</td><td>"
+																				+ respondent
 																				+ "</td><td id='surveyState"
 																				+ value.surveyId
 																				+ "'>"
 																				+ state
-																				+ "</td><td>"
-																				+ value.sponsor
-																				+ "</td><td><a href='TeacherStudent_Survey_3_selectSurveyById?surveyId="
+																				+ "</td><td><a href='TeacherStudent_Survey_Modify_selectSurveyById?surveyId="
 																				+ value.surveyId
 																				+ "' onclick='return stop("
 																				+ value.surveyId
-																				+ ");'>编辑</a>&nbsp;&nbsp;<a onclick='publishSurvey("
+																				+ ");'>编辑</a>&nbsp;&nbsp;&nbsp;<a onclick='deleteSurvey("
 																				+ value.surveyId
-																				+ ")'>发布</a>&nbsp;&nbsp;<a href='TeacherStudent_Survey_Result_selectSurveyById?surveyId="
+																				+ ")'>删除</a></td><td><a onclick='publishSurvey("
 																				+ value.surveyId
-																				+ "'>数据</a>&nbsp;&nbsp;<a onclick='deleteSurvey("
+																				+ ")'>发布</a>&nbsp;&nbsp;<a onclick='overSurvey("
 																				+ value.surveyId
-																				+ ")'>删除</a></td></tr>");
+																				+ ")'>结束</a>&nbsp;&nbsp;<a href='TeacherStudent_Survey_Result_selectSurveyById?surveyId="
+																				+ value.surveyId
+																				+ "'>数据</a></td></tr>");
 													});
 								}
 
@@ -219,6 +239,15 @@
 				return false;
 				}
 			return true;
+		}
+		//结束问卷调查
+		function overSurvey(surveyId){
+			$.getJSON("Json_overSurvey",{
+				surveyId:surveyId
+			},function(data){
+				document.getElementById("surveyState"+surveyId).innerHTML="已结束";
+				alert("问卷结束设置成功！");
+			});
 		}
 	</script>
 </body>

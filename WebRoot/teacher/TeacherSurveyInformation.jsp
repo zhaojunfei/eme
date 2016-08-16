@@ -47,14 +47,14 @@
 							</div>
 							<hr />
 							<form
-								action="TeacherStudent_Survey_List_addSurveyDone?surveyId=<s:property
+								action="Teacher_Survey_List1_addTchrSurveyDone?surveyId=<s:property
 										value="survey.surveyId" />"
 								method="post" class="form-horizontal"
 								onsubmit="javascript:return isEmpty()">
 								<s:iterator value="surveyQuestions" var="sq" status="status">
 									<ul class="question-style top-distance">
 										<label>Q<s:property value="%{#status.count}" />： <s:property
-												value="#sq.content" /></label>
+												value="#sq.content" /><s:if test="#sq.type==2">（多选）</s:if></label>
 										<s:if test="#sq.type==1||#sq.type==2">
 											<s:generator val="#sq.selectors" separator="_" id="s" />
 											<s:iterator status="st" value="#request.s" id="selector">
@@ -93,8 +93,7 @@
 								<%-- <input type="text" name="survey.surveyId"
 									value="<s:property value="survey.surveyId" />">
 								<!-- 获取问卷的ID --> --%>
-								<!-- <input type="submit" class="btn" value="提交问卷"
-									onclick="linkSelSubmit()">   -->
+								
 								<div class="top-distance">
 									<span>问卷有效日期：</span><input type="text" name="startTime"
 										style="width: 100px;" readonly id="startTime"
@@ -103,12 +102,9 @@
 										id="endTime"
 										value="<s:property  value="%{getText('{0,date,yyyy-MM-dd}',{survey.endTime})}"/>">
 								</div>
+								<div class="top-distance right_align"><input type="submit" class="btn" value="提交问卷"
+									onclick="linkSelSubmit()"></div>
 							</form>
-							<input type="button" class="btn" name="publish" id="publish"
-								value="发    布"
-								onclick="publishSurvey(<s:property value="survey.surveyId" />)">
-								<s:if test="survey.state!=1"><a href="TeacherStudent_Survey_Modify_selectSurveyById?surveyId=<s:property value="survey.surveyId" />" class="btn"  id="modify"
-								>编    辑</a></s:if>
 						</div>
 					</div>
 				</div>

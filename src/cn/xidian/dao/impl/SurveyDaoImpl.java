@@ -190,23 +190,37 @@ public class SurveyDaoImpl implements SurveyDao{
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Survey> selectStuSurveys(String role) {
+	public List<Survey> selectStuOrTchrSurveys(Integer role) {
 		// TODO Auto-generated method stub
-		String sql="from Survey where delState=1 and state=1 order by surveyId desc";
+		String sql="from Survey where delState=1 and state=1 and (respondent=? or respondent=?)  order by surveyId desc";
 		Query query=currentSession().createQuery(sql);
+		query.setInteger(0, role);
+		query.setInteger(1, 3);
 		List<Survey> surveys=query.list();
 		return surveys;
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Survey> findStuSurveys(String role, Integer begin, Integer limit) {
+	public List<Survey> findStuOrTchrSurveys(Integer role, Integer begin, Integer limit) {
 		// TODO Auto-generated method stub
 		
-		String sql="from Survey where delState=1 and state=1 order by surveyId desc";
+		String sql="from Survey where delState=1 and state=1 and (respondent=? or respondent=?) order by surveyId desc";
 		Query query=currentSession().createQuery(sql).setFirstResult(begin).setMaxResults(limit);
+		query.setInteger(0, role);
+		query.setInteger(1, 3);
 		List<Survey> surveys=query.list();
 		return surveys;
+	}
+
+	@Override
+	public boolean overSurvey(Integer surveyId) {
+		// TODO Auto-generated method stub
+		String sql="update Survey set state=2 where surveyId=?";
+		Query query =currentSession().createQuery(sql);
+		query.setInteger(0, surveyId);
+		query.executeUpdate();
+		return true;
 	}
 
 }

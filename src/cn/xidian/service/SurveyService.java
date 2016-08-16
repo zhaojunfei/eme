@@ -32,5 +32,7 @@ public interface SurveyService {
 	
 	boolean deleteSurvey(Integer surveyId);
 	
-	PageBean<Survey> selectStuSurveys(String role,Integer page);
+	PageBean<Survey> selectStuOrTchrSurveys(Integer role,Integer page);
+	
+	boolean overSurvey(Integer surveyId);
 }

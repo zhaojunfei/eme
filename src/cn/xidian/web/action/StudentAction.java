@@ -101,6 +101,8 @@ public class StudentAction extends ActionSupport implements RequestAware {
 	private List<SurveyQuestion> surveyQuestions;
 	private List<SurveySelector> surveySelectors;
 	private List<TextAnswer> textAnswers;
+	private Integer role;
+	private String message;
 
 	Map<String, Object> session = ActionContext.getContext().getSession();
 	User tUser = (User) session.get("tUser");
@@ -414,7 +416,16 @@ public class StudentAction extends ActionSupport implements RequestAware {
 		if (page == null) {
 			page = 1;
 		}
-		suPageBean = surveyService.selectStuSurveys("", page);
+		if (tUser != null) {
+			String userRole = tUser.getIdentity().toString();
+			if (userRole == "STUDENT") {
+				role = 1;
+			}
+			suPageBean = surveyService.selectStuOrTchrSurveys(role, page);
+		}
+		if (message != null) {
+			message="问卷提交成功！";
+		}
 		return "student";
 	}
 
@@ -448,7 +459,6 @@ public class StudentAction extends ActionSupport implements RequestAware {
 		}
 
 		// 存储问卷选择结果
-		System.out.println("文本问题的个数" + textAnswers.size());
 		boolean isSuccess = surveyService.addSurveyDone(surveySelectors, textAnswers, survey);
 		if (isSuccess) {
 			request.put("Message", "提交成功！！");
@@ -772,6 +782,14 @@ public class StudentAction extends ActionSupport implements RequestAware {
 
 	public void setTextAnswers(List<TextAnswer> textAnswers) {
 		this.textAnswers = textAnswers;
+	}
+
+	public String getMessage() {
+		return message;
+	}
+
+	public void setMessage(String message) {
+		this.message = message;
 	}
 
 }

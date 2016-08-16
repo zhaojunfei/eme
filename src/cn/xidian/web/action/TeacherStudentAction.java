@@ -100,6 +100,7 @@ public class TeacherStudentAction extends ActionSupport implements RequestAware 
 	private List<TextAnswer> textAnswers;
 	private Student student;
 
+
 	private Map<String, Object> request;
 	Map<String, Object> session = ActionContext.getContext().getSession();
 	// 获取登陆者的账号
@@ -413,7 +414,6 @@ public class TeacherStudentAction extends ActionSupport implements RequestAware 
 			page = 1;
 		}
 		suPageBean = surveyService.selectAllSurveys(teacher, page);
-		System.out.println("测试" + suPageBean.getList().size());
 		return "teacher";
 	}
 

@@ -54,7 +54,7 @@
 								<s:iterator value="surveyQuestions" var="sq" status="status">
 									<ul class="question-style top-distance">
 										<label>Q<s:property value="%{#status.count}" />： <s:property
-												value="#sq.content" /></label>
+												value="#sq.content" /><s:if test="#sq.type==2">（多选）</s:if></label>
 										<s:if test="#sq.type==1||#sq.type==2">
 											<s:generator val="#sq.selectors" separator="_" id="s" />
 											<s:iterator status="st" value="#request.s" id="selector">
