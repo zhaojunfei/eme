@@ -2,6 +2,7 @@ package cn.xidian.dao;
 
 import java.util.List;
 
+import cn.xidian.entity.PageBean;
 import cn.xidian.entity.Survey;
 import cn.xidian.entity.SurveyQuestion;
 import cn.xidian.entity.SurveyReplyer;
@@ -42,4 +43,10 @@ public interface SurveyDao {
 	boolean publishSurvey(Integer surveyId);
 
 	boolean deleteSurvey(Integer surveyId);
+
+	List<Survey> selectStuOrTchrSurveys(Integer role);
+
+	List<Survey> findStuOrTchrSurveys(Integer role, Integer begin, Integer limit);
+
+	boolean overSurvey(Integer surveyId);
 }

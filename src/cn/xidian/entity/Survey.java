@@ -26,6 +26,7 @@ public class Survey {
 	private String remark;//问卷备注
 	private Integer sumNum;//问卷被做了几次
 	private Integer delState;//问卷是否删除0表示已删除，1表示未删除
+	private Integer respondent;//问卷调查对象1代表学生2代表老师3代表既有老师又有学生
 
 	@Id
 	@GeneratedValue
@@ -125,6 +126,14 @@ public class Survey {
 
 	public void setDelState(Integer delState) {
 		this.delState = delState;
+	}
+
+	public Integer getRespondent() {
+		return respondent;
+	}
+
+	public void setRespondent(Integer respondent) {
+		this.respondent = respondent;
 	}
 
 }

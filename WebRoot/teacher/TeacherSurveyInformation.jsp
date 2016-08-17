@@ -47,7 +47,7 @@
 							</div>
 							<hr />
 							<form
-								action="TeacherStudent_Survey_List_addSurveyDone?surveyId=<s:property
+								action="Teacher_Survey_List1_addTchrSurveyDone?surveyId=<s:property
 										value="survey.surveyId" />"
 								method="post" class="form-horizontal"
 								onsubmit="javascript:return isEmpty()">
@@ -93,8 +93,7 @@
 								<%-- <input type="text" name="survey.surveyId"
 									value="<s:property value="survey.surveyId" />">
 								<!-- 获取问卷的ID --> --%>
-								<!-- <input type="submit" class="btn" value="提交问卷"
-									onclick="linkSelSubmit()">   -->
+								
 								<div class="top-distance">
 									<span>问卷有效日期：</span><input type="text" name="startTime"
 										style="width: 100px;" readonly id="startTime"
@@ -103,12 +102,9 @@
 										id="endTime"
 										value="<s:property  value="%{getText('{0,date,yyyy-MM-dd}',{survey.endTime})}"/>">
 								</div>
+								<div class="top-distance right_align"><input type="submit" class="btn" value="提交问卷"
+									onclick="linkSelSubmit()"></div>
 							</form>
-							<div class="right_align"><input type="button" class="btn" name="publish" id="publish"
-								value="发    布"
-								onclick="publishSurvey(<s:property value="survey.surveyId" />)">
-								<s:if test="survey.state!=1"><a href="TeacherStudent_Survey_Modify_selectSurveyById?surveyId=<s:property value="survey.surveyId" />" class="btn"  id="modify"
-								>编    辑</a></s:if></div>
 						</div>
 					</div>
 				</div>
@@ -132,7 +128,7 @@
 					$(document).height() - 90 - 88 - 41 + "px");//container的最小高度为“浏览器当前窗口文档的高度-header高度-footer高度”
 		});
 
-		/* function linkSelSubmit() {
+		function linkSelSubmit() {
 			//获取选中的单选
 			var radios = document.getElementsByClassName("radio");
 			for (var i = 0; i < radios.length; i++) {
@@ -173,7 +169,7 @@
 			}
 
 		}
-		//判断是否把问卷填写完整
+//判断是否把问卷填写完整
 		function isEmpty() {
 			var selected = document.getElementsByClassName("selected");
 			for (var k = 0; k < selected.length; k++) {
@@ -195,14 +191,14 @@
 
 			}
 			return true;
-		} */
+		}
 		//发布问卷
-		function publishSurvey(surveyId) {
-			$.getJSON("Json_publishSurvey", {
-				surveyId : surveyId
-			}, function(data) {
+		function publishSurvey(surveyId){
+			$.getJSON("Json_publishSurvey",{
+				surveyId :surveyId
+			},function(data){
 				alert("发布成功");
-			});
+				});
 		}
 	</script>
 </body>

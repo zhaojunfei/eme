@@ -16,6 +16,7 @@
 			</li>
 			<li><img src="img/png-link.png" /><a href="Student_Performance_1_excute">课程成绩</a>
 			</li>
+			
 		</ul>
 	</div>
 	<div class="div-content-white-bgr div-link">
@@ -28,6 +29,8 @@
 			<li><img src="img/png-link.png" /><a href="http://payment.xidian.edu.cn/showPublic">校园缴费平台</a>
 			</li>
 			<li><img src="img/png-link.png" /><a href="http://ids.xidian.edu.cn/authserver/">教务系统</a>
+			</li>
+			<li><img src="img/png-link.png" /><a href="Student_Survey_List1_selectSurveys">问卷调查</a>
 			</li>
 		</ul>
 	</div>

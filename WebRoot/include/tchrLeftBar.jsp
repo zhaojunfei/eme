@@ -33,6 +33,8 @@
 			</li>
 			<li><img src="img/png-link.png" /><a href="http://ids.xidian.edu.cn/authserver/">教务系统</a>
 			</li>
+			<li><img src="img/png-link.png" /><a href="Teacher_Survey_List1_selectTeacherSurveys">问卷调查</a>
+			</li>
 		</ul>
 	</div>
 

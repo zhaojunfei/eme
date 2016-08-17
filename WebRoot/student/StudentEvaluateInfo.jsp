@@ -64,7 +64,7 @@
 									</table>
 								</div>
 							</div>
-							<div class="div-radar">
+							<div class="div-radar" id="div-radar">
 								<canvas id="canvas" width="450px" height="450px"></canvas>
 							</div>
 							<div>
@@ -102,33 +102,32 @@
 			document.getElementById("endSchoolYear").value = parseInt(startSchoolYear) + 1;
 		}
 		function selectEvaluateResult() {
-			
 			var startSchoolYear = $("#startSchoolYear").val();
 			var endSchoolYear = $("#endSchoolYear").val();
 			var schoolYear = startSchoolYear + "-" + endSchoolYear;
 			$("#evaluateScoreList tbody").html("");
-			
 			$.getJSON("Json_selectEvaluateResult", {
 				schoolYear : schoolYear
 			}, function(data) {
-					$("#evaluateScoreList").append(
-							"<tr><td>" + data.evaluateResult.student.stuSchNum
-									+ "</td><td>"
-									+ data.evaluateResult.student.stuName
-									+ "</td><td class='M1'>"
-									+ data.evaluateResult.m1
-									+ "</td><td class='M2'>"
-									+ data.evaluateResult.m2
-									+ "</td><td class='M3'>"
-									+ data.evaluateResult.m3
-									+ "</td><td class='M4'>"
-									+ data.evaluateResult.m4
-									+ "</td><td class='M5'>"
-									+ data.evaluateResult.m5 + "</td></tr>");
+				if(data.evaluateResult!=null){$("#evaluateScoreList").append(
+						"<tr><td>" + data.evaluateResult.student.stuSchNum
+						+ "</td><td>"
+						+ data.evaluateResult.student.stuName
+						+ "</td><td class='M1'>"
+						+ data.evaluateResult.m1
+						+ "</td><td class='M2'>"
+						+ data.evaluateResult.m2
+						+ "</td><td class='M3'>"
+						+ data.evaluateResult.m3
+						+ "</td><td class='M4'>"
+						+ data.evaluateResult.m4
+						+ "</td><td class='M5'>"
+						+ data.evaluateResult.m5 + "</td></tr>");
 
-					radarPhoto(data.maxEva.maxM1, data.maxEva.maxM2,
-							data.maxEva.maxM3, data.maxEva.maxM4,
-							data.maxEva.maxM5);
+				radarPhoto(data.maxEva.maxM1, data.maxEva.maxM2,
+						data.maxEva.maxM3, data.maxEva.maxM4,
+						data.maxEva.maxM5);}
+				
 			});
 		}
 
@@ -179,10 +178,15 @@
 			//根据数据绘制折线
 			context.beginPath();
 			var M1 = $(".M1").html();
+			
 			var M2 = $(".M2").html();
+			
 			var M3 = $(".M3").html();
+			
 			var M4 = $(".M4").html();
+			
 			var M5 = $(".M5").html();
+		
 			if (maxM1 == 0)
 				maxM1 = 1;
 			if (maxM2 == 0)

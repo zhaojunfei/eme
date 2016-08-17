@@ -57,10 +57,11 @@
 										value="survey.surveyId" />">
 									<span>问卷有效时间：</span> 
 									<input type="date" name="survey.startTime" id="startTime" />至
-									<input type="date" name="survey.endTime" id="endTime" /> <input
-										type="submit" class="btn" name="submit" id="submit"
-										value="保    存" onclick="linksel()" style="margin-left: 30px">
+									<input type="date" name="survey.endTime" id="endTime" /> 
 								</div>
+								<div class="right_align"><input
+										type="submit" class="btn" name="submit" id="submit"
+										value="保    存" onclick="linksel()" style="margin-left: 30px"></div>
 							</form>
 						</div>
 						<hr>

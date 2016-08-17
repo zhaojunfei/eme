@@ -100,6 +100,7 @@ public class TeacherStudentAction extends ActionSupport implements RequestAware 
 	private List<TextAnswer> textAnswers;
 	private Student student;
 
+
 	private Map<String, Object> request;
 	Map<String, Object> session = ActionContext.getContext().getSession();
 	// 获取登陆者的账号
@@ -347,6 +348,7 @@ public class TeacherStudentAction extends ActionSupport implements RequestAware 
 
 	// 创建问卷
 	public String createSurvey() {
+
 		String tchrSchNum = tUser.getSchNum();
 		teacher = teacherService.selectInfBySchNum(tchrSchNum);
 		Date createTime = new Date();
@@ -368,11 +370,38 @@ public class TeacherStudentAction extends ActionSupport implements RequestAware 
 
 	// 添加问卷问题
 	public String addQuestion() {
+
+		// 添加问卷问题
 		boolean isSuccess = surveyService.addQuestion(qs, survey);
 		if (isSuccess) {
 			request.put("Message", "问卷创建成功！！");
 		} else {
 			request.put("Message", "问卷创建失败！");
+		}
+		return "teacherStudentSurveyList";
+	}
+
+	public String modifySurvey() {
+		
+		// 添加问卷
+		String tchrSchNum = tUser.getSchNum();
+		teacher = teacherService.selectInfBySchNum(tchrSchNum);
+		Date createTime = new Date();
+		survey.setCreateTime(createTime);
+		survey.setState(0);
+		survey.setDelState(1);
+		survey.setTeacher(teacher);
+		survey.setSumNum(0);
+		boolean success=surveyService.createSurvey(survey);
+
+		// 添加问卷问题
+		boolean isSuccess = surveyService.addQuestion(qs, survey);
+		if (isSuccess&&success) {
+			request.put("Message", "问卷修改成功！！");
+			//删除之前的问卷
+			surveyService.deleteSurvey(surveyId);
+		} else {
+			request.put("Message", "问卷修改失败！");
 		}
 		return "teacherStudentSurveyList";
 	}
@@ -385,7 +414,6 @@ public class TeacherStudentAction extends ActionSupport implements RequestAware 
 			page = 1;
 		}
 		suPageBean = surveyService.selectAllSurveys(teacher, page);
-		System.out.println("测试" + suPageBean.getList().size());
 		return "teacher";
 	}
 
@@ -418,8 +446,8 @@ public class TeacherStudentAction extends ActionSupport implements RequestAware 
 		}
 
 		// 存储问卷选择结果
+		System.out.println("文本问题的个数"+textAnswers.size());
 		boolean isSuccess = surveyService.addSurveyDone(surveySelectors, textAnswers, survey);
-		
 		if (isSuccess) {
 			request.put("Message", "提交成功！！");
 		} else {

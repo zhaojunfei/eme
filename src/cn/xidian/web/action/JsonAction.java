@@ -81,6 +81,7 @@ public class JsonAction extends ActionSupport implements RequestAware {
 	private Integer surveyId;
 	private Integer questionId;
 	private String[] sels;
+	private Integer role;
 
 	Map<String, Object> session = ActionContext.getContext().getSession();
 	User tUser = (User) session.get("tUser");
@@ -281,8 +282,30 @@ public class JsonAction extends ActionSupport implements RequestAware {
 		return "list";
 	}
 
+	// 删除问卷
 	public String deleteSurvey() {
 		surveyService.deleteSurvey(surveyId);
+		return "list";
+	}
+
+	// 查询属于老师或学生的问卷
+	public String selectStuOrTchrSurveys() {
+		if (tUser != null) {
+			String userRole = tUser.getIdentity().toString();
+			if (userRole == "STUDENT") {
+				role = 1;
+			}
+			if (userRole == "TEACHER") {
+				role = 2;
+			}
+			suPageBean = surveyService.selectStuOrTchrSurveys(role, page);
+		}
+		return "list";
+	}
+
+	// 结束问卷调查
+	public String overSurvey() {
+		surveyService.overSurvey(surveyId);
 		return "list";
 	}
 
