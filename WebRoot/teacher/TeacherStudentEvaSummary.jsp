@@ -53,11 +53,11 @@
 								</div>
 								<div style="margin-top: 15px">
 									<span class="text-size">评定学年：</span><input type="text"
-										name="startSchoolYear" id="startSchoolYear"
-										class="year-width" onChange="changeEndYear(this)"
+										name="startSchoolYear" id="startSchoolYear" class="year-width"
+										onChange="changeEndYear(this)"
 										onFocus="WdatePicker(WdatePicker({lang:'zh-cn',dateFmt:'yyyy',readOnly:'true'})) ">
 									<span class="text-size ">至</span>&nbsp;&nbsp;<input type="text"
-										name="endSchoolYear" id="endSchoolYear"  class="year-width"
+										name="endSchoolYear" id="endSchoolYear" class="year-width"
 										readOnly> <br>
 								</div>
 								<div>
@@ -67,13 +67,13 @@
 										class="text-size left-distance">至</span>&nbsp;&nbsp; <input
 										type="date" id="endTime" name="endTime" pattern="yyyy-MM-dd"
 										class="date-width">&nbsp;&nbsp;&nbsp;&nbsp; <input
-										type="button" id="evaSummary" class="btn left-distance btn-bottom"
-										value="评估汇总" 
+										type="button" id="evaSummary"
+										class="btn left-distance btn-bottom" value="评估汇总"
 										onclick="isEmpity(this)">
 								</div>
 							</div>
 						</div>
-						<hr/>
+						<hr />
 						<div class="div-inf-tbl" style="margin-top: 100px">
 							<div>
 
@@ -94,8 +94,8 @@
 									readOnly>
 							</div>
 							<input type="button" value="查看评估结果" class="btn" name="checkEva"
-								id="checkEva" onclick="isEmpity(this)"> <input
-								type="button" value="导出Excel" class="btn">
+								id="checkEva" onclick="isEmpity(this)"> <a class="btn"
+								href="export_ExcelExport">导出Excel</a>
 							<div class="div-tchr-detail">
 								<table class="table table-bordered table-condensed"
 									id="evaluateScoreList">
@@ -116,9 +116,10 @@
 									</tbody>
 								</table>
 								<div>
-									<input type=button class="btn btn-bottom" onclick="upPage()" id="upPage"
-										value="上一页">&nbsp;&nbsp;<span id="page" ></span>&nbsp;&nbsp;<input type="button"  class="btn btn-bottom"
-										 onclick="downPage()" id="downPage" value="下一页"><span class="left-distance">共&nbsp;&nbsp;<span
+									<input type=button class="btn btn-bottom" onclick="upPage()"
+										id="upPage" value="上一页">&nbsp;&nbsp;<span id="page"></span>&nbsp;&nbsp;<input
+										type="button" class="btn btn-bottom" onclick="downPage()"
+										id="downPage" value="下一页"><span class="left-distance">共&nbsp;&nbsp;<span
 										id="totalPage"></span>&nbsp;&nbsp;页
 									</span>
 								</div>

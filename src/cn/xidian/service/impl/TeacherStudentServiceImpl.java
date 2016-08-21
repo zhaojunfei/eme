@@ -120,4 +120,10 @@ public class TeacherStudentServiceImpl implements TeacherStudentService {
 		return pageBean;
 	}
 
+	@Override
+	public List<EvaluateResult> selectSummaryEvas(Integer claId, String schoolYear) {
+		// TODO Auto-generated method stub
+		return teacherStudentDao.selectSummaryEvas(claId, schoolYear);
+	}
+
 }

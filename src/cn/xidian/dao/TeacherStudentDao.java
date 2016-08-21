@@ -26,6 +26,8 @@ public interface TeacherStudentDao {
 
 	Integer selectSummaryEva(Integer claId, String schoolYear);
 
+	List<EvaluateResult> selectSummaryEvas(Integer claId, String schoolYear);
+
 	Clazz selectClazzById(Integer id);
 
 	boolean deleteEvas(Integer claId, String schoolYear);

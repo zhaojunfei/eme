@@ -222,4 +222,16 @@ public class TeacherStudentDaoImpl implements TeacherStudentDao {
 		return studentCourses;
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<EvaluateResult> selectSummaryEvas(Integer claId, String schoolYear) {
+		// TODO Auto-generated method stub
+		String sql = "from EvaluateResult where claId=? and schoolYear=? ";
+		Query query = currentSession().createQuery(sql);
+		query.setInteger(0, claId);
+		query.setString(1, schoolYear);
+		List<EvaluateResult> evaluateResults = query.list();
+		return evaluateResults;
+	}
+
 }

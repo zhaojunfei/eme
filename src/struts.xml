@@ -160,6 +160,14 @@
 			<result name="list" type="json"></result>
 
 		</action>
+		<action name="export_*" class="cn.xidian.web.action.ExportAction"
+			method="{1}">
+			<result name="excel" type="stream">
+				<param name="inputName">excelFile</param>
+				<param name="contentDisposition">attachment;filename="${fileName}"</param>
+				<param name="contentType">application/vnd.ms-excel,charset=utf-8</param>
+			</result>
+		</action>
 	</package>
 
 </struts>
