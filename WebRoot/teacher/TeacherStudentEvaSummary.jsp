@@ -75,8 +75,8 @@
 						</div>
 						<hr />
 						<div class="div-inf-tbl" style="margin-top: 100px">
+							
 							<div>
-
 								<span class="text-size ">班级：</span>&nbsp;&nbsp;<select
 									name="limits.stuClazz" id="stuSchClazz1"
 									style="width: 140px; height: 30px">
@@ -95,7 +95,7 @@
 							</div>
 							<input type="button" value="查看评估结果" class="btn" name="checkEva"
 								id="checkEva" onclick="isEmpity(this)"> <a class="btn"
-								href="export_ExcelExport">导出Excel</a>
+								 onclick="excelExport()">导出Excel</a>
 							<div class="div-tchr-detail">
 								<table class="table table-bordered table-condensed"
 									id="evaluateScoreList">
@@ -289,6 +289,20 @@
 								}
 
 							});
+		}
+		
+		function excelExport(){
+			var clazz = $("#stuSchClazz1").val();
+			var startSchoolYear = $("#startSchoolYear1").val();
+			var endSchoolYear = $("#endSchoolYear1").val();
+			var schoolYear = startSchoolYear + "-" + endSchoolYear;
+			if (clazz == "" || startSchoolYear == "" || endSchoolYear == ""
+				|| startTime == "" || endTime == "") {
+			alert("请选择班级、学年、评估时间段！");
+			}else{
+				window.location.href="export_excelExport?claId="+clazz+"&schoolYear="+schoolYear+"";
+			}
+			 
 		}
 	</script>
 </body>
