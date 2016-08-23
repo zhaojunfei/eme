@@ -68,7 +68,7 @@ public class StudentServiceImpl implements StudentService {
 	public PageBean<StudentCourse> selectStuAllGradesById(Integer id,Integer page) {
 		// TODO Auto-generated method stub
 		List<StudentCourse> studentCourses=studentDao.selectStuAllGradesById(id);
-		PageBean<StudentCourse> pageBean=PageUtils.page(page, studentCourses.size());
+		PageBean<StudentCourse> pageBean=PageUtils.page(page, studentCourses.size(),15);
 		List<StudentCourse> studentCourses2=studentDao.findStuCoursesByStuId(id,pageBean.getBegin(),pageBean.getLimit());
 		pageBean.setList(studentCourses2);
 		return pageBean;
@@ -79,5 +79,6 @@ public class StudentServiceImpl implements StudentService {
 		// TODO Auto-generated method stub
 		return studentDao.selectEvaluateResult(stuId,schoolYear);
 	}
+
 
 }

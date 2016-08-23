@@ -204,4 +204,5 @@ public class StudentDaoImpl implements StudentDao {
 		List<StudentCourse> studentCourses=query.list();
 		return studentCourses;
 	}
+
 }

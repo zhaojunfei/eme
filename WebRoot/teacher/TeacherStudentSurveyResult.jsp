@@ -34,6 +34,11 @@
 							<label>创建全新问卷</label>
 						</div>
 						<div class="div-inf-tbl">
+							<div style="font-size: 17px; color: red;">
+								受访总人数：
+								<s:property value="survey.sumNum" />
+								人
+							</div>
 							<div>
 								<h3 class="title_center">
 									<s:property value="survey.title" />
@@ -55,9 +60,11 @@
 										：
 										<s:property value="#sq.content" />
 										<s:if test="#sq.type==2">
-											<span>（多选）</span>
+											<span>（多选题）</span>
 										</s:if>
-
+										<s:if test="#sq.type==3">
+											<span>（文本题）</span>
+										</s:if>
 										<s:if test="#sq.type==1">
 											<img class="small_img show_Pie" src="img/showPie.png"
 												onclick="showChart(this,1)"
@@ -86,7 +93,7 @@
 										</s:if>
 										<s:if test="#sq.type==3">
 											<img class="small_img show_Pie" src="img/showPie.png"
-												onclick="showChart(this,3)"
+												onclick="showTextChart(<s:property value="#sq.questionId" />,1)"
 												name="<s:property value="#sq.questionId" />"
 												id="img<s:property value="#sq.questionId" />" />
 											<img class="small_img show_Pie" src="img/showPie.png"
@@ -117,16 +124,43 @@
 													</s:if></li>
 											</s:iterator>
 											<!-- 获取选中的选项的selectorNum -->
+											<div id="jqChart<s:property value="#sq.questionId"/>"
+												class="pieChart_style"></div>
 										</s:if>
 										<s:if test="#sq.type==3">
-											<li class="li_style selector-style"><textarea
+											<%-- <li class="li_style selector-style"><textarea
 													name="<s:property value="%{#status.count}" />"
 													placeholder='请填写内容' class='textarea left_distance'
-													style='width: 72%; height: 100px' readonly></textarea></li>
+													style='width: 72%; height: 50px' readonly></textarea></li> --%>
+											<div id="jqChart<s:property value="#sq.questionId"/>"
+												class="pieChart_style">
+												<table class="table table-bordered table-condensed"
+													id="textAnswerList<s:property value="#sq.questionId" />">
+													<thead>
+														<tr>
+															<td class="align_left">答案：</td>
+														</tr>
+													</thead>
+													<tbody></tbody>
+												</table>
+												<div>
+													<input type=button class="btn btn-bottom"
+														onclick="upPage(this)"
+														id="upPage<s:property value="#sq.questionId" />"
+														name="<s:property value="#sq.questionId" />" value="上一页">&nbsp;&nbsp;<span
+														id="page<s:property value="#sq.questionId" />"></span>&nbsp;&nbsp;<input
+														type="button" class="btn btn-bottom"
+														onclick="downPage(this)"
+														id="downPage<s:property value="#sq.questionId" />"
+														name="<s:property value="#sq.questionId" />" value="下一页"><span
+														class="left-distance">共&nbsp;&nbsp;<span
+														id="totalPage<s:property value="#sq.questionId" />"></span>&nbsp;&nbsp;页
+													</span>
+												</div>
+											</div>
 										</s:if>
 									</ul>
-									<div id="jqChart<s:property value="#sq.questionId"/>"
-										class="pieChart_style"></div>
+
 								</div>
 							</s:iterator>
 						</div>

@@ -38,4 +38,5 @@ public interface StudentDao {
 	EvaluateResult selectEvaluateResult(Integer stuId, String schoolYear);
 	
 	List<StudentCourse> findStuCoursesByStuId(Integer id,Integer begin,Integer limit);
+	
 }

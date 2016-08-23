@@ -30,6 +30,7 @@ import cn.xidian.entity.StudentItem;
 import cn.xidian.entity.Survey;
 import cn.xidian.entity.SurveySelector;
 import cn.xidian.entity.Teacher;
+import cn.xidian.entity.TextAnswer;
 import cn.xidian.entity.User;
 import cn.xidian.service.StudentItemService;
 import cn.xidian.service.StudentService;
@@ -82,6 +83,7 @@ public class JsonAction extends ActionSupport implements RequestAware {
 	private Integer questionId;
 	private String[] sels;
 	private Integer role;
+	private PageBean<TextAnswer> taPageBean;
 
 	Map<String, Object> session = ActionContext.getContext().getSession();
 	User tUser = (User) session.get("tUser");
@@ -306,6 +308,12 @@ public class JsonAction extends ActionSupport implements RequestAware {
 	// 结束问卷调查
 	public String overSurvey() {
 		surveyService.overSurvey(surveyId);
+		return "list";
+	}
+
+	// 查看问卷的问本题的信息
+	public String selectSurveyTextResult() {
+		taPageBean = surveyService.selectSurveyTextResult(page, surveyId, questionId);
 		return "list";
 	}
 
@@ -545,6 +553,14 @@ public class JsonAction extends ActionSupport implements RequestAware {
 
 	public void setSels(String[] sels) {
 		this.sels = sels;
+	}
+
+	public PageBean<TextAnswer> getTaPageBean() {
+		return taPageBean;
+	}
+
+	public void setTaPageBean(PageBean<TextAnswer> taPageBean) {
+		this.taPageBean = taPageBean;
 	}
 
 }

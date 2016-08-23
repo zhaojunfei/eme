@@ -1,6 +1,5 @@
 package cn.xidian.service.impl;
 
-
 import java.util.List;
 import java.util.Set;
 
@@ -25,7 +24,7 @@ public class TeacherStudentServiceImpl implements TeacherStudentService {
 
 	private TeacherStudentDao teacherStudentDao;
 
-	@Resource(name="teacherStudentDaoImpl")
+	@Resource(name = "teacherStudentDaoImpl")
 	public void teacherStudentDao(TeacherStudentDao teacherStudentDao) {
 		this.teacherStudentDao = teacherStudentDao;
 	}
@@ -45,7 +44,7 @@ public class TeacherStudentServiceImpl implements TeacherStudentService {
 	@Override
 	public Set<Student> selectStuLimits(AdminStuLimits limits, List<Clazz> clazzs) {
 		// TODO Auto-generated method stub
-		return teacherStudentDao.selectStuLimits(limits,clazzs);
+		return teacherStudentDao.selectStuLimits(limits, clazzs);
 	}
 
 	@Override
@@ -57,7 +56,7 @@ public class TeacherStudentServiceImpl implements TeacherStudentService {
 	@Override
 	public Integer selectSummaryEva(Integer claId, String schoolYear) {
 		// TODO Auto-generated method stub
-		return teacherStudentDao.selectSummaryEva(claId,schoolYear);
+		return teacherStudentDao.selectSummaryEva(claId, schoolYear);
 	}
 
 	@Override
@@ -69,42 +68,63 @@ public class TeacherStudentServiceImpl implements TeacherStudentService {
 	@Override
 	public boolean deleteEvas(Integer claId, String schoolYear) {
 		// TODO Auto-generated method stub
-		return teacherStudentDao.deleteEvas(claId,schoolYear);
+		return teacherStudentDao.deleteEvas(claId, schoolYear);
 	}
 
 	@Override
 	public List<StudentCourse> selectStuGrades(Integer stuId, String schoolYear) {
 		// TODO Auto-generated method stub
-		return teacherStudentDao.selectStuGrades(stuId,schoolYear);
+		return teacherStudentDao.selectStuGrades(stuId, schoolYear);
 	}
 
 	@Override
 	public EvaluateResult selectEvaluateResultById(Integer id) {
 		// TODO Auto-generated method stub
-		
+
 		return teacherStudentDao.selectEvaluateResultById(id);
 	}
 
 	@Override
 	public MaxEva selectMaxEva(String schoolYear) {
 		// TODO Auto-generated method stub
-		MaxEva eva=new MaxEva();	
-		eva.setMaxM1(teacherStudentDao.selectMaxEva(schoolYear,1).getM1());
-		eva.setMaxM2(teacherStudentDao.selectMaxEva(schoolYear,2).getM2());
-		eva.setMaxM3(teacherStudentDao.selectMaxEva(schoolYear,3).getM3());
-		eva.setMaxM4(teacherStudentDao.selectMaxEva(schoolYear,4).getM4());
-		eva.setMaxM5(teacherStudentDao.selectMaxEva(schoolYear,5).getM5());
+		MaxEva eva = new MaxEva();
+		if (teacherStudentDao.selectMaxEva(schoolYear, 1).size() == 0) {
+			eva.setMaxM1(1.0);
+		} else {
+			eva.setMaxM1(teacherStudentDao.selectMaxEva(schoolYear, 1).get(0).getM1());
+		}
+		if (teacherStudentDao.selectMaxEva(schoolYear, 2).size() == 0){
+			eva.setMaxM2(1.0);
+		} else {
+			eva.setMaxM2(teacherStudentDao.selectMaxEva(schoolYear, 2).get(0).getM2());
+		}
+		if (teacherStudentDao.selectMaxEva(schoolYear, 3).size() == 0){
+			eva.setMaxM3(1.0);
+		} else {
+			eva.setMaxM3(teacherStudentDao.selectMaxEva(schoolYear, 3).get(0).getM3());
+		}
+		if (teacherStudentDao.selectMaxEva(schoolYear, 4).size() == 0){
+			eva.setMaxM3(1.0);
+		} else {
+			eva.setMaxM4(teacherStudentDao.selectMaxEva(schoolYear, 4).get(0).getM4());
+		}
+		if (teacherStudentDao.selectMaxEva(schoolYear, 5).size() == 0){
+			eva.setMaxM5(1.0);
+		} else {
+			eva.setMaxM5(teacherStudentDao.selectMaxEva(schoolYear, 5).get(0).getM5());
+		}
 		return eva;
 	}
 
 	@Override
-	public PageBean<EvaluateResult> findByPageCid(Integer claId,String schoolYear, Integer page) {
+	public PageBean<EvaluateResult> findByPageCid(Integer claId, String schoolYear, Integer page) {
 		// TODO Auto-generated method stub
-		PageBean<EvaluateResult> pageBean= new PageBean<EvaluateResult>();
-		int totalCount=0;
+		PageBean<EvaluateResult> pageBean = new PageBean<EvaluateResult>();
+		int totalCount = 0;
 		totalCount = teacherStudentDao.selectSummaryEva(claId, schoolYear);
-		pageBean=PageUtils.page(page, totalCount);
-		List<EvaluateResult> list=teacherStudentDao.findByPageCid(claId,schoolYear,pageBean.getBegin(), pageBean.getLimit());
+		pageBean = PageUtils.page(page, totalCount, 20);
+		List<EvaluateResult> list = teacherStudentDao.findByPageCid(claId, schoolYear, pageBean.getBegin(),
+				pageBean.getLimit());
 		pageBean.setList(list);
 		return pageBean;
 	}
@@ -112,10 +132,11 @@ public class TeacherStudentServiceImpl implements TeacherStudentService {
 	@Override
 	public PageBean<StudentCourse> selectStuGradesByPage(Integer stuId, String schoolYear, Integer page) {
 		// TODO Auto-generated method stub
-		PageBean<StudentCourse> pageBean=new PageBean<StudentCourse>();
-		List<StudentCourse> studentCourses=teacherStudentDao.selectStuGrades(stuId, schoolYear);
-		pageBean=PageUtils.page(page, studentCourses.size());
-		List<StudentCourse> list=teacherStudentDao.findStuGradesByPage(stuId,schoolYear,pageBean.getBegin(), pageBean.getLimit());
+		PageBean<StudentCourse> pageBean = new PageBean<StudentCourse>();
+		List<StudentCourse> studentCourses = teacherStudentDao.selectStuGrades(stuId, schoolYear);
+		pageBean = PageUtils.page(page, studentCourses.size(), 15);
+		List<StudentCourse> list = teacherStudentDao.findStuGradesByPage(stuId, schoolYear, pageBean.getBegin(),
+				pageBean.getLimit());
 		pageBean.setList(list);
 		return pageBean;
 	}

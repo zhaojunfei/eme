@@ -5,11 +5,11 @@ import cn.xidian.entity.PageBean;
 
 public class PageUtils {
 
-	public static <T>  PageBean<T> page(Integer page,Integer allCount){
+	public static <T>  PageBean<T> page(Integer page,Integer allCount,Integer limitNum){
 		PageBean<T> pageBean = new PageBean<T>();
 		pageBean.setPage(page);
 		//设置每页显示的记录数
-		int limit =4;
+		int limit =limitNum;
 		pageBean.setLimit(limit);
 		//设置总记录数
 		int totalCount=0;

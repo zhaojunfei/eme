@@ -36,7 +36,7 @@ public interface TeacherStudentDao {
 
 	EvaluateResult selectEvaluateResultById(Integer id);
 
-	EvaluateResult selectMaxEva(String schoolYear, Integer i);
+	List<EvaluateResult> selectMaxEva(String schoolYear, Integer i);
 
 	Integer findCountCid(Integer claId);
 

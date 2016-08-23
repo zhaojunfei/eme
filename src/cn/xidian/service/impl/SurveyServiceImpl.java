@@ -1,7 +1,5 @@
 package cn.xidian.service.impl;
 
-import java.util.Calendar;
-import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.List;
 
@@ -73,7 +71,7 @@ public class SurveyServiceImpl implements SurveyService {
 	public PageBean<Survey> selectAllSurveys(Teacher teacher, Integer page) {
 		// TODO Auto-generated method stub
 		List<Survey> surveys = surveyDao.selectAllSurveys(teacher);
-		PageBean<Survey> pageBean = PageUtils.page(page, surveys.size());
+		PageBean<Survey> pageBean = PageUtils.page(page, surveys.size(),10);
 		List<Survey> s = surveyDao.findSurveys(teacher, pageBean.getBegin(), pageBean.getLimit());
 		pageBean.setList(s);
 		return pageBean;
@@ -154,7 +152,7 @@ public class SurveyServiceImpl implements SurveyService {
 	public PageBean<Survey> selectStuOrTchrSurveys(Integer role, Integer page) {
 		// TODO Auto-generated method stub
 		List<Survey> surveys = surveyDao.selectStuOrTchrSurveys(role);
-		PageBean<Survey> pageBean = PageUtils.page(page, surveys.size());
+		PageBean<Survey> pageBean = PageUtils.page(page, surveys.size(),10);
 		List<Survey> s = surveyDao.findStuOrTchrSurveys(role, pageBean.getBegin(), pageBean.getLimit());
 		pageBean.setList(s);
 		return pageBean;
@@ -164,5 +162,15 @@ public class SurveyServiceImpl implements SurveyService {
 	public boolean overSurvey(Integer surveyId) {
 		// TODO Auto-generated method stub
 		return surveyDao.overSurvey(surveyId);
+	}
+
+	@Override
+	public PageBean<TextAnswer> selectSurveyTextResult(Integer page, Integer surveyId, Integer questionId) {
+		// TODO Auto-generated method stub
+		List<TextAnswer> textAnswers=surveyDao.selectSurveyTextResult(surveyId,questionId);
+		PageBean<TextAnswer> taPageBean = PageUtils.page(page, textAnswers.size(),5);
+		List<TextAnswer> tAnswers=surveyDao.findSurveyTextResult(surveyId,questionId,taPageBean.getBegin(),taPageBean.getLimit());
+		taPageBean.setList(tAnswers);
+		return taPageBean;
 	}
 }

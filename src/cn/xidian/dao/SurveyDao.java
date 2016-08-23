@@ -49,4 +49,8 @@ public interface SurveyDao {
 	List<Survey> findStuOrTchrSurveys(Integer role, Integer begin, Integer limit);
 
 	boolean overSurvey(Integer surveyId);
+	
+	List<TextAnswer> selectSurveyTextResult(Integer surveyId,Integer questionId);
+	
+	List<TextAnswer> findSurveyTextResult(Integer surveyId,Integer questionId,Integer begin, Integer limit);
 }

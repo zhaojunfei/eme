@@ -176,13 +176,13 @@ public class TeacherStudentDaoImpl implements TeacherStudentDao {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public EvaluateResult selectMaxEva(String schoolYear, Integer i) {
+	public List<EvaluateResult> selectMaxEva(String schoolYear, Integer i) {
 		// TODO Auto-generated method stub
 		String sql1 = "from EvaluateResult where schoolYear=? order by M" + i + " desc";
 		Query query = currentSession().createQuery(sql1);
 		query.setString(0, schoolYear);
 		List<EvaluateResult> evaluateResults = query.list();
-		return evaluateResults.get(0);
+		return evaluateResults;
 	}
 
 
