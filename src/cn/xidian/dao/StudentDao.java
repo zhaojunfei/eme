@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Set;
 
 import cn.xidian.entity.EvaluateResult;
+import cn.xidian.entity.StuEvaluateResult;
 import cn.xidian.entity.Student;
 import cn.xidian.entity.StudentCourse;
 
@@ -38,5 +39,7 @@ public interface StudentDao {
 	EvaluateResult selectEvaluateResult(Integer stuId, String schoolYear);
 	
 	List<StudentCourse> findStuCoursesByStuId(Integer id,Integer begin,Integer limit);
+	
+	List<StuEvaluateResult> selectStuEvaluateResults(Integer stuId, String schoolYear);
 	
 }

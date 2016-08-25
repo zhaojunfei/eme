@@ -2,19 +2,15 @@ package cn.xidian.service.impl;
 
 import java.util.List;
 import java.util.Set;
-
 import javax.annotation.Resource;
-
 import org.springframework.stereotype.Component;
-
 import cn.xidian.dao.TeacherStudentDao;
 import cn.xidian.entity.Clazz;
 import cn.xidian.entity.EvaluateResult;
-import cn.xidian.entity.MaxEva;
 import cn.xidian.entity.PageBean;
+import cn.xidian.entity.StuEvaluateResult;
 import cn.xidian.entity.Student;
 import cn.xidian.entity.StudentCourse;
-import cn.xidian.entity.SurveyQuestion;
 import cn.xidian.service.TeacherStudentService;
 import cn.xidian.utils.PageUtils;
 import cn.xidian.web.bean.AdminStuLimits;
@@ -84,37 +80,7 @@ public class TeacherStudentServiceImpl implements TeacherStudentService {
 		return teacherStudentDao.selectEvaluateResultById(id);
 	}
 
-	@Override
-	public MaxEva selectMaxEva(String schoolYear) {
-		// TODO Auto-generated method stub
-		MaxEva eva = new MaxEva();
-		if (teacherStudentDao.selectMaxEva(schoolYear, 1).size() == 0) {
-			eva.setMaxM1(1.0);
-		} else {
-			eva.setMaxM1(teacherStudentDao.selectMaxEva(schoolYear, 1).get(0).getM1());
-		}
-		if (teacherStudentDao.selectMaxEva(schoolYear, 2).size() == 0){
-			eva.setMaxM2(1.0);
-		} else {
-			eva.setMaxM2(teacherStudentDao.selectMaxEva(schoolYear, 2).get(0).getM2());
-		}
-		if (teacherStudentDao.selectMaxEva(schoolYear, 3).size() == 0){
-			eva.setMaxM3(1.0);
-		} else {
-			eva.setMaxM3(teacherStudentDao.selectMaxEva(schoolYear, 3).get(0).getM3());
-		}
-		if (teacherStudentDao.selectMaxEva(schoolYear, 4).size() == 0){
-			eva.setMaxM3(1.0);
-		} else {
-			eva.setMaxM4(teacherStudentDao.selectMaxEva(schoolYear, 4).get(0).getM4());
-		}
-		if (teacherStudentDao.selectMaxEva(schoolYear, 5).size() == 0){
-			eva.setMaxM5(1.0);
-		} else {
-			eva.setMaxM5(teacherStudentDao.selectMaxEva(schoolYear, 5).get(0).getM5());
-		}
-		return eva;
-	}
+	
 
 	@Override
 	public PageBean<EvaluateResult> findByPageCid(Integer claId, String schoolYear, Integer page) {
@@ -145,6 +111,31 @@ public class TeacherStudentServiceImpl implements TeacherStudentService {
 	public List<EvaluateResult> selectSummaryEvas(Integer claId, String schoolYear) {
 		// TODO Auto-generated method stub
 		return teacherStudentDao.selectSummaryEvas(claId, schoolYear);
+	}
+
+	@Override
+	public boolean addStuEvaScore(StuEvaluateResult stuEvaluateResult) {
+		// TODO Auto-generated method stub
+		return teacherStudentDao.addStuEvaScore(stuEvaluateResult);
+	}
+
+	@Override
+	public List<StuEvaluateResult> selectSummaryStuEvas(Integer claId, String schoolYear) {
+		// TODO Auto-generated method stub
+
+		return teacherStudentDao.selectSummaryStuEvas(claId, schoolYear);
+	}
+
+	@Override
+	public boolean deleteStuEvas(Integer claId, String schoolYear) {
+		// TODO Auto-generated method stub
+		return teacherStudentDao.deleteStuEvas(claId, schoolYear);
+	}
+
+	@Override
+	public List<StuEvaluateResult> selectMaxEva(Integer i, String schoolYear) {
+		// TODO Auto-generated method stub
+		return teacherStudentDao.selectMaxEva(schoolYear, i);
 	}
 
 }

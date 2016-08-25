@@ -39,4 +39,6 @@ public interface StudentItemService {
 	ItemEvaluateScore selectItemEvaScore(Integer id);
 
 	List<StudentItem> selectItemByLimitTime(String stuNum, Date startTime, Date endTime);
+	
+	List<StudentItem> selectItemByLimitTimes(Integer id,String stuNum, Date startTime, Date endTime);
 }

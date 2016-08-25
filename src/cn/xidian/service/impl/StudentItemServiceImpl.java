@@ -114,4 +114,10 @@ public class StudentItemServiceImpl implements StudentItemService {
 		return studentItemDao.selectItemByLimitTime(stuNum,startTime,endTime);
 	}
 
+	@Override
+	public List<StudentItem> selectItemByLimitTimes(Integer id, String stuNum, Date startTime, Date endTime) {
+		// TODO Auto-generated method stub
+		return studentItemDao.selectItemByLimitTimes(id,stuNum,startTime,endTime);
+	}
+
 }

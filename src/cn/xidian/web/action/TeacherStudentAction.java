@@ -31,10 +31,9 @@ import cn.xidian.entity.ItemEvaluatePoint;
 import cn.xidian.entity.ItemEvaluateScore;
 import cn.xidian.entity.ItemEvaluateType;
 import cn.xidian.entity.ItemFile;
-import cn.xidian.entity.MaxEva;
 import cn.xidian.entity.PageBean;
+import cn.xidian.entity.StuEvaluateResult;
 import cn.xidian.entity.Student;
-import cn.xidian.entity.StudentCourse;
 import cn.xidian.entity.StudentItem;
 import cn.xidian.entity.Survey;
 import cn.xidian.entity.SurveyQuestion;
@@ -75,8 +74,8 @@ public class TeacherStudentAction extends ActionSupport implements RequestAware 
 	// 学生评估汇总添加
 	private EvaluateResult evaluateResult;
 	private Integer evaluateResultId;
-	private MaxEva maxEva;
 	private String schoolYear;
+	private Integer stuId;
 	private Integer claId;
 	private Integer page;
 	/* 上传头像 */
@@ -88,6 +87,9 @@ public class TeacherStudentAction extends ActionSupport implements RequestAware 
 	private ItemEvaluatePoint itemEvaluatePoint;
 	private ItemEvaluateScore itemEvaluateScore;
 	private PageBean<StudentItem> siPageBean;
+	private List<ItemEvaluateType> itemEvaluateTypes;
+	private List<StuEvaluateResult> stuEvaluateResults;
+	private Double[]  MaxScoreArr;
 
 	// 调查问卷添加
 	private Survey survey;
@@ -333,8 +335,16 @@ public class TeacherStudentAction extends ActionSupport implements RequestAware 
 	}
 
 	public String selectEvaluateResultById() {
-		evaluateResult = teacherStudentService.selectEvaluateResultById(evaluateResultId);
-		maxEva = teacherStudentService.selectMaxEva(schoolYear);
+		stuEvaluateResults = studentService.selectStuEvaluateResults(stuId, schoolYear);
+		itemEvaluateTypes = studentItemService.selectItemEvaTypes();
+		Double[] arr = new Double[itemEvaluateTypes.size()];
+		for (int i = 1; i <= itemEvaluateTypes.size(); i++) {
+			List<StuEvaluateResult> sEvaluateResults = teacherStudentService.selectMaxEva(i, schoolYear);
+			if (sEvaluateResults.size() != 0) {
+				arr[i - 1] = sEvaluateResults.get(0).getmScore();
+			}
+		}
+		MaxScoreArr = arr;
 		return "teacher";
 	}
 
@@ -364,7 +374,6 @@ public class TeacherStudentAction extends ActionSupport implements RequestAware 
 			request.put("Message", "创建失败！");
 		}
 		surveyId = survey.getSurveyId();
-		System.out.println("数据是" + survey.getSurveyId());
 		return "teacher";
 	}
 
@@ -616,13 +625,6 @@ public class TeacherStudentAction extends ActionSupport implements RequestAware 
 		this.evaluateResultId = evaluateResultId;
 	}
 
-	public MaxEva getMaxEva() {
-		return maxEva;
-	}
-
-	public void setMaxEva(MaxEva maxEva) {
-		this.maxEva = maxEva;
-	}
 
 	public String getSchoolYear() {
 		return schoolYear;
@@ -718,6 +720,38 @@ public class TeacherStudentAction extends ActionSupport implements RequestAware 
 
 	public void setTextAnswers(List<TextAnswer> textAnswers) {
 		this.textAnswers = textAnswers;
+	}
+
+	public List<ItemEvaluateType> getItemEvaluateTypes() {
+		return itemEvaluateTypes;
+	}
+
+	public void setItemEvaluateTypes(List<ItemEvaluateType> itemEvaluateTypes) {
+		this.itemEvaluateTypes = itemEvaluateTypes;
+	}
+
+	public List<StuEvaluateResult> getStuEvaluateResults() {
+		return stuEvaluateResults;
+	}
+
+	public void setStuEvaluateResults(List<StuEvaluateResult> stuEvaluateResults) {
+		this.stuEvaluateResults = stuEvaluateResults;
+	}
+
+	public Double[] getMaxScoreArr() {
+		return MaxScoreArr;
+	}
+
+	public void setMaxScoreArr(Double[] maxScoreArr) {
+		MaxScoreArr = maxScoreArr;
+	}
+
+	public Integer getStuId() {
+		return stuId;
+	}
+
+	public void setStuId(Integer stuId) {
+		this.stuId = stuId;
 	}
 
 }

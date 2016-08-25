@@ -56,37 +56,37 @@
 											<th width="40px">学号</th>
 											<th width="40px">姓名</th>
 											<!-- <th width="40px">学年</th> -->
-											<th width="40px">M1</th>
-											<th width="40px">M2</th>
-											<th width="40px">M3</th>
-											<th width="40px">M4</th>
-											<th width="40px">M5</th>
-											<th class="hidden" width="40px">MaxM1</th>
-											<th class="hidden" width="40px">MaxM2</th>
-											<th class="hidden" width="40px">MaxM3</th>
-											<th class="hidden" width="40px">MaxM4</th>
-											<th class="hidden" width="40px">MaxM5</th>
+											<s:iterator value="itemEvaluateTypes" var="i">
+												<th width="40px"><s:property value="#i.itemEvaTypeMark" /></th>
+											</s:iterator>
+											<s:iterator value="itemEvaluateTypes" var="i">
+												<th class="hidden" width="40px"><s:property
+														value="#i.itemEvaTypeMark" /></th>
+											</s:iterator>
 										</tr>
 									</thead>
 									<tbody>
 										<tr>
-											<td><s:property value="evaluateResult.student.stuSchNum" /></td>
-											<td><s:property value="evaluateResult.student.stuName" /></td>
-											<td class="M1"><s:property value="evaluateResult.M1" /></td>
-											<td class="M2"><s:property value="evaluateResult.M2" /></td>
-											<td class="M3"><s:property value="evaluateResult.M3" /></td>
-											<td class="M4"><s:property value="evaluateResult.M4" /></td>
-											<td class="M5"><s:property value="evaluateResult.M5" /></td>
+											<td><s:property
+													value="stuEvaluateResults[0].student.stuSchNum" /></td>
+											<td><s:property
+													value="stuEvaluateResults[0].student.stuName" /></td>
+											<s:iterator value="stuEvaluateResults" var="s"
+												status="status">
+												<td class="M<s:property value="%{#status.count}"/>">
+												<s:property
+														value="#s.mScore" /></td>
+											</s:iterator>
 											<td class="hidden" id="maxM1"><s:property
-													value="maxEva.maxM1" /></td>
+													value="MaxScoreArr[0]" /></td>
 											<td class="hidden" id="maxM2"><s:property
-													value="maxEva.maxM2" /></td>
+													value="MaxScoreArr[1]" /></td>
 											<td class="hidden" id="maxM3"><s:property
-													value="maxEva.maxM3" /></td>
+													value="MaxScoreArr[2]" /></td>
 											<td class="hidden" id="maxM4"><s:property
-													value="maxEva.maxM4" /></td>
+													value="MaxScoreArr[3]" /></td>
 											<td class="hidden" id="maxM5"><s:property
-													value="maxEva.maxM5" /></td>
+													value="MaxScoreArr[4]" /></td>
 										</tr>
 									</tbody>
 								</table>
@@ -96,7 +96,11 @@
 							<canvas id="canvas" width="450px" height="450px"></canvas>
 						</div>
 						<div>
-							<label class="text-style" >注：M1：思想道德素质，M2：专业理论素质，M3：创新精神与实践能力，M4：文化素质，M5：身心素质</label>
+							<label class="text-style">注：<s:iterator
+									value="itemEvaluateTypes" var="i">
+									<s:property value="#i.itemEvaTypeMark" />：<s:property
+										value="#i.itemEvaTypeName" />
+												&nbsp;&nbsp;</s:iterator></label>
 						</div>
 					</div>
 				</div>
@@ -120,11 +124,11 @@
 					$(document).height() - 90 - 88 - 41 + "px");//container的最小高度为“浏览器当前窗口文档的高度-header高度-footer高度”
 
 			//格式化表格中的数据
-			for (var i = 1; i < 6; i++) {
+			/*  for (var i = 1; i < 6; i++) {
 				document.getElementsByClassName("M" + i)[0].innerHTML = parseFloat(
 						document.getElementsByClassName("M" + i)[0].innerHTML)
 						.toFixed(2);
-			}
+			} */
 
 			/**
 			 * 开始绘制雷达图

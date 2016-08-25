@@ -52,11 +52,11 @@
 												<th width="40px">学号</th>
 												<th width="40px">姓名</th>
 												<!-- <th width="40px">学年</th> -->
-												<th width="40px">M1</th>
-												<th width="40px">M2</th>
-												<th width="40px">M3</th>
-												<th width="40px">M4</th>
-												<th width="40px">M5</th>
+												<s:iterator value="itemEvaluateTypes" var="i">
+													<th width="40px"><s:property
+															value="#i.itemEvaTypeMark" /></th>
+												</s:iterator>
+
 											</tr>
 										</thead>
 										<tbody>
@@ -68,7 +68,11 @@
 								<canvas id="canvas" width="450px" height="450px"></canvas>
 							</div>
 							<div>
-								<label class="text-style">注：M1：思想道德素质，M2：专业理论素质，M3：创新精神与实践能力，M4：文化素质，M5：身心素质</label>
+								<label class="text-style">注：<s:iterator
+										value="itemEvaluateTypes" var="i">
+										<s:property value="#i.itemEvaTypeMark" />：<s:property
+											value="#i.itemEvaTypeName" />
+												&nbsp;&nbsp;</s:iterator></label>
 							</div>
 						</div>
 					</div>
@@ -101,39 +105,47 @@
 			var startSchoolYear = $("#startSchoolYear").val();
 			document.getElementById("endSchoolYear").value = parseInt(startSchoolYear) + 1;
 		}
+		
 		function selectEvaluateResult() {
 			var startSchoolYear = $("#startSchoolYear").val();
 			var endSchoolYear = $("#endSchoolYear").val();
 			var schoolYear = startSchoolYear + "-" + endSchoolYear;
 			$("#evaluateScoreList tbody").html("");
 			delChart();
-			$.getJSON("Json_selectEvaluateResult", {
-				schoolYear : schoolYear
-			}, function(data) {
-				if (data.evaluateResult == null) {
-					alert("未找到相关数据");
-				} else {
-					$("#evaluateScoreList").append(
-							"<tr><td>" + data.evaluateResult.student.stuSchNum
-									+ "</td><td>"
-									+ data.evaluateResult.student.stuName
-									+ "</td><td class='M1'>"
-									+ data.evaluateResult.m1
-									+ "</td><td class='M2'>"
-									+ data.evaluateResult.m2
-									+ "</td><td class='M3'>"
-									+ data.evaluateResult.m3
-									+ "</td><td class='M4'>"
-									+ data.evaluateResult.m4
-									+ "</td><td class='M5'>"
-									+ data.evaluateResult.m5 + "</td></tr>");
+			$
+					.getJSON(
+							"Json_selectEvaluateResult",
+							{
+								schoolYear : schoolYear
+							},
+							function(data) {
+								if (data.stuEvaluateResults.length == 0) {
+									alert("未找到相关数据");
+								} else {
+									$("#evaluateScoreList")
+											.append(
+													"<tr id='evaluateScoreListTr'><td>"
+															+ data.stuEvaluateResults[0].student.stuSchNum
+															+ "</td><td>"
+															+ data.stuEvaluateResults[0].student.stuName
+															+ "</td></tr>");
+									$.each(data.stuEvaluateResults, function(i,
+											value) {
+										var j=i+1;
+										$("#evaluateScoreListTr")
+										.append("<td class='M"+j+"'>"
+												+ value.mScore
+												+ "</td>");
+									});
+									
+									radarPhoto(data.maxScoreArr[0],
+											data.maxScoreArr[1],
+											data.maxScoreArr[2],
+											data.maxScoreArr[3],
+											data.maxScoreArr[4]);
+								}
 
-					radarPhoto(data.maxEva.maxM1, data.maxEva.maxM2,
-							data.maxEva.maxM3, data.maxEva.maxM4,
-							data.maxEva.maxM5);
-				}
-
-			});
+							});
 		}
 
 		function radarPhoto(maxM1, maxM2, maxM3, maxM4, maxM5) {

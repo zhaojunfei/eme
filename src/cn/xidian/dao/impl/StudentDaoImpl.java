@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 
 import cn.xidian.dao.StudentDao;
 import cn.xidian.entity.EvaluateResult;
+import cn.xidian.entity.StuEvaluateResult;
 import cn.xidian.entity.Student;
 import cn.xidian.entity.StudentCourse;
 
@@ -203,6 +204,18 @@ public class StudentDaoImpl implements StudentDao {
 		query.setInteger(0, id);
 		List<StudentCourse> studentCourses=query.list();
 		return studentCourses;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<StuEvaluateResult> selectStuEvaluateResults(Integer stuId, String schoolYear) {
+		// TODO Auto-generated method stub
+		String sql="from StuEvaluateResult where stuId=? and schoolYear=?";
+		Query query=currentSession().createQuery(sql);
+		query.setInteger(0,stuId);
+		query.setString(1, schoolYear);
+		List<StuEvaluateResult> stuEvaluateResults=query.list();
+		return stuEvaluateResults;
 	}
 
 }

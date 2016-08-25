@@ -7,7 +7,7 @@ import org.hibernate.SessionFactory;
 
 import cn.xidian.entity.Clazz;
 import cn.xidian.entity.EvaluateResult;
-import cn.xidian.entity.MaxEva;
+import cn.xidian.entity.StuEvaluateResult;
 import cn.xidian.entity.Student;
 import cn.xidian.entity.StudentCourse;
 import cn.xidian.web.bean.AdminStuLimits;
@@ -36,11 +36,17 @@ public interface TeacherStudentDao {
 
 	EvaluateResult selectEvaluateResultById(Integer id);
 
-	List<EvaluateResult> selectMaxEva(String schoolYear, Integer i);
+	List<StuEvaluateResult> selectMaxEva(String schoolYear, Integer i);
 
 	Integer findCountCid(Integer claId);
 
 	List<EvaluateResult> findByPageCid(Integer claId, String schoolYear, Integer begin, Integer limit);
 
 	List<StudentCourse> findStuGradesByPage(Integer stuId, String schoolYear, Integer begin, Integer limit);
+
+	boolean addStuEvaScore(StuEvaluateResult stuEvaluateResult);
+	
+	List<StuEvaluateResult> selectSummaryStuEvas(Integer claId, String schoolYear);
+	
+	boolean deleteStuEvas(Integer claId, String schoolYear);
 }

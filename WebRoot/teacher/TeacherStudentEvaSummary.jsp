@@ -280,8 +280,8 @@
 																						value.m5)
 																						.toFixed(
 																								2)
-																				+ "</td><td><a href='TeacherStudent_Eva_Info_selectEvaluateResultById?evaluateResultId="
-																				+ value.evaluateResultId
+																				+ "</td><td><a href='TeacherStudent_Eva_Info_selectEvaluateResultById?stuId="
+																				+ value.student.stuId
 																				+ "&schoolYear="
 																				+ value.schoolYear
 																				+ "'>详情</a></td></tr>");

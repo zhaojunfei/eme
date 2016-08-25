@@ -12,13 +12,10 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Component;
-
-import com.mysql.fabric.xmlrpc.base.Array;
-
 import cn.xidian.dao.TeacherStudentDao;
 import cn.xidian.entity.Clazz;
 import cn.xidian.entity.EvaluateResult;
-import cn.xidian.entity.MaxEva;
+import cn.xidian.entity.StuEvaluateResult;
 import cn.xidian.entity.Student;
 import cn.xidian.entity.StudentCourse;
 import cn.xidian.web.bean.AdminStuLimits;
@@ -176,13 +173,14 @@ public class TeacherStudentDaoImpl implements TeacherStudentDao {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<EvaluateResult> selectMaxEva(String schoolYear, Integer i) {
+	public List<StuEvaluateResult> selectMaxEva(String schoolYear, Integer i) {
 		// TODO Auto-generated method stub
-		String sql1 = "from EvaluateResult where schoolYear=? order by M" + i + " desc";
+		String sql1 = "from StuEvaluateResult where schoolYear=? and itemEvaTypeId=?order by mScore desc";
 		Query query = currentSession().createQuery(sql1);
 		query.setString(0, schoolYear);
-		List<EvaluateResult> evaluateResults = query.list();
-		return evaluateResults;
+		query.setInteger(1, i);
+		List<StuEvaluateResult> stuEvaluateResults = query.list();
+		return stuEvaluateResults;
 	}
 
 
@@ -232,6 +230,36 @@ public class TeacherStudentDaoImpl implements TeacherStudentDao {
 		query.setString(1, schoolYear);
 		List<EvaluateResult> evaluateResults = query.list();
 		return evaluateResults;
+	}
+
+	@Override
+	public boolean addStuEvaScore(StuEvaluateResult stuEvaluateResult) {
+		// TODO Auto-generated method stub
+		currentSession().save(stuEvaluateResult);
+		return true;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<StuEvaluateResult> selectSummaryStuEvas(Integer claId, String schoolYear) {
+		// TODO Auto-generated method stub
+		String sql="from StuEvaluateResult where claId=? and schoolYear=?";
+		Query query =currentSession().createQuery(sql);
+		query.setInteger(0, claId);
+		query.setString(1, schoolYear);
+		List<StuEvaluateResult> stuEvaluateResults=query.list();
+		return stuEvaluateResults;
+	}
+
+	@Override
+	public boolean deleteStuEvas(Integer claId, String schoolYear) {
+		// TODO Auto-generated method stub
+		String sql = "delete from StuEvaluateResult  where claId=? and schoolYear=?";
+		Query query = currentSession().createQuery(sql);
+		query.setInteger(0, claId);
+		query.setString(1, schoolYear);
+		query.executeUpdate();
+		return true;
 	}
 
 }

@@ -27,7 +27,7 @@
 						<a href="#" class="dropdown-toggle" data-toggle="dropdown">学习成果</a>
 						<ul class="dropdown-menu">
 							<li><a href="Student_Course_Grade_selectStuAllGradesById">成绩查询</a></li>
-							<li><a href="Student_Evaluate_Info_selectActivity">评估雷达图</a></li>
+							<li><a href="Student_Evaluate_Info_selectItemEvaType">评估雷达图</a></li>
 						</ul>
 					</li>
 				</ul>

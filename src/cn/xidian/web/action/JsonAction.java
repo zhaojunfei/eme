@@ -1,5 +1,6 @@
 package cn.xidian.web.action;
 
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -22,8 +23,9 @@ import cn.xidian.entity.Clazz;
 import cn.xidian.entity.EvaluateResult;
 import cn.xidian.entity.ItemEvaluatePoint;
 import cn.xidian.entity.ItemEvaluateScore;
-import cn.xidian.entity.MaxEva;
+import cn.xidian.entity.ItemEvaluateType;
 import cn.xidian.entity.PageBean;
+import cn.xidian.entity.StuEvaluateResult;
 import cn.xidian.entity.Student;
 import cn.xidian.entity.StudentCourse;
 import cn.xidian.entity.StudentItem;
@@ -60,7 +62,6 @@ public class JsonAction extends ActionSupport implements RequestAware {
 	private Integer size;
 	private List<StudentCourse> studentCourses;
 	private Student s;
-	private MaxEva maxEva;
 	private Date startTime;
 	private Date endTime;
 	private String start;
@@ -74,8 +75,12 @@ public class JsonAction extends ActionSupport implements RequestAware {
 	private PageBean<StudentCourse> pbStuCours;
 	private PageBean<StudentItem> siPageBean;
 	private String stuNum;
+	private List<ItemEvaluateType> itemEvaluateTypes;
+	private StuEvaluateResult stuEvaluateResult;
+	private List<StuEvaluateResult> stuEvaluateResults;
+	private Double[] MaxScoreArr;
 
-	// 問卷添加
+	// 问卷添加
 	private Teacher teacher;
 	private PageBean<Survey> suPageBean;
 	private List<SurveySelector> surveySelectors;
@@ -133,6 +138,53 @@ public class JsonAction extends ActionSupport implements RequestAware {
 
 	public String selectItemEvaScore() {
 		itemEvaluateScore = studentItemService.selectItemEvaScore(gradeId);
+		return "list";
+	}
+
+	public String evaluateStuSummaryByClazz() {
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		start = simpleDateFormat.format(startTime);
+		end = simpleDateFormat.format(endTime);
+		try {
+			date1 = simpleDateFormat.parse(start);
+			date2 = simpleDateFormat.parse(end);
+			Calendar calendar = new GregorianCalendar();
+			calendar.setTime(date2);
+			calendar.add(calendar.DATE, 1);// 把日期往后增加一天.整数往后推,负数往前移动
+			date3 = calendar.getTime(); // 这个时间就是日期往后推一天的结果
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		stus = teacherStudentService.selectChargeStus(clazz);
+		cla = teacherStudentService.selectClazzById(clazz);
+		itemEvaluateTypes = studentItemService.selectItemEvaTypes();
+		size = teacherStudentService.selectSummaryStuEvas(clazz, schoolYear).size();
+		if (size != 0) {
+			teacherStudentService.deleteStuEvas(clazz, schoolYear);
+		}
+		for (Student element : stus) {
+			String sch = element.getStuSchNum();
+			DecimalFormat df = new DecimalFormat("######0.00");
+			for (int i = 1; i <= itemEvaluateTypes.size(); i++) {
+				Double M = 0.0;
+				if (i == 2) {
+
+					M += countGrade(element, schoolYear);
+				}
+				items = studentItemService.selectItemByLimitTimes(i, sch, date1, date3);
+				StuEvaluateResult ser = new StuEvaluateResult();
+				for (StudentItem st : items) {
+					M += Double.parseDouble(st.getItemScore());
+				}
+				ser.setClazz(cla);
+				ser.setmScore(Double.parseDouble(df.format(M)));
+				ser.setStudent(element);
+				ser.setSchoolYear(schoolYear);
+				ser.setItemEvaluateType(itemEvaluateTypes.get(i - 1));
+				teacherStudentService.addStuEvaScore(ser);
+			}
+		}
 		return "list";
 	}
 
@@ -240,11 +292,20 @@ public class JsonAction extends ActionSupport implements RequestAware {
 	public String selectEvaluateResult() {
 		String schNum = tUser.getSchNum();
 		s = studentService.selectInfBySchNum(schNum);
-		evaluateResult = studentService.selectEvaluateResult(s.getStuId(), schoolYear);
-		maxEva = teacherStudentService.selectMaxEva(schoolYear);
+		stuEvaluateResults = studentService.selectStuEvaluateResults(s.getStuId(), schoolYear);
+		itemEvaluateTypes = studentItemService.selectItemEvaTypes();
+		Double[] arr = new Double[itemEvaluateTypes.size()];
+		for (int i = 1; i <= itemEvaluateTypes.size(); i++) {
+			List<StuEvaluateResult> sEvaluateResults = teacherStudentService.selectMaxEva(i, schoolYear);
+			if (sEvaluateResults.size() != 0) {
+				arr[i - 1] = sEvaluateResults.get(0).getmScore();
+			}
+		}
+		MaxScoreArr = arr;
 		return "list";
 	}
 
+	// 查找学生项目
 	public String selectItem() {
 		String schNum;
 		if (stuNum == null) {
@@ -259,11 +320,6 @@ public class JsonAction extends ActionSupport implements RequestAware {
 		return "list";
 	}
 
-	/*
-	 * public String selectItem1() { if (page == null) { page = 1; }
-	 * siPageBean=studentItemService.selectByStuNum(stuNum,page); return "list";
-	 * }
-	 */
 	// 翻页查找问卷列表
 	public String selectSurveys() {
 		String tchrSchNum = tUser.getSchNum();
@@ -443,14 +499,6 @@ public class JsonAction extends ActionSupport implements RequestAware {
 		this.evaluateResult = evaluateResult;
 	}
 
-	public MaxEva getMaxEva() {
-		return maxEva;
-	}
-
-	public void setMaxEva(MaxEva maxEva) {
-		this.maxEva = maxEva;
-	}
-
 	public Date getStartTime() {
 		return startTime;
 	}
@@ -562,5 +610,39 @@ public class JsonAction extends ActionSupport implements RequestAware {
 	public void setTaPageBean(PageBean<TextAnswer> taPageBean) {
 		this.taPageBean = taPageBean;
 	}
+
+	public List<ItemEvaluateType> getItemEvaluateTypes() {
+		return itemEvaluateTypes;
+	}
+
+	public void setItemEvaluateTypes(List<ItemEvaluateType> itemEvaluateTypes) {
+		this.itemEvaluateTypes = itemEvaluateTypes;
+	}
+
+	public StuEvaluateResult getStuEvaluateResult() {
+		return stuEvaluateResult;
+	}
+
+	public void setStuEvaluateResult(StuEvaluateResult stuEvaluateResult) {
+		this.stuEvaluateResult = stuEvaluateResult;
+	}
+
+	public List<StuEvaluateResult> getStuEvaluateResults() {
+		return stuEvaluateResults;
+	}
+
+	public void setStuEvaluateResults(List<StuEvaluateResult> stuEvaluateResults) {
+		this.stuEvaluateResults = stuEvaluateResults;
+	}
+
+	public Double[] getMaxScoreArr() {
+		return MaxScoreArr;
+	}
+
+	public void setMaxScoreArr(Double[] maxScoreArr) {
+		MaxScoreArr = maxScoreArr;
+	}
+
+	
 
 }
