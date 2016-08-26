@@ -11,22 +11,17 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import javax.annotation.Resource;
-
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.usermodel.Range;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.interceptor.RequestAware;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-
 import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.ActionSupport;
-
 import cn.xidian.entity.Clazz;
 import cn.xidian.entity.EvaluateResult;
-import cn.xidian.entity.Identity;
 import cn.xidian.entity.ItemEvaluatePoint;
 import cn.xidian.entity.ItemEvaluateScore;
 import cn.xidian.entity.ItemEvaluateType;

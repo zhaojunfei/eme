@@ -5,6 +5,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.Resource;
@@ -24,6 +25,7 @@ import org.springframework.stereotype.Component;
 import com.opensymphony.xwork2.ActionSupport;
 import cn.xidian.entity.EvaluateResult;
 import cn.xidian.entity.ItemEvaluateType;
+import cn.xidian.entity.StuEvaluateResult;
 import cn.xidian.service.StudentItemService;
 import cn.xidian.service.TeacherStudentService;
 import cn.xidian.web.bean.AdminStuLimits;
@@ -65,8 +67,45 @@ public class ExportAction extends ActionSupport implements RequestAware {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddhhmmss");
 		// 文件名，以当前秒为文件名
 		fileName = sdf.format(new Date()) + ".xls";
-		evaluateResults = teacherStudentService.selectSummaryEvas(claId, schoolYear);
 		itemEvaluateTypes = studentItemService.selectItemEvaTypes();
+		List<EvaluateResult> evaluateResults = new LinkedList<EvaluateResult>();
+		for (int i = 0; i < itemEvaluateTypes.size(); i++) {
+			List<StuEvaluateResult> stuEvaluateResults = teacherStudentService.findStuEvaByPageCid(itemEvaluateTypes.get(i).getItemEvaTypeId(), claId, schoolYear);
+			switch (i) {
+			case 0:
+				for (int j = 0; j < stuEvaluateResults.size(); j++) {
+					EvaluateResult e = new EvaluateResult();
+					e.setStudent(stuEvaluateResults.get(j).getStudent());
+					e.setClazz(stuEvaluateResults.get(j).getClazz());
+					e.setM1(stuEvaluateResults.get(j).getmScore());
+					evaluateResults.add(e);
+				}
+				break;
+			case 1:
+				for (int k = 0; k < stuEvaluateResults.size(); k++) {
+					evaluateResults.get(k).setM2(stuEvaluateResults.get(k).getmScore());
+				}
+				break;
+			case 2:
+				for (int k = 0; k < stuEvaluateResults.size(); k++) {
+					evaluateResults.get(k).setM3(stuEvaluateResults.get(k).getmScore());
+				}
+				break;
+			case 3:
+				for (int k = 0; k < stuEvaluateResults.size(); k++) {
+					evaluateResults.get(k).setM4(stuEvaluateResults.get(k).getmScore());
+				}
+				break;
+			case 4:
+				for (int k = 0; k < stuEvaluateResults.size(); k++) {
+					evaluateResults.get(k).setM5(stuEvaluateResults.get(k).getmScore());
+				}
+				break;
+			}
+
+		}
+		/*evaluateResults = teacherStudentService.selectSummaryEvas(claId, schoolYear);*/
+		
 		int num = itemEvaluateTypes.size() + itemEvaluateTypes.size() + 5;
 		Workbook workbook = new HSSFWorkbook();
 		Sheet sheet = workbook.createSheet("schoolExcel");

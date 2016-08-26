@@ -262,4 +262,17 @@ public class TeacherStudentDaoImpl implements TeacherStudentDao {
 		return true;
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<StuEvaluateResult> findStuEvaByPageCid(Integer itemEvaTypeId,Integer claId, String schoolYear, Integer begin, Integer limit) {
+		// TODO Auto-generated method stub
+		String sql="from StuEvaluateResult where claId=? and schoolYear=? and itemEvaTypeId=?";
+		Query query=currentSession().createQuery(sql).setFirstResult(begin).setMaxResults(limit);
+		query.setInteger(0, claId);
+		query.setString(1, schoolYear);
+		query.setInteger(2, itemEvaTypeId);
+		List<StuEvaluateResult> stuEvaluateResults=query.list();
+		return stuEvaluateResults;
+	}
+
 }

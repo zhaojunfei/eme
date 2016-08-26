@@ -34,7 +34,7 @@ public interface TeacherStudentService {
 
 	EvaluateResult selectEvaluateResultById(Integer id);
 
-	List<StuEvaluateResult> selectMaxEva(Integer i,String schoolYear);
+	List<StuEvaluateResult> selectMaxEva(Integer i, String schoolYear);
 
 	PageBean<EvaluateResult> findByPageCid(Integer claId, String schoolYear, Integer page);
 
@@ -43,6 +43,8 @@ public interface TeacherStudentService {
 	boolean addStuEvaScore(StuEvaluateResult stuEvaluateResult);
 
 	List<StuEvaluateResult> selectSummaryStuEvas(Integer claId, String schoolYear);
+
+	List<StuEvaluateResult> findStuEvaByPageCid(Integer itemEvaTypeId,Integer claId, String schoolYear);
 
 	boolean deleteStuEvas(Integer claId, String schoolYear);
 }

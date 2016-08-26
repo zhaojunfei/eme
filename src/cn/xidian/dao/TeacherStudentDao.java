@@ -45,8 +45,10 @@ public interface TeacherStudentDao {
 	List<StudentCourse> findStuGradesByPage(Integer stuId, String schoolYear, Integer begin, Integer limit);
 
 	boolean addStuEvaScore(StuEvaluateResult stuEvaluateResult);
-	
+
 	List<StuEvaluateResult> selectSummaryStuEvas(Integer claId, String schoolYear);
-	
+
 	boolean deleteStuEvas(Integer claId, String schoolYear);
+
+	List<StuEvaluateResult> findStuEvaByPageCid(Integer itemEvaTypeId,Integer claId, String schoolYear, Integer begin, Integer limit);
 }

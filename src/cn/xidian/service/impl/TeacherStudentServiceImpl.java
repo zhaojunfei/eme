@@ -1,12 +1,16 @@
 package cn.xidian.service.impl;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import javax.annotation.Resource;
 import org.springframework.stereotype.Component;
+
+import cn.xidian.dao.StudentItemDao;
 import cn.xidian.dao.TeacherStudentDao;
 import cn.xidian.entity.Clazz;
 import cn.xidian.entity.EvaluateResult;
+import cn.xidian.entity.ItemEvaluateType;
 import cn.xidian.entity.PageBean;
 import cn.xidian.entity.StuEvaluateResult;
 import cn.xidian.entity.Student;
@@ -23,6 +27,13 @@ public class TeacherStudentServiceImpl implements TeacherStudentService {
 	@Resource(name = "teacherStudentDaoImpl")
 	public void teacherStudentDao(TeacherStudentDao teacherStudentDao) {
 		this.teacherStudentDao = teacherStudentDao;
+	}
+
+	private StudentItemDao studentItemDao;
+
+	@Resource(name = "studentItemDaoImpl")
+	public void setStudentItemDao(StudentItemDao studentItemDao) {
+		this.studentItemDao = studentItemDao;
 	}
 
 	@Override
@@ -80,19 +91,56 @@ public class TeacherStudentServiceImpl implements TeacherStudentService {
 		return teacherStudentDao.selectEvaluateResultById(id);
 	}
 
-	
-
 	@Override
 	public PageBean<EvaluateResult> findByPageCid(Integer claId, String schoolYear, Integer page) {
 		// TODO Auto-generated method stub
 		PageBean<EvaluateResult> pageBean = new PageBean<EvaluateResult>();
 		int totalCount = 0;
-		totalCount = teacherStudentDao.selectSummaryEva(claId, schoolYear);
-		pageBean = PageUtils.page(page, totalCount, 20);
-		List<EvaluateResult> list = teacherStudentDao.findByPageCid(claId, schoolYear, pageBean.getBegin(),
-				pageBean.getLimit());
-		pageBean.setList(list);
+		int typeNum = 0;
+		List<ItemEvaluateType> itemEvaluateTypes = studentItemDao.selectItemEvaTypes();
+		typeNum = itemEvaluateTypes.size();// 有多少种类型
+		totalCount = teacherStudentDao.selectSummaryStuEvas(claId, schoolYear).size();// 计算应该有多少个stuEvaluateresult
+		pageBean = PageUtils.page(page, totalCount / typeNum, 20);
+		List<EvaluateResult> evaluateResults = new LinkedList<EvaluateResult>();
+
+		for (int i = 0; i < typeNum; i++) {
+			List<StuEvaluateResult> stuEvaluateResults = teacherStudentDao.findStuEvaByPageCid(itemEvaluateTypes.get(i).getItemEvaTypeId(), claId, schoolYear, pageBean.getBegin(), pageBean.getLimit());
+			switch (i) {
+			case 0:
+				for (int j = 0; j < stuEvaluateResults.size(); j++) {
+					EvaluateResult e = new EvaluateResult();
+					e.setStudent(stuEvaluateResults.get(j).getStudent());
+					e.setClazz(stuEvaluateResults.get(j).getClazz());
+					e.setM1(stuEvaluateResults.get(j).getmScore());
+					evaluateResults.add(e);
+				}
+				break;
+			case 1:
+				for (int k = 0; k < stuEvaluateResults.size(); k++) {
+					evaluateResults.get(k).setM2(stuEvaluateResults.get(k).getmScore());
+				}
+				break;
+			case 2:
+				for (int k = 0; k < stuEvaluateResults.size(); k++) {
+					evaluateResults.get(k).setM3(stuEvaluateResults.get(k).getmScore());
+				}
+				break;
+			case 3:
+				for (int k = 0; k < stuEvaluateResults.size(); k++) {
+					evaluateResults.get(k).setM4(stuEvaluateResults.get(k).getmScore());
+				}
+				break;
+			case 4:
+				for (int k = 0; k < stuEvaluateResults.size(); k++) {
+					evaluateResults.get(k).setM5(stuEvaluateResults.get(k).getmScore());
+				}
+				break;
+			}
+
+		}
+		pageBean.setList(evaluateResults);
 		return pageBean;
+
 	}
 
 	@Override
@@ -136,6 +184,12 @@ public class TeacherStudentServiceImpl implements TeacherStudentService {
 	public List<StuEvaluateResult> selectMaxEva(Integer i, String schoolYear) {
 		// TODO Auto-generated method stub
 		return teacherStudentDao.selectMaxEva(schoolYear, i);
+	}
+
+	@Override
+	public List<StuEvaluateResult> findStuEvaByPageCid(Integer itemEvaTypeId, Integer claId, String schoolYear) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
