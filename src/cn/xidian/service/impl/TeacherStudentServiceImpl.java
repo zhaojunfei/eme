@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 import cn.xidian.dao.StudentItemDao;
 import cn.xidian.dao.TeacherStudentDao;
 import cn.xidian.entity.Clazz;
-import cn.xidian.entity.EvaluateResult;
+import cn.xidian.web.bean.EvaluateResult;
 import cn.xidian.entity.ItemEvaluateType;
 import cn.xidian.entity.PageBean;
 import cn.xidian.entity.StuEvaluateResult;
@@ -55,40 +55,15 @@ public class TeacherStudentServiceImpl implements TeacherStudentService {
 	}
 
 	@Override
-	public boolean addEvaScore(EvaluateResult evaluateResult) {
-		// TODO Auto-generated method stub
-		return teacherStudentDao.addEvaScore(evaluateResult);
-	}
-
-	@Override
-	public Integer selectSummaryEva(Integer claId, String schoolYear) {
-		// TODO Auto-generated method stub
-		return teacherStudentDao.selectSummaryEva(claId, schoolYear);
-	}
-
-	@Override
 	public Clazz selectClazzById(Integer id) {
 		// TODO Auto-generated method stub
 		return teacherStudentDao.selectClazzById(id);
 	}
 
 	@Override
-	public boolean deleteEvas(Integer claId, String schoolYear) {
-		// TODO Auto-generated method stub
-		return teacherStudentDao.deleteEvas(claId, schoolYear);
-	}
-
-	@Override
 	public List<StudentCourse> selectStuGrades(Integer stuId, String schoolYear) {
 		// TODO Auto-generated method stub
 		return teacherStudentDao.selectStuGrades(stuId, schoolYear);
-	}
-
-	@Override
-	public EvaluateResult selectEvaluateResultById(Integer id) {
-		// TODO Auto-generated method stub
-
-		return teacherStudentDao.selectEvaluateResultById(id);
 	}
 
 	@Override
@@ -102,7 +77,6 @@ public class TeacherStudentServiceImpl implements TeacherStudentService {
 		totalCount = teacherStudentDao.selectSummaryStuEvas(claId, schoolYear).size();// 计算应该有多少个stuEvaluateresult
 		pageBean = PageUtils.page(page, totalCount / typeNum, 20);
 		List<EvaluateResult> evaluateResults = new LinkedList<EvaluateResult>();
-
 		for (int i = 0; i < typeNum; i++) {
 			List<StuEvaluateResult> stuEvaluateResults = teacherStudentDao.findStuEvaByPageCid(itemEvaluateTypes.get(i).getItemEvaTypeId(), claId, schoolYear, pageBean.getBegin(), pageBean.getLimit());
 			switch (i) {
@@ -112,6 +86,7 @@ public class TeacherStudentServiceImpl implements TeacherStudentService {
 					e.setStudent(stuEvaluateResults.get(j).getStudent());
 					e.setClazz(stuEvaluateResults.get(j).getClazz());
 					e.setM1(stuEvaluateResults.get(j).getmScore());
+					e.setSchoolYear(stuEvaluateResults.get(j).getSchoolYear());
 					evaluateResults.add(e);
 				}
 				break;
@@ -156,12 +131,6 @@ public class TeacherStudentServiceImpl implements TeacherStudentService {
 	}
 
 	@Override
-	public List<EvaluateResult> selectSummaryEvas(Integer claId, String schoolYear) {
-		// TODO Auto-generated method stub
-		return teacherStudentDao.selectSummaryEvas(claId, schoolYear);
-	}
-
-	@Override
 	public boolean addStuEvaScore(StuEvaluateResult stuEvaluateResult) {
 		// TODO Auto-generated method stub
 		return teacherStudentDao.addStuEvaScore(stuEvaluateResult);
@@ -189,7 +158,7 @@ public class TeacherStudentServiceImpl implements TeacherStudentService {
 	@Override
 	public List<StuEvaluateResult> findStuEvaByPageCid(Integer itemEvaTypeId, Integer claId, String schoolYear) {
 		// TODO Auto-generated method stub
-		return null;
+		return teacherStudentDao.findStuEvas(itemEvaTypeId,claId,schoolYear);
 	}
 
 }

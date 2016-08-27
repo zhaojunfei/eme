@@ -29,6 +29,9 @@
 <body>
 	<%@ include file="/include/header.jsp"%>
 	<%@ include file="/include/teacher_main_nav.jsp"%>
+	<div id="loading" class="wait_style">
+		<div style="margin-top:250px" ><img src="img/wait.gif" alt="" />正在计算数据,请稍候...</div>
+	</div>
 	<div class="content">
 		<div class="container">
 			<div class="row">
@@ -75,7 +78,7 @@
 						</div>
 						<hr />
 						<div class="div-inf-tbl" style="margin-top: 100px">
-							
+
 							<div>
 								<span class="text-size ">班级：</span>&nbsp;&nbsp;<select
 									name="limits.stuClazz" id="stuSchClazz1"
@@ -95,7 +98,7 @@
 							</div>
 							<input type="button" value="查看评估结果" class="btn" name="checkEva"
 								id="checkEva" onclick="isEmpity(this)"> <a class="btn"
-								 onclick="excelExport()">导出Excel</a>
+								onclick="excelExport()">导出Excel</a>
 							<div class="div-tchr-detail">
 								<table class="table table-bordered table-condensed"
 									id="evaluateScoreList">
@@ -130,6 +133,7 @@
 			</div>
 		</div>
 	</div>
+
 	<%@ include file="/include/footer.jsp"%>
 	<script type="text/javascript" src="js/jquery1.12.1.js"></script>
 	<script type="text/javascript" src="js/bootstrap.js"></script>
@@ -204,6 +208,7 @@
 		}
 		//对学生项目进行汇总
 		function summaryEva() {
+			ShowDiv();
 			var clazz = $("#stuSchClazz").val();
 			var startSchoolYear = $("#startSchoolYear").val();
 			var endSchoolYear = $("#endSchoolYear").val();
@@ -211,12 +216,13 @@
 			var startTime = $("#startTime").val();
 			var endTime = $("#endTime").val();
 			$("#evaluateScoreList1").html = "";
-			$.getJSON("Json_evaluateSummaryByClazz", {
+			$.getJSON("Json_evaluateStuSummaryByClazz", {
 				clazz : clazz,
 				schoolYear : schoolYear,
 				startTime : startTime,
 				endTime : endTime
 			}, function(data) {
+				HiddenDiv();
 				alert("评估成功！");
 			});
 		}
@@ -226,9 +232,9 @@
 			var startSchoolYear = $("#startSchoolYear1").val();
 			var endSchoolYear = $("#endSchoolYear1").val();
 			var schoolYear = startSchoolYear + "-" + endSchoolYear;
-			/* if (page == "") {
+			/*  if (page == "") {
 				page = 1;
-			} */
+			}  */
 			$("#evaluateScoreList tbody").html("");
 			$
 					.getJSON(
@@ -290,19 +296,34 @@
 
 							});
 		}
-		
-		function excelExport(){
+
+		function excelExport() {
 			var clazz = $("#stuSchClazz1").val();
 			var startSchoolYear = $("#startSchoolYear1").val();
 			var endSchoolYear = $("#endSchoolYear1").val();
 			var schoolYear = startSchoolYear + "-" + endSchoolYear;
 			if (clazz == "" || startSchoolYear == "" || endSchoolYear == ""
-				|| startTime == "" || endTime == "") {
-			alert("请选择班级、学年、评估时间段！");
-			}else{
-				window.location.href="export_excelExport?claId="+clazz+"&schoolYear="+schoolYear+"";
+					|| startTime == "" || endTime == "") {
+				alert("请选择班级、学年、评估时间段！");
+			} else {
+				window.location.href = "export_excelExport?claId=" + clazz
+						+ "&schoolYear=" + schoolYear + "";
 			}
-			 
+
+		}
+	</script>
+	<script type="text/javascript">
+		function ShowDiv() {
+			document.getElementsByTagName('footer')[0].style.display = 'none';
+			document.getElementsByClassName('container')[0].style.display = 'none';
+			$("#loading").show();
+			
+		} //隐藏加载数据
+		function HiddenDiv() {
+			document.getElementsByTagName('footer')[0].style.display = 'block';
+			document.getElementsByClassName('container')[0].style.display = 'block';
+			$("#loading").hide();
+			
 		}
 	</script>
 </body>

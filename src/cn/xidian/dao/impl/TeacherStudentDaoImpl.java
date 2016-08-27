@@ -14,7 +14,6 @@ import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Component;
 import cn.xidian.dao.TeacherStudentDao;
 import cn.xidian.entity.Clazz;
-import cn.xidian.entity.EvaluateResult;
 import cn.xidian.entity.StuEvaluateResult;
 import cn.xidian.entity.Student;
 import cn.xidian.entity.StudentCourse;
@@ -110,25 +109,6 @@ public class TeacherStudentDaoImpl implements TeacherStudentDao {
 	}
 
 	@Override
-	public boolean addEvaScore(EvaluateResult evaluateResult) {
-		// TODO Auto-generated method stub
-		currentSession().save(evaluateResult);
-		return true;
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public Integer selectSummaryEva(Integer claId, String schoolYear) {
-		// TODO Auto-generated method stub
-		String sql = "from EvaluateResult where claId=? and schoolYear=? ";
-		Query query = currentSession().createQuery(sql);
-		query.setInteger(0, claId);
-		query.setString(1, schoolYear);
-		List<EvaluateResult> evaluateResults = query.list();
-		return evaluateResults.size();
-	}
-
-	@Override
 	public Clazz selectClazzById(Integer id) {
 		// TODO Auto-generated method stub
 		String sql = "from Clazz where claId=?";
@@ -138,16 +118,6 @@ public class TeacherStudentDaoImpl implements TeacherStudentDao {
 		return clazz;
 	}
 
-	@Override
-	public boolean deleteEvas(Integer claId, String schoolYear) {
-		// TODO Auto-generated method stub
-		String sql = "delete from EvaluateResult  where claId=? and schoolYear=?";
-		Query query = currentSession().createQuery(sql);
-		query.setInteger(0, claId);
-		query.setString(1, schoolYear);
-		query.executeUpdate();
-		return true;
-	}
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -159,16 +129,6 @@ public class TeacherStudentDaoImpl implements TeacherStudentDao {
 		query.setString(1, schoolYear);
 		List<StudentCourse> studentCourses = query.list();
 		return studentCourses;
-	}
-
-	@Override
-	public EvaluateResult selectEvaluateResultById(Integer id) {
-		// TODO Auto-generated method stub
-		String sql = "from EvaluateResult where evaluateResultId=?";
-		Query query = currentSession().createQuery(sql);
-		query.setInteger(0, id);
-		EvaluateResult evaluateResult = (EvaluateResult) query.uniqueResult();
-		return evaluateResult;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -186,30 +146,6 @@ public class TeacherStudentDaoImpl implements TeacherStudentDao {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public Integer findCountCid(Integer claId) {
-		// TODO Auto-generated method stub
-		String sql = "from EvaluateResult where claId=?";
-		Query query = currentSession().createQuery(sql);
-		query.setInteger(0, claId);
-		List<EvaluateResult> evaluateResults = query.list();
-
-		return evaluateResults.size();
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<EvaluateResult> findByPageCid(Integer claId,String schoolYear, Integer begin, Integer limit) {
-		// TODO Auto-generated method stub
-		String sql="from EvaluateResult where claId=? and schoolYear=?";
-		Query query=currentSession().createQuery(sql).setFirstResult(begin).setMaxResults(limit);
-		query.setInteger(0, claId);
-		query.setString(1, schoolYear);
-		List<EvaluateResult> evaluateResults=query.list();
-		return evaluateResults;
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
 	public List<StudentCourse> findStuGradesByPage(Integer stuId, String schoolYear, Integer begin, Integer limit) {
 		// TODO Auto-generated method stub
 		String sql = "from StudentCourse where stuId=? and schoolYear=?";
@@ -220,17 +156,6 @@ public class TeacherStudentDaoImpl implements TeacherStudentDao {
 		return studentCourses;
 	}
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<EvaluateResult> selectSummaryEvas(Integer claId, String schoolYear) {
-		// TODO Auto-generated method stub
-		String sql = "from EvaluateResult where claId=? and schoolYear=? ";
-		Query query = currentSession().createQuery(sql);
-		query.setInteger(0, claId);
-		query.setString(1, schoolYear);
-		List<EvaluateResult> evaluateResults = query.list();
-		return evaluateResults;
-	}
 
 	@Override
 	public boolean addStuEvaScore(StuEvaluateResult stuEvaluateResult) {
@@ -273,6 +198,20 @@ public class TeacherStudentDaoImpl implements TeacherStudentDao {
 		query.setInteger(2, itemEvaTypeId);
 		List<StuEvaluateResult> stuEvaluateResults=query.list();
 		return stuEvaluateResults;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<StuEvaluateResult> findStuEvas(Integer itemEvaTypeId, Integer claId, String schoolYear) {
+		// TODO Auto-generated method stub
+		String sql="from StuEvaluateResult where claId=? and schoolYear=? and itemEvaTypeId=?";
+		Query query=currentSession().createQuery(sql);
+		query.setInteger(0, claId);
+		query.setString(1, schoolYear);
+		query.setInteger(2, itemEvaTypeId);
+		List<StuEvaluateResult> stuEvaluateResults=query.list();
+		return stuEvaluateResults;
+		
 	}
 
 }

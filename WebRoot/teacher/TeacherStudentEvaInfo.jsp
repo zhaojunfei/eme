@@ -75,7 +75,7 @@
 												status="status">
 												<td class="M<s:property value="%{#status.count}"/>">
 												<s:property
-														value="#s.mScore" /></td>
+														value="#s.mScore"/></td>
 											</s:iterator>
 											<td class="hidden" id="maxM1"><s:property
 													value="MaxScoreArr[0]" /></td>

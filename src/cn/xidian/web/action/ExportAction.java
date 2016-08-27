@@ -23,7 +23,7 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.struts2.interceptor.RequestAware;
 import org.springframework.stereotype.Component;
 import com.opensymphony.xwork2.ActionSupport;
-import cn.xidian.entity.EvaluateResult;
+import cn.xidian.web.bean.EvaluateResult;
 import cn.xidian.entity.ItemEvaluateType;
 import cn.xidian.entity.StuEvaluateResult;
 import cn.xidian.service.StudentItemService;
@@ -68,6 +68,7 @@ public class ExportAction extends ActionSupport implements RequestAware {
 		// 文件名，以当前秒为文件名
 		fileName = sdf.format(new Date()) + ".xls";
 		itemEvaluateTypes = studentItemService.selectItemEvaTypes();
+		//拼凑evaluateResults
 		List<EvaluateResult> evaluateResults = new LinkedList<EvaluateResult>();
 		for (int i = 0; i < itemEvaluateTypes.size(); i++) {
 			List<StuEvaluateResult> stuEvaluateResults = teacherStudentService.findStuEvaByPageCid(itemEvaluateTypes.get(i).getItemEvaTypeId(), claId, schoolYear);

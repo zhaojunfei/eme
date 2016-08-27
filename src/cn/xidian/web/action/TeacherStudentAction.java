@@ -21,7 +21,7 @@ import org.springframework.stereotype.Component;
 import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.ActionSupport;
 import cn.xidian.entity.Clazz;
-import cn.xidian.entity.EvaluateResult;
+import cn.xidian.web.bean.EvaluateResult;
 import cn.xidian.entity.ItemEvaluatePoint;
 import cn.xidian.entity.ItemEvaluateScore;
 import cn.xidian.entity.ItemEvaluateType;
@@ -450,7 +450,6 @@ public class TeacherStudentAction extends ActionSupport implements RequestAware 
 		}
 
 		// 存储问卷选择结果
-		System.out.println("文本问题的个数"+textAnswers.size());
 		boolean isSuccess = surveyService.addSurveyDone(surveySelectors, textAnswers, survey);
 		if (isSuccess) {
 			request.put("Message", "提交成功！！");

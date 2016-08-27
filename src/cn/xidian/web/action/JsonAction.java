@@ -20,7 +20,7 @@ import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.ActionSupport;
 
 import cn.xidian.entity.Clazz;
-import cn.xidian.entity.EvaluateResult;
+
 import cn.xidian.entity.ItemEvaluatePoint;
 import cn.xidian.entity.ItemEvaluateScore;
 import cn.xidian.entity.ItemEvaluateType;
@@ -39,6 +39,7 @@ import cn.xidian.service.StudentService;
 import cn.xidian.service.SurveyService;
 import cn.xidian.service.TeacherService;
 import cn.xidian.service.TeacherStudentService;
+import cn.xidian.web.bean.EvaluateResult;
 
 @SuppressWarnings("serial")
 @Component(value = "JsonAction")
@@ -188,70 +189,6 @@ public class JsonAction extends ActionSupport implements RequestAware {
 		return "list";
 	}
 
-	public String evaluateSummaryByClazz() {
-		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		start = simpleDateFormat.format(startTime);
-		end = simpleDateFormat.format(endTime);
-		try {
-			date1 = simpleDateFormat.parse(start);
-			date2 = simpleDateFormat.parse(end);
-			Calendar calendar = new GregorianCalendar();
-			calendar.setTime(date2);
-			calendar.add(calendar.DATE, 1);// 把日期往后增加一天.整数往后推,负数往前移动
-			date3 = calendar.getTime(); // 这个时间就是日期往后推一天的结果
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		stus = teacherStudentService.selectChargeStus(clazz);
-		cla = teacherStudentService.selectClazzById(clazz);
-		size = teacherStudentService.selectSummaryEva(clazz, schoolYear);
-		if (size != 0) {
-			teacherStudentService.deleteEvas(clazz, schoolYear);
-		}
-		for (Student element : stus) {
-			Double M1 = 0.0;
-			Double M2 = 0.0;
-			Double M3 = 0.0;
-			Double M4 = 0.0;
-			Double M5 = 0.0;
-			EvaluateResult evaluateResult = new EvaluateResult();
-			String sch = element.getStuSchNum();
-			M2 += countGrade(element, schoolYear);
-			items = studentItemService.selectItemByLimitTime(sch, date1, date3);
-			for (StudentItem st : items) {
-				switch (st.getItemEvaluateType().getItemEvaTypeId()) {
-				case 1:
-					M1 += Double.parseDouble(st.getItemScore());
-					break;
-				case 2:
-					M2 += Double.parseDouble(st.getItemScore());
-					break;
-				case 3:
-					M3 += Double.parseDouble(st.getItemScore());
-					break;
-				case 4:
-					M4 += Double.parseDouble(st.getItemScore());
-					break;
-				case 5:
-					M5 += Double.parseDouble(st.getItemScore());
-					break;
-				}
-
-			}
-			evaluateResult.setM1(M1);
-			evaluateResult.setM2(M2);
-			evaluateResult.setM3(M3);
-			evaluateResult.setM4(M4);
-			evaluateResult.setM5(M5);
-			evaluateResult.setSchoolYear(schoolYear);
-			evaluateResult.setClazz(cla);
-			evaluateResult.setStudent(element);
-			teacherStudentService.addEvaScore(evaluateResult);
-		}
-		return "list";
-	}
-
 	public String selectSummaryEva() {
 		pageBean = teacherStudentService.findByPageCid(clazz, schoolYear, page);// 根据一级分类查询带分页的商品
 		// 将PageBean存入到值栈中
@@ -289,6 +226,7 @@ public class JsonAction extends ActionSupport implements RequestAware {
 		return "list";
 	}
 
+	// 学生查询评估结果显示雷达图
 	public String selectEvaluateResult() {
 		String schNum = tUser.getSchNum();
 		s = studentService.selectInfBySchNum(schNum);
@@ -642,7 +580,5 @@ public class JsonAction extends ActionSupport implements RequestAware {
 	public void setMaxScoreArr(Double[] maxScoreArr) {
 		MaxScoreArr = maxScoreArr;
 	}
-
-	
 
 }

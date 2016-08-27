@@ -1,4 +1,4 @@
-package cn.xidian.entity;
+package cn.xidian.web.bean;
 
 
 import javax.persistence.Entity;
@@ -6,10 +6,11 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+
+import cn.xidian.entity.Clazz;
+import cn.xidian.entity.Student;
 
 @Entity
-@Table(name = "evaluateresult")
 public class EvaluateResult {
 	private Integer evaluateResultId;
 	private Double M1;
