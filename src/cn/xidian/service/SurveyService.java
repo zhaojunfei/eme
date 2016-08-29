@@ -35,4 +35,6 @@ public interface SurveyService {
 	PageBean<Survey> selectStuOrTchrSurveys(Integer role,Integer page);
 	
 	boolean overSurvey(Integer surveyId);
+	 
+	PageBean<TextAnswer> selectSurveyTextResult(Integer page, Integer surveyId,Integer questionId);
 }

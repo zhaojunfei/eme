@@ -12,7 +12,7 @@ import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Component;
 
 import cn.xidian.dao.StudentDao;
-import cn.xidian.entity.EvaluateResult;
+import cn.xidian.entity.StuEvaluateResult;
 import cn.xidian.entity.Student;
 import cn.xidian.entity.StudentCourse;
 
@@ -183,17 +183,6 @@ public class StudentDaoImpl implements StudentDao {
 		return studentCourses;
 	}
 
-	@Override
-	public EvaluateResult selectEvaluateResult(Integer stuId, String schoolYear) {
-		// TODO Auto-generated method stub
-		String sql="from EvaluateResult where stuId=? and schoolYear=?";
-		Query query=currentSession().createQuery(sql);
-		query.setInteger(0, stuId);
-		query.setString(1, schoolYear);
-		EvaluateResult evaluateResult=(EvaluateResult) query.uniqueResult();
-		return evaluateResult;
-	}
-
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<StudentCourse> findStuCoursesByStuId(Integer id, Integer begin, Integer limit) {
@@ -204,4 +193,17 @@ public class StudentDaoImpl implements StudentDao {
 		List<StudentCourse> studentCourses=query.list();
 		return studentCourses;
 	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<StuEvaluateResult> selectStuEvaluateResults(Integer stuId, String schoolYear) {
+		// TODO Auto-generated method stub
+		String sql="from StuEvaluateResult where stuId=? and schoolYear=?";
+		Query query=currentSession().createQuery(sql);
+		query.setInteger(0,stuId);
+		query.setString(1, schoolYear);
+		List<StuEvaluateResult> stuEvaluateResults=query.list();
+		return stuEvaluateResults;
+	}
+
 }

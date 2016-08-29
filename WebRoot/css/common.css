@@ -644,15 +644,15 @@ h5 {
 	}
 }
 
-.div-radar{
-	width : 450px;
+.div-radar {
+	width: 450px;
 	height: 450px;
 	margin: 0px auto;
 }
 
-.text-style{
-	color:red;
-	font-size:10px;
+.text-style {
+	color: red;
+	font-size: 10px;
 	margin-left: 150px
 }
 
@@ -666,14 +666,28 @@ h5 {
 }
 
 .left {
-	text-align:left !important;
+	text-align: left !important;
 }
-.btn-bottom{
-	margin-bottom:25px;
+
+.btn-bottom {
+	margin-bottom: 25px;
 }
-.year-width{
-	width:40px;
+
+.year-width {
+	width: 40px;
 }
-.date-width{
-	width:135px;
+
+.date-width {
+	width: 135px;
+}
+
+.wait_style {
+	display: none;
+	text-align: center;
+	position: absolute;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	background: rgba(255, 255, 255, 0.8);
 }

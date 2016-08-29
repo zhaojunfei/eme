@@ -8,8 +8,8 @@ import javax.annotation.Resource;
 import org.springframework.stereotype.Component;
 
 import cn.xidian.dao.StudentDao;
-import cn.xidian.entity.EvaluateResult;
 import cn.xidian.entity.PageBean;
+import cn.xidian.entity.StuEvaluateResult;
 import cn.xidian.entity.Student;
 import cn.xidian.entity.StudentCourse;
 import cn.xidian.service.StudentService;
@@ -68,16 +68,18 @@ public class StudentServiceImpl implements StudentService {
 	public PageBean<StudentCourse> selectStuAllGradesById(Integer id,Integer page) {
 		// TODO Auto-generated method stub
 		List<StudentCourse> studentCourses=studentDao.selectStuAllGradesById(id);
-		PageBean<StudentCourse> pageBean=PageUtils.page(page, studentCourses.size());
+		PageBean<StudentCourse> pageBean=PageUtils.page(page, studentCourses.size(),15);
 		List<StudentCourse> studentCourses2=studentDao.findStuCoursesByStuId(id,pageBean.getBegin(),pageBean.getLimit());
 		pageBean.setList(studentCourses2);
 		return pageBean;
 	}
 
+
 	@Override
-	public EvaluateResult selectEvaluateResult(Integer stuId, String schoolYear) {
+	public List<StuEvaluateResult> selectStuEvaluateResults(Integer stuId, String schoolYear) {
 		// TODO Auto-generated method stub
-		return studentDao.selectEvaluateResult(stuId,schoolYear);
+		return studentDao.selectStuEvaluateResults(stuId,schoolYear);
 	}
+
 
 }

@@ -198,4 +198,19 @@ public class StudentItemDaoImpl implements StudentItemDao {
 		query.setString(0, schNum);
 		return query.list();
 	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<StudentItem> selectItemByLimitTimes(Integer id, String stuNum, Date startTime, Date endTime) {
+		// TODO Auto-generated method stub
+		List<StudentItem> items = new LinkedList<StudentItem>();
+		String sql = "from StudentItem where stuId=(select stuId from Student as stuId where stuSchNum=? and isDelete=1) and itemEvaTypeId=? and itemSubmitDate between ? and ? ";
+		Query query = currentSession().createQuery(sql);
+		query.setString(0, stuNum);
+		query.setInteger(1, id);
+		query.setDate(2,startTime);
+		query.setDate(3,endTime);
+		items.addAll(query.list());
+		return items;
+	}
 }

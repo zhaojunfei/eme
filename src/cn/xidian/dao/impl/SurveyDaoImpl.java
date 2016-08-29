@@ -223,4 +223,28 @@ public class SurveyDaoImpl implements SurveyDao{
 		return true;
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<TextAnswer> selectSurveyTextResult(Integer surveyId, Integer questionId) {
+		// TODO Auto-generated method stub
+		String sql="from TextAnswer where surveyId=? and questionId=?";
+		Query query=currentSession().createQuery(sql);
+		query.setInteger(0, surveyId);
+		query.setInteger(1, questionId);
+		List<TextAnswer> textAnswers=query.list();
+		return textAnswers;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<TextAnswer> findSurveyTextResult(Integer surveyId, Integer questionId, Integer begin, Integer limit) {
+		// TODO Auto-generated method stub
+		String sql="from TextAnswer where surveyId=? and questionId=?";
+		Query query=currentSession().createQuery(sql).setFirstResult(begin).setMaxResults(limit);
+		query.setInteger(0, surveyId);
+		query.setInteger(1, questionId);
+		List<TextAnswer> textAnswers=query.list();
+		return textAnswers;
+	}
+
 }

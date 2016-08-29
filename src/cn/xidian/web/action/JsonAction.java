@@ -1,5 +1,6 @@
 package cn.xidian.web.action;
 
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -19,23 +20,26 @@ import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.ActionSupport;
 
 import cn.xidian.entity.Clazz;
-import cn.xidian.entity.EvaluateResult;
+
 import cn.xidian.entity.ItemEvaluatePoint;
 import cn.xidian.entity.ItemEvaluateScore;
-import cn.xidian.entity.MaxEva;
+import cn.xidian.entity.ItemEvaluateType;
 import cn.xidian.entity.PageBean;
+import cn.xidian.entity.StuEvaluateResult;
 import cn.xidian.entity.Student;
 import cn.xidian.entity.StudentCourse;
 import cn.xidian.entity.StudentItem;
 import cn.xidian.entity.Survey;
 import cn.xidian.entity.SurveySelector;
 import cn.xidian.entity.Teacher;
+import cn.xidian.entity.TextAnswer;
 import cn.xidian.entity.User;
 import cn.xidian.service.StudentItemService;
 import cn.xidian.service.StudentService;
 import cn.xidian.service.SurveyService;
 import cn.xidian.service.TeacherService;
 import cn.xidian.service.TeacherStudentService;
+import cn.xidian.web.bean.EvaluateResult;
 
 @SuppressWarnings("serial")
 @Component(value = "JsonAction")
@@ -59,7 +63,6 @@ public class JsonAction extends ActionSupport implements RequestAware {
 	private Integer size;
 	private List<StudentCourse> studentCourses;
 	private Student s;
-	private MaxEva maxEva;
 	private Date startTime;
 	private Date endTime;
 	private String start;
@@ -73,8 +76,12 @@ public class JsonAction extends ActionSupport implements RequestAware {
 	private PageBean<StudentCourse> pbStuCours;
 	private PageBean<StudentItem> siPageBean;
 	private String stuNum;
+	private List<ItemEvaluateType> itemEvaluateTypes;
+	private StuEvaluateResult stuEvaluateResult;
+	private List<StuEvaluateResult> stuEvaluateResults;
+	private Double[] MaxScoreArr;
 
-	// 問卷添加
+	// 问卷添加
 	private Teacher teacher;
 	private PageBean<Survey> suPageBean;
 	private List<SurveySelector> surveySelectors;
@@ -82,6 +89,7 @@ public class JsonAction extends ActionSupport implements RequestAware {
 	private Integer questionId;
 	private String[] sels;
 	private Integer role;
+	private PageBean<TextAnswer> taPageBean;
 
 	Map<String, Object> session = ActionContext.getContext().getSession();
 	User tUser = (User) session.get("tUser");
@@ -134,7 +142,7 @@ public class JsonAction extends ActionSupport implements RequestAware {
 		return "list";
 	}
 
-	public String evaluateSummaryByClazz() {
+	public String evaluateStuSummaryByClazz() {
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		start = simpleDateFormat.format(startTime);
 		end = simpleDateFormat.format(endTime);
@@ -151,49 +159,32 @@ public class JsonAction extends ActionSupport implements RequestAware {
 		}
 		stus = teacherStudentService.selectChargeStus(clazz);
 		cla = teacherStudentService.selectClazzById(clazz);
-		size = teacherStudentService.selectSummaryEva(clazz, schoolYear);
+		itemEvaluateTypes = studentItemService.selectItemEvaTypes();
+		size = teacherStudentService.selectSummaryStuEvas(clazz, schoolYear).size();
 		if (size != 0) {
-			teacherStudentService.deleteEvas(clazz, schoolYear);
+			teacherStudentService.deleteStuEvas(clazz, schoolYear);
 		}
 		for (Student element : stus) {
-			Double M1 = 0.0;
-			Double M2 = 0.0;
-			Double M3 = 0.0;
-			Double M4 = 0.0;
-			Double M5 = 0.0;
-			EvaluateResult evaluateResult = new EvaluateResult();
 			String sch = element.getStuSchNum();
-			M2 += countGrade(element, schoolYear);
-			items = studentItemService.selectItemByLimitTime(sch, date1, date3);
-			for (StudentItem st : items) {
-				switch (st.getItemEvaluateType().getItemEvaTypeId()) {
-				case 1:
-					M1 += Double.parseDouble(st.getItemScore());
-					break;
-				case 2:
-					M2 += Double.parseDouble(st.getItemScore());
-					break;
-				case 3:
-					M3 += Double.parseDouble(st.getItemScore());
-					break;
-				case 4:
-					M4 += Double.parseDouble(st.getItemScore());
-					break;
-				case 5:
-					M5 += Double.parseDouble(st.getItemScore());
-					break;
-				}
+			DecimalFormat df = new DecimalFormat("######0.00");
+			for (int i = 1; i <= itemEvaluateTypes.size(); i++) {
+				Double M = 0.0;
+				if (i == 2) {
 
+					M += countGrade(element, schoolYear);
+				}
+				items = studentItemService.selectItemByLimitTimes(i, sch, date1, date3);
+				StuEvaluateResult ser = new StuEvaluateResult();
+				for (StudentItem st : items) {
+					M += Double.parseDouble(st.getItemScore());
+				}
+				ser.setClazz(cla);
+				ser.setmScore(Double.parseDouble(df.format(M)));
+				ser.setStudent(element);
+				ser.setSchoolYear(schoolYear);
+				ser.setItemEvaluateType(itemEvaluateTypes.get(i - 1));
+				teacherStudentService.addStuEvaScore(ser);
 			}
-			evaluateResult.setM1(M1);
-			evaluateResult.setM2(M2);
-			evaluateResult.setM3(M3);
-			evaluateResult.setM4(M4);
-			evaluateResult.setM5(M5);
-			evaluateResult.setSchoolYear(schoolYear);
-			evaluateResult.setClazz(cla);
-			evaluateResult.setStudent(element);
-			teacherStudentService.addEvaScore(evaluateResult);
 		}
 		return "list";
 	}
@@ -235,14 +226,24 @@ public class JsonAction extends ActionSupport implements RequestAware {
 		return "list";
 	}
 
+	// 学生查询评估结果显示雷达图
 	public String selectEvaluateResult() {
 		String schNum = tUser.getSchNum();
 		s = studentService.selectInfBySchNum(schNum);
-		evaluateResult = studentService.selectEvaluateResult(s.getStuId(), schoolYear);
-		maxEva = teacherStudentService.selectMaxEva(schoolYear);
+		stuEvaluateResults = studentService.selectStuEvaluateResults(s.getStuId(), schoolYear);
+		itemEvaluateTypes = studentItemService.selectItemEvaTypes();
+		Double[] arr = new Double[itemEvaluateTypes.size()];
+		for (int i = 1; i <= itemEvaluateTypes.size(); i++) {
+			List<StuEvaluateResult> sEvaluateResults = teacherStudentService.selectMaxEva(i, schoolYear);
+			if (sEvaluateResults.size() != 0) {
+				arr[i - 1] = sEvaluateResults.get(0).getmScore();
+			}
+		}
+		MaxScoreArr = arr;
 		return "list";
 	}
 
+	// 查找学生项目
 	public String selectItem() {
 		String schNum;
 		if (stuNum == null) {
@@ -257,11 +258,6 @@ public class JsonAction extends ActionSupport implements RequestAware {
 		return "list";
 	}
 
-	/*
-	 * public String selectItem1() { if (page == null) { page = 1; }
-	 * siPageBean=studentItemService.selectByStuNum(stuNum,page); return "list";
-	 * }
-	 */
 	// 翻页查找问卷列表
 	public String selectSurveys() {
 		String tchrSchNum = tUser.getSchNum();
@@ -306,6 +302,12 @@ public class JsonAction extends ActionSupport implements RequestAware {
 	// 结束问卷调查
 	public String overSurvey() {
 		surveyService.overSurvey(surveyId);
+		return "list";
+	}
+
+	// 查看问卷的问本题的信息
+	public String selectSurveyTextResult() {
+		taPageBean = surveyService.selectSurveyTextResult(page, surveyId, questionId);
 		return "list";
 	}
 
@@ -435,14 +437,6 @@ public class JsonAction extends ActionSupport implements RequestAware {
 		this.evaluateResult = evaluateResult;
 	}
 
-	public MaxEva getMaxEva() {
-		return maxEva;
-	}
-
-	public void setMaxEva(MaxEva maxEva) {
-		this.maxEva = maxEva;
-	}
-
 	public Date getStartTime() {
 		return startTime;
 	}
@@ -545,6 +539,46 @@ public class JsonAction extends ActionSupport implements RequestAware {
 
 	public void setSels(String[] sels) {
 		this.sels = sels;
+	}
+
+	public PageBean<TextAnswer> getTaPageBean() {
+		return taPageBean;
+	}
+
+	public void setTaPageBean(PageBean<TextAnswer> taPageBean) {
+		this.taPageBean = taPageBean;
+	}
+
+	public List<ItemEvaluateType> getItemEvaluateTypes() {
+		return itemEvaluateTypes;
+	}
+
+	public void setItemEvaluateTypes(List<ItemEvaluateType> itemEvaluateTypes) {
+		this.itemEvaluateTypes = itemEvaluateTypes;
+	}
+
+	public StuEvaluateResult getStuEvaluateResult() {
+		return stuEvaluateResult;
+	}
+
+	public void setStuEvaluateResult(StuEvaluateResult stuEvaluateResult) {
+		this.stuEvaluateResult = stuEvaluateResult;
+	}
+
+	public List<StuEvaluateResult> getStuEvaluateResults() {
+		return stuEvaluateResults;
+	}
+
+	public void setStuEvaluateResults(List<StuEvaluateResult> stuEvaluateResults) {
+		this.stuEvaluateResults = stuEvaluateResults;
+	}
+
+	public Double[] getMaxScoreArr() {
+		return MaxScoreArr;
+	}
+
+	public void setMaxScoreArr(Double[] maxScoreArr) {
+		MaxScoreArr = maxScoreArr;
 	}
 
 }

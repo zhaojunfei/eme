@@ -4,6 +4,7 @@ public class AdminStuLimits {
 	private String stuSchNum;
 	private String stuName;
 	private Integer stuClazz;
+	private String schoolYear;
 	
 	public AdminStuLimits() {
 		super();
@@ -35,6 +36,14 @@ public class AdminStuLimits {
 
 	public void setStuClazz(Integer stuClazz) {
 		this.stuClazz = stuClazz;
+	}
+
+	public String getSchoolYear() {
+		return schoolYear;
+	}
+
+	public void setSchoolYear(String schoolYear) {
+		this.schoolYear = schoolYear;
 	}
 	
 }

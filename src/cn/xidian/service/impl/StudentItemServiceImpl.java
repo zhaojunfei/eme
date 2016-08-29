@@ -41,7 +41,7 @@ public class StudentItemServiceImpl implements StudentItemService {
 	public PageBean<StudentItem> selectByStuNum(String stuNum,Integer page) {
 		PageBean<StudentItem> siPageBean=new PageBean<StudentItem>();
 		List<StudentItem> studentItems=studentItemDao.selectByStuNum(stuNum);
-		siPageBean=PageUtils.page(page, studentItems.size());
+		siPageBean=PageUtils.page(page, studentItems.size(),10);
 		List<StudentItem> items=studentItemDao.findByStuNum(stuNum,siPageBean.getBegin(),siPageBean.getLimit());
 		siPageBean.setList(items);
 		return siPageBean;
@@ -112,6 +112,12 @@ public class StudentItemServiceImpl implements StudentItemService {
 	public List<StudentItem> selectItemByLimitTime(String stuNum, Date startTime, Date endTime) {
 		// TODO Auto-generated method stub
 		return studentItemDao.selectItemByLimitTime(stuNum,startTime,endTime);
+	}
+
+	@Override
+	public List<StudentItem> selectItemByLimitTimes(Integer id, String stuNum, Date startTime, Date endTime) {
+		// TODO Auto-generated method stub
+		return studentItemDao.selectItemByLimitTimes(id,stuNum,startTime,endTime);
 	}
 
 }

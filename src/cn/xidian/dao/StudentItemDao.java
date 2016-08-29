@@ -40,6 +40,8 @@ public interface StudentItemDao {
 	ItemEvaluateScore selectItemEvaScore(Integer id);
 
 	List<StudentItem> selectItemByLimitTime(String stuNum, Date startTime, Date endTime);
+	
+	List<StudentItem> selectItemByLimitTimes(Integer id,String stuNum, Date startTime, Date endTime);
 
 	List<StudentItem> findByStuNum(String schNum, Integer begin, Integer limit);
 
