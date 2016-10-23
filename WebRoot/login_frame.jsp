@@ -249,7 +249,7 @@
 					<div class="loginNoteDiv">
 						<p>
 							如提示“账号”或“密码”错误，请填写账号、姓名、电话、身份证号、发邮件到信息处邮箱。 <br>
-						<address>信息处邮箱：xdxxc@mail.xidian.edu.cn</address>
+						<address>信息处邮箱：xd_jdgcxy@163.com</address>
 					</div>
 				</div>
 			</div>

@@ -1,6 +1,7 @@
 package cn.xidian.web.action;
 
 import java.io.File;
+import java.io.UnsupportedEncodingException;
 import java.text.DecimalFormat;
 import java.util.LinkedHashSet;
 import java.util.Date;
@@ -492,12 +493,18 @@ public class TeacherAction extends ActionSupport implements RequestAware {
 		if (tUser != null) {
 			String userRole = tUser.getIdentity().toString();
 			if (userRole == "TEACHER") {
-				role=2;
+				role = 2;
 			}
-			suPageBean = surveyService.selectStuOrTchrSurveys(role, page);
+			suPageBean = surveyService.selectTchrSurveys(role, page);
 		}
 		if (message != null) {
-			message="问卷提交成功！";
+			try {
+				message = new String(message.getBytes("ISO-8859-1"), "UTF-8");
+			} catch (UnsupportedEncodingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			request.put("Message", message);
 		}
 		return "teacher";
 	}
@@ -511,28 +518,36 @@ public class TeacherAction extends ActionSupport implements RequestAware {
 
 	// 提交老师填写的问卷结果
 	public String addTchrSurveyDone() {
-		// 存储问卷者信息
-		if (tUser != null) {
-			String userRole = tUser.getIdentity().toString();
-			survey = surveyService.selectSurveyById(surveyId);
-			SurveyReplyer surveyReplyer = new SurveyReplyer();
-			Date replyTime = new Date();// 做問卷的时间
-			if (userRole == "TEACHER") {
-				String tchrSchNum = tUser.getSchNum();
-				teacher = teacherService.selectInfBySchNum(tchrSchNum);
+		Teacher teacher = teacherService.selectInfBySchNum(tUser.getSchNum());
+		System.out.println("用户角色" + tUser.getIdentity().toString());
+		List<SurveyReplyer> replayers = surveyService.selectSurveyReplayer(surveyId, teacher.getTchrId(),
+				tUser.getIdentity().toString());
+		if (replayers.size() == 0) {// 存储问卷者信息
+			// 存储问卷者信息
+			if (tUser != null) {
+				String userRole = tUser.getIdentity().toString();
+				survey = surveyService.selectSurveyById(surveyId);
+				SurveyReplyer surveyReplyer = new SurveyReplyer();
+				Date replyTime = new Date();// 做問卷的时间
 				surveyReplyer.setTeacher(teacher);
-			}
-			surveyReplyer.setSurvey(survey);
-			surveyReplyer.setReplyTime(replyTime);
-			surveyService.addSurveyReplyer(surveyReplyer);
-		}
+				surveyReplyer.setSurvey(survey);
+				surveyReplyer.setReplyTime(replyTime);
+				surveyService.addSurveyReplyer(surveyReplyer);
+				// 存储问卷选择结果
+				boolean isSuccess = surveyService.addSurveyDone(surveySelectors, textAnswers, survey);
+				if (isSuccess) {
+					request.put("Message", "提交成功！！");
+					message = "提交成功！！";
+				} else {
+					request.put("Message", "提交失败！");
+					message = "提交成功！！";
+				}
 
-		// 存储问卷选择结果
-		boolean isSuccess = surveyService.addSurveyDone(surveySelectors, textAnswers, survey);
-		if (isSuccess) {
-			request.put("Message", "提交成功！！");
+			}
+
 		} else {
-			request.put("Message", "提交失败！");
+			request.put("Message", "提交失败，不能重复填写问卷！");
+			message = "提交失败，不能重复填写问卷！";
 		}
 		return "surveyDone";
 	}

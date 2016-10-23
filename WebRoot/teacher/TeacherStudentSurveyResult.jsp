@@ -36,7 +36,7 @@
 						<div class="div-inf-tbl">
 							<div style="font-size: 17px; color: red;">
 								受访总人数：
-								<s:property value="survey.sumNum" />
+								<a href="TeacherStudent_SurveyReplyer_List_selectSurveyReplyerById?surveyId=<s:property value="survey.surveyId" />"><s:property value="survey.sumNum" /></a>
 								人
 							</div>
 							<div>
@@ -133,7 +133,7 @@
 													placeholder='请填写内容' class='textarea left_distance'
 													style='width: 72%; height: 50px' readonly></textarea></li> --%>
 											<div id="jqChart<s:property value="#sq.questionId"/>"
-												class="pieChart_style">
+												style="display: none;width:600px">
 												<table class="table table-bordered table-condensed"
 													id="textAnswerList<s:property value="#sq.questionId" />">
 													<thead>

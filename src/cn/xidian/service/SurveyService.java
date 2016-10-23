@@ -2,6 +2,9 @@ package cn.xidian.service;
 
 import java.util.List;
 
+import org.omg.PortableInterceptor.INACTIVE;
+
+import cn.xidian.entity.GradeClazzSurvey;
 import cn.xidian.entity.PageBean;
 import cn.xidian.entity.Survey;
 import cn.xidian.entity.SurveyQuestion;
@@ -18,6 +21,8 @@ public interface SurveyService {
 
 	PageBean<Survey> selectAllSurveys(Teacher teacher, Integer page);
 
+	PageBean<Survey> selectPublishedSurveys(Teacher teacher, Integer page);
+
 	Survey selectSurveyById(Integer surveyId);
 
 	List<SurveyQuestion> selectQuestionBysurveyId(Integer surveyId);
@@ -25,16 +30,24 @@ public interface SurveyService {
 	boolean addSurveyDone(List<SurveySelector> surveySelectors, List<TextAnswer> textAnswers, Survey survey);
 
 	boolean addSurveyReplyer(SurveyReplyer surveyReplyer);
-	
-	List<SurveySelector> selectSurveySelectors(Integer surveyId,Integer questionId);
-	
+
+	List<SurveySelector> selectSurveySelectors(Integer surveyId, Integer questionId);
+
 	boolean publishSurvey(Integer surveyId);
-	
+
 	boolean deleteSurvey(Integer surveyId);
-	
-	PageBean<Survey> selectStuOrTchrSurveys(Integer role,Integer page);
-	
+
+	PageBean<GradeClazzSurvey> selectStuSurveys(Integer role, Integer page, Integer claId, String grade);
+
+	PageBean<Survey> selectTchrSurveys(Integer role, Integer page);
+
 	boolean overSurvey(Integer surveyId);
-	 
-	PageBean<TextAnswer> selectSurveyTextResult(Integer page, Integer surveyId,Integer questionId);
+
+	PageBean<TextAnswer> selectSurveyTextResult(Integer page, Integer surveyId, Integer questionId);
+
+	boolean addLimitForSurvey(GradeClazzSurvey gradeClazzSurvey);
+
+	List<SurveyReplyer> selectSurveyReplayer(Integer surveyId, Integer userId, String userRole);
+
+	PageBean<SurveyReplyer> selectSurveyReplyerById(Integer surveyId, Integer page);
 }

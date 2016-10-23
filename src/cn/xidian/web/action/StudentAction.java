@@ -5,6 +5,8 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedList;
@@ -21,6 +23,7 @@ import org.apache.struts2.interceptor.RequestAware;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import cn.xidian.entity.GradeClazzSurvey;
 import cn.xidian.entity.ItemEvaluatePoint;
 import cn.xidian.entity.ItemEvaluateScore;
 import cn.xidian.entity.ItemEvaluateType;
@@ -103,6 +106,7 @@ public class StudentAction extends ActionSupport implements RequestAware {
 	private List<TextAnswer> textAnswers;
 	private Integer role;
 	private String message;
+	private PageBean<GradeClazzSurvey> gcsPageBean;
 
 	Map<String, Object> session = ActionContext.getContext().getSession();
 	User tUser = (User) session.get("tUser");
@@ -300,7 +304,7 @@ public class StudentAction extends ActionSupport implements RequestAware {
 	public String deleteItem() {
 		// 判断是否能够删除
 		item = studentItemService.selectItemInfo(itemId);
-		if (!item.getItemScore().toString().equals("0")) {
+		if (!item.getItemState().toString().equals("待审核")) {
 			request.put("Message", "已审核，不允许删除！");
 			return "stuItemList";
 		}
@@ -418,14 +422,24 @@ public class StudentAction extends ActionSupport implements RequestAware {
 		}
 		if (tUser != null) {
 			String userRole = tUser.getIdentity().toString();
+			Student student = studentService.selectInfBySchNum(tUser.getSchNum());
 			if (userRole == "STUDENT") {
 				role = 1;
 			}
-			suPageBean = surveyService.selectStuOrTchrSurveys(role, page);
+			gcsPageBean = surveyService.selectStuSurveys(role, page, student.getClazz().getClaId(),
+					student.getClazz().getClaGrade());
 		}
-		if (message != null) {
-			message="问卷提交成功！";
+		try {
+			if (message != null) {
+				message = new String(message.getBytes("ISO-8859-1"), "UTF-8");
+				request.put("Message", message);
+			}
+
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
+
 		return "student";
 	}
 
@@ -438,32 +452,42 @@ public class StudentAction extends ActionSupport implements RequestAware {
 
 	// 提交学生填写的问卷结果
 	public String addSurveyDone() {
-		// 存储问卷者信息
-		if (tUser != null) {
-			String userRole = tUser.getIdentity().toString();
-			survey = surveyService.selectSurveyById(surveyId);
-			SurveyReplyer surveyReplyer = new SurveyReplyer();
-			Date replyTime = new Date();// 做問卷的时间
-			if (userRole == "TEACHER") {
-				String tchrSchNum = tUser.getSchNum();
-				teacher = teacherService.selectInfBySchNum(tchrSchNum);
-				surveyReplyer.setTeacher(teacher);
-			} else if (userRole == "STUDENT") {
-				String stuSchNum = tUser.getSchNum();
-				student = studentService.selectInfBySchNum(stuSchNum);
-				surveyReplyer.setStudent(student);
-			}
-			surveyReplyer.setSurvey(survey);
-			surveyReplyer.setReplyTime(replyTime);
-			surveyService.addSurveyReplyer(surveyReplyer);
-		}
+		// 判断学生是否已经提交过问卷
+		Student student = studentService.selectInfBySchNum(tUser.getSchNum());
+		System.out.println("用户角色" + tUser.getIdentity().toString());
+		List<SurveyReplyer> replayers = surveyService.selectSurveyReplayer(surveyId, student.getStuId(),
+				tUser.getIdentity().toString());
+		if (replayers.size() == 0) {// 存储问卷者信息
+			if (tUser != null) {
+				survey = surveyService.selectSurveyById(surveyId);
+				boolean isSuccess = surveyService.addSurveyDone(surveySelectors, textAnswers, survey);
+				if (isSuccess) {
+					SurveyReplyer surveyReplyer = new SurveyReplyer();
+					Date replyTime = new Date();// 做問卷的时间
+					surveyReplyer.setStudent(student);
+					surveyReplyer.setSurvey(survey);
+					surveyReplyer.setReplyTime(replyTime);
+					boolean isAddSuccess = surveyService.addSurveyReplyer(surveyReplyer);
+					if (isAddSuccess) {
+						request.put("Message", "提交成功！！");
+						message = "提交成功！！";
+					} else {
+						request.put("Message", "提交失败！");
+						message = "提交失败！！";
+					}
 
-		// 存储问卷选择结果
-		boolean isSuccess = surveyService.addSurveyDone(surveySelectors, textAnswers, survey);
-		if (isSuccess) {
-			request.put("Message", "提交成功！！");
+				} else {
+					request.put("Message", "提交失败！");
+					message = "提交失败！！";
+				}
+			} else {
+				request.put("Message", "提交失败,用户信息无效，请重新登陆！");
+				message = "提交失败,用户信息无效，请重新登陆！！";
+			}
+
 		} else {
-			request.put("Message", "提交失败！");
+			request.put("Message", "提交失败，不能重复填写问卷！");
+			message = "提交失败，不能重复填写问卷！";
 		}
 		return "surveyDone";
 	}
@@ -790,6 +814,14 @@ public class StudentAction extends ActionSupport implements RequestAware {
 
 	public void setMessage(String message) {
 		this.message = message;
+	}
+
+	public PageBean<GradeClazzSurvey> getGcsPageBean() {
+		return gcsPageBean;
+	}
+
+	public void setGcsPageBean(PageBean<GradeClazzSurvey> gcsPageBean) {
+		this.gcsPageBean = gcsPageBean;
 	}
 
 }

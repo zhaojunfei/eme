@@ -34,6 +34,7 @@
 							<label>问卷调查</label>
 						</div>
 						<div class="div-inf-tbl">
+							<div style="font-size: 17px; color: red; display: none" id="warn">你已做过该问卷，不能重复填写！</div>
 							<div>
 								<h3 class="title_center">
 									<s:property value="survey.title" />
@@ -54,7 +55,7 @@
 								<s:iterator value="surveyQuestions" var="sq" status="status">
 									<ul class="question-style top-distance">
 										<label>Q<s:property value="%{#status.count}" />： <s:property
-												value="#sq.content" /><s:if test="#sq.type==2">（多选）</s:if></label>
+												value="#sq.content" /> <s:if test="#sq.type==2">（多选）</s:if></label>
 										<s:if test="#sq.type==1||#sq.type==2">
 											<s:generator val="#sq.selectors" separator="_" id="s" />
 											<s:iterator status="st" value="#request.s" id="selector">
@@ -76,6 +77,9 @@
 											<input type="hidden" class="selected"
 												id="seled<s:property value="%{#status.count}" />"
 												value="<s:property value="#sq.questionId" />">
+											<input type="hidden"
+												id="selQuesId<s:property value="%{#status.count}" />"
+												value="<s:property value="#sq.questionId" />">
 											<!-- 获取选中的选项的selectorNum -->
 										</s:if>
 										<s:if test="#sq.type==3">
@@ -86,6 +90,9 @@
 											<input type="hidden" class="textAnswer"
 												id="text<s:property value="%{#status.count}" />"
 												value="<s:property value="#sq.questionId" />">
+											<input type="hidden"
+												id="textQuesId<s:property value="%{#status.count}" />"
+												value="<s:property value="#sq.questionId" />">
 										</s:if>
 									</ul>
 								</s:iterator>
@@ -93,7 +100,7 @@
 									value="<s:property value="survey.surveyId" />">
 								<!-- 获取问卷的ID --> --%>
 
-								<div class="top-distance" >
+								<div class="top-distance">
 									<span>问卷有效日期：</span><input type="text" name="startTime"
 										style="width: 100px;" readonly id="startTime"
 										value="<s:property  value="%{getText('{0,date,yyyy-MM-dd}',{survey.startTime})}"/>">至<input
@@ -101,9 +108,10 @@
 										id="endTime"
 										value="<s:property  value="%{getText('{0,date,yyyy-MM-dd}',{survey.endTime})}"/>">
 								</div>
-								<div class="top-distance" style="text-align:right">
-									<input type="submit" class="btn top-distance" style="text-align:center"
-										value="提交问卷" onclick="linkSelSubmit()">
+								<div class="top-distance" style="text-align: right">
+									<input type="submit" class="btn top-distance"
+										style="text-align: center" value="提交问卷" id="submitSurvey"
+										onclick="linkSelSubmit()">
 								</div>
 							</form>
 						</div>
@@ -117,15 +125,33 @@
 	<script type="text/javascript" src="js/bootstrap.js"></script>
 	<script>
 		$(function() {
+			$.getJSON("Json_selectSurveyReplayer", {
+				surveyId : sessionStorage.getItem('surveyId')
+			}, function(data) {
+				if (data.amount > 0) {
+					$("#submitSurvey").hide();
+					$("#warn").show();
+				} else {
+					$("#submitSurvey").show();
+					$("#warn").hide();
+				}
+			});
+
 			$(".container").css("min-height",
 					$(document).height() - 90 - 88 - 41 + "px");//container的最小高度为“浏览器当前窗口文档的高度-header高度-footer高度”
 		});
 
 		function linkSelSubmit() {
+			var selecteds = document.getElementsByClassName("selected");
+			for (var l = 1; l <= selecteds.length; l++) {
+				document.getElementById("seled" + l + "").value = document
+						.getElementById("selQuesId" + l + "").value;
+			}
 			//获取选中的单选
 			var radios = document.getElementsByClassName("radio");
 			for (var i = 0; i < radios.length; i++) {
 				if (radios[i].checked) {
+
 					document.getElementById("seled" + radios[i].name + "").value += "#"
 							+ radios[i].id;
 				}
@@ -143,6 +169,8 @@
 			var texts = document.getElementsByClassName("textarea");
 			for (var m = 0; m < texts.length; m++) {
 				if (texts[m].value.trim() != "") {
+					document.getElementById("text" + texts[m].name + "").value = document
+							.getElementById("textQuesId" + texts[m].name + "").value;
 					document.getElementById("text" + texts[m].name + "").value += "#"
 							+ texts[m].value;
 				}
@@ -173,7 +201,7 @@
 				}
 
 			}
-			//设置文本问题的name属性
+			//判断文本问题是否为空
 			var textAnswer = document.getElementsByClassName("textAnswer");
 			for (var n = 0; n < textAnswer.length; n++) {
 				if (textAnswer[n].value.indexOf('#') < 0) {
@@ -184,6 +212,8 @@
 				}
 
 			}
+			$("#submitSurvey").attr("disabled", true);
+			$("#submitSurvey").attr("disabled", "disabled");
 			return true;
 		}
 		//发布问卷

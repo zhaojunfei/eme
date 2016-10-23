@@ -39,7 +39,7 @@
 									<span class="text-size left-distance">查询学年：</span><input
 										type="text" name="startSchoolYear" id="startSchoolYear"
 										style="width: 40px" onchange="changeEndYear()"
-										onFocus="WdatePicker(WdatePicker({lang:'zh-cn',dateFmt:'yyyy',readOnly:'true'})) ">
+										onFocus="WdatePicker(WdatePicker({lang:'zh-cn',cssStyle:'width:50px;',dateFmt:'yyyy',readOnly:'true'})) ">
 									<span class="text-size ">至</span>&nbsp;&nbsp;<input type="text"
 										name="endSchoolYear" id="endSchoolYear" style="width: 40px"
 										readOnly>&nbsp;&nbsp;<input type="button"
@@ -121,6 +121,7 @@
 			var startSchoolYear = $("#startSchoolYear").val();
 			var endSchoolYear = $("#endSchoolYear").val();
 			var schoolYear = startSchoolYear + "-" + endSchoolYear;
+			alert(schoolYear);
 			$("#stuCourseGradeList tbody").html("");
 			$.getJSON("Json_selectStuCourseGrades", {
 				schoolYear : schoolYear,

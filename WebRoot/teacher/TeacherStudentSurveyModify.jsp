@@ -197,11 +197,22 @@
 									<input type="hidden" name="survey.surveyId"
 										value="<s:property
 										value="survey.surveyId" />">
-									<span>问卷有效时间：</span> <input type="date" name="survey.startTime"
+									<span>问卷有效时间：</span>
+									<input
+										type="text" name="survey.startTime" id="startTime"
+										style="width: 110px" value="<s:property
+														value="%{getText('{0,date,yyyy-MM-dd}',{survey.startTime})}"/>"
+										onFocus="WdatePicker(WdatePicker({lang:'zh-cn',dateFmt:'yyyy-MM-dd',readOnly:'true'})) ">至<input
+										type="text" name="survey.endTime" id="endTime"
+										style="width: 110px"  value="<s:property
+														value="%{getText('{0,date,yyyy-MM-dd}',{survey.endTime})}"/>"
+										onFocus="WdatePicker(WdatePicker({lang:'zh-cn',dateFmt:'yyyy-MM-dd',readOnly:'true'})) ">
+									
+									<%--  <input type="date" name="survey.startTime"
 										id="startTime" value="<s:property
 														value="%{getText('{0,date,yyyy-MM-dd}',{survey.startTime})}"/>" />至
 									<input type="date" name="survey.endTime" id="endTime" value="<s:property
-														value="%{getText('{0,date,yyyy-MM-dd}',{survey.endTime})}"/>"/> 
+														value="%{getText('{0,date,yyyy-MM-dd}',{survey.endTime})}"/>"/>  --%>
 								</div>
 								<div class="right_align"><input
 										type="submit" class="btn" name="submit" id="submit"
@@ -228,6 +239,7 @@
 	<script type="text/javascript" src="js/jquery1.12.1.js"></script>
 	<script type="text/javascript" src="js/bootstrap.js"></script>
 	<script type="text/javascript" src="js/survey.js"></script>
+	<script src="js/My97DatePickerBeta/My97DatePicker/WdatePicker.js"></script>
 	<script type="text/javascript">
 		var msg = "${requestScope.Message}";
 		if (msg != "") {

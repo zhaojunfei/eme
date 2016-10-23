@@ -2,6 +2,7 @@ package cn.xidian.dao;
 
 import java.util.List;
 
+import cn.xidian.entity.GradeClazzSurvey;
 import cn.xidian.entity.PageBean;
 import cn.xidian.entity.Survey;
 import cn.xidian.entity.SurveyQuestion;
@@ -22,7 +23,11 @@ public interface SurveyDao {
 
 	List<Survey> selectAllSurveys(Teacher teacher);
 
+	List<Survey> selectPublishedSurveys(Teacher teacher);
+
 	List<Survey> findSurveys(Teacher teacher, Integer begin, Integer limit);
+
+	List<Survey> findPublishedSurveys(Teacher teacher, Integer begin, Integer limit);
 
 	Survey selectSurveyById(Integer surveyId);
 
@@ -44,13 +49,27 @@ public interface SurveyDao {
 
 	boolean deleteSurvey(Integer surveyId);
 
-	List<Survey> selectStuOrTchrSurveys(Integer role);
+	List<GradeClazzSurvey> selectStuSurveys(Integer role, Integer claId, String grade);
 
-	List<Survey> findStuOrTchrSurveys(Integer role, Integer begin, Integer limit);
+	List<GradeClazzSurvey> findStuSurveys(Integer role, Integer begin, Integer limit, Integer claId, String grade);
+
+	List<Survey> selectTchrSurveys(Integer role);
+
+	List<Survey> findTchrSurveys(Integer role, Integer begin, Integer limit);
 
 	boolean overSurvey(Integer surveyId);
-	
-	List<TextAnswer> selectSurveyTextResult(Integer surveyId,Integer questionId);
-	
-	List<TextAnswer> findSurveyTextResult(Integer surveyId,Integer questionId,Integer begin, Integer limit);
+
+	List<TextAnswer> selectSurveyTextResult(Integer surveyId, Integer questionId);
+
+	List<TextAnswer> findSurveyTextResult(Integer surveyId, Integer questionId, Integer begin, Integer limit);
+
+	boolean addLimitForSurvey(GradeClazzSurvey gradeClazzSurvey);
+
+	List<SurveyReplyer> selectStuSurveyReplayer(Integer surveyId, Integer stuId);
+
+	List<SurveyReplyer> selectTeaSurveyReplayer(Integer surveyId, Integer tchrId);
+
+	List<SurveyReplyer> selectSurveyReplyerById(Integer surveyId);
+
+	List<SurveyReplyer> findSurveyReplyerById(Integer surveyId,Integer begin, Integer limit);
 }

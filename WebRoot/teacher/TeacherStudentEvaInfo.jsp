@@ -71,22 +71,24 @@
 													value="stuEvaluateResults[0].student.stuSchNum" /></td>
 											<td><s:property
 													value="stuEvaluateResults[0].student.stuName" /></td>
-											<s:iterator value="stuEvaluateResults" var="s"
+											<%-- <s:iterator value="stuEvaluateResults" var="s"
 												status="status">
 												<td class="M<s:property value="%{#status.count}"/>">
 												<s:property
 														value="#s.mScore"/></td>
-											</s:iterator>
-											<td class="hidden" id="maxM1"><s:property
-													value="MaxScoreArr[0]" /></td>
-											<td class="hidden" id="maxM2"><s:property
-													value="MaxScoreArr[1]" /></td>
-											<td class="hidden" id="maxM3"><s:property
-													value="MaxScoreArr[2]" /></td>
-											<td class="hidden" id="maxM4"><s:property
-													value="MaxScoreArr[3]" /></td>
-											<td class="hidden" id="maxM5"><s:property
-													value="MaxScoreArr[4]" /></td>
+											</s:iterator> --%>
+											<s:iterator value="ScoreArr" var="s"
+												status="status">
+												<td class="M<s:property value="%{#status.count}"/>">
+												<s:property
+														value="#s"/></td>
+											</s:iterator> 
+											<s:iterator value="MaxScoreArr" var="m"
+												status="status">
+												<td class="hidden" id="maxM<s:property value="%{#status.count}"/>">
+												<s:property
+														value="#m"/></td>
+											</s:iterator> 
 										</tr>
 									</tbody>
 								</table>
@@ -108,6 +110,7 @@
 		</div>
 	</div>
 	<%@ include file="/include/footer.jsp"%>
+	<s:debug></s:debug>
 	<script type="text/javascript" src="js/jquery1.12.1.js"></script>
 	<script type="text/javascript" src="js/bootstrap.js"></script>
 	<script type="text/javascript" src="js/radarChart.js"></script>

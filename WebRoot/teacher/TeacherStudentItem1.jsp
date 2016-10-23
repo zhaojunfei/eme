@@ -78,9 +78,9 @@
 									</tr>
 								</tbody>
 							</table>
-							<a href="Student_Award_Info_CreateWord">导出表格</a>
-							<a href="FileDown_ExportFile?fileName=导出文档">下载</a>
-							
+							<!-- <a href="Student_Award_Info_CreateWord">导出表格</a>
+							<a href="FileDown_ExportFile?fileName=导出文档">下载</a> -->
+
 							<table class="table table-bordered">
 								<thead>
 									<tr>
@@ -116,11 +116,11 @@
 								value="<s:property value="item.itemPrizeObject" />"
 								style="display: none">
 						</div>
-						<div style="position: relative;  left:70%">
+						<div style="position: relative; left: 70%">
 							<input type="button" class="btn" data-toggle="modal"
 								data-target="#myModal"
 								id="<s:property value="item.stuItemId" />"
-								onclick="getItemId(this)" value="项目审核" >
+								onclick="getItemId(this)" value="项目审核">
 						</div>
 					</div>
 					<!-- 模态框，用于添加参与活动信息 -->
@@ -222,9 +222,13 @@
 		function isEmpty() {
 			var score = document.getElementById("input-score");
 			var note = document.getElementById("input-note");
-
+			var obj = document.getElementById("input-score").value.toString()
+					.trim();
 			if (score.value.toString().trim().length != 0
 					&& note.value.toString().trim().length != 0) {
+				if (obj == "无效") {
+					document.getElementById("input-score").value = "0";
+				}
 				return true;
 			} else {
 				if (score.value.toString().trim().length == 0) {
@@ -236,6 +240,7 @@
 				alert("输入框不能为空！");
 				return false;
 			}
+
 		}
 		//判断输入的数字是否符合要求
 		function numJudge() {
@@ -253,7 +258,8 @@
 			var itemId = obj.id;
 			document.getElementById("input-itemId").value = itemId;
 			var itemEvaScore = document.getElementById("item-itemEvaScore").value;
-			var itemMemberScore = document.getElementById("item-itemMemberScore").value;
+			var itemMemberScore = document
+					.getElementById("item-itemMemberScore").value;
 			var itemPrizeObject = document
 					.getElementById("item-itemPrizeObject").value;
 			if (itemEvaScore.indexOf("-") >= 0) {
@@ -263,7 +269,7 @@
 				for (var i = min; i <= max; i++) {
 					document.getElementById("scoreList").style.display = "";
 					$("#scoreList").append(
-							"<option value="+i+">" + i+ "</option>");
+							"<option value="+i+">" + i + "</option>");
 				}
 				var judgeScore = (parseInt(min) + parseInt(max)) / 2;
 
@@ -280,7 +286,8 @@
 		function typeChange() {
 			var type = document.getElementById("input-type").value;
 			var itemEvaScore = document.getElementById("item-itemEvaScore").value;
-			var itemMemberScore = document.getElementById("item-itemMemberScore").value;
+			var itemMemberScore = document
+					.getElementById("item-itemMemberScore").value;
 			var itemPrizeObject = document
 					.getElementById("item-itemPrizeObject").value;
 			if (itemEvaScore.indexOf("-") >= 0) {

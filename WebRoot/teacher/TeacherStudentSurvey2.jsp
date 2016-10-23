@@ -56,8 +56,15 @@
 										value="<s:property
 										value="survey.surveyId" />">
 									<span>问卷有效时间：</span> 
-									<input type="date" name="survey.startTime" id="startTime" />至
-									<input type="date" name="survey.endTime" id="endTime" /> 
+									<input
+										type="text" name="survey.startTime" id="startTime"
+										style="width: 110px"
+										onFocus="WdatePicker(WdatePicker({lang:'zh-cn',dateFmt:'yyyy-MM-dd',readOnly:'true'})) ">至<input
+										type="text" name="survey.endTime" id="endTime"
+										style="width: 110px" 
+										onFocus="WdatePicker(WdatePicker({lang:'zh-cn',dateFmt:'yyyy-MM-dd',readOnly:'true'})) ">
+									<!-- <input type="date" name="survey.startTime" id="startTime" />
+									<input type="date" name="survey.endTime" id="endTime" />  -->
 								</div>
 								<div class="right_align"><input
 										type="submit" class="btn" name="submit" id="submit"
