@@ -54,7 +54,7 @@
 								<s:iterator value="surveyQuestions" var="sq" status="status">
 									<ul class="question-style top-distance">
 										<label>Q<s:property value="%{#status.count}" />： <s:property
-												value="#sq.content" /><s:if test="#sq.type==2">（多选）</s:if></label>
+												value="#sq.content" /> <s:if test="#sq.type==2">（多选）</s:if></label>
 										<s:if test="#sq.type==1||#sq.type==2">
 											<s:generator val="#sq.selectors" separator="_" id="s" />
 											<s:iterator status="st" value="#request.s" id="selector">
@@ -104,13 +104,82 @@
 										value="<s:property  value="%{getText('{0,date,yyyy-MM-dd}',{survey.endTime})}"/>">
 								</div>
 							</form>
-							<div class="right_align"><input type="button" class="btn" name="publish" id="publish"
-								value="发    布"
-								onclick="publishSurvey(<s:property value="survey.surveyId" />)">
-								<s:if test="survey.state!=1"><a href="TeacherStudent_Survey_Modify_selectSurveyById?surveyId=<s:property value="survey.surveyId" />" class="btn"  id="modify"
-								>编    辑</a></s:if></div>
+							<div class="right_align">
+								
+								<s:if test="survey.state!=1">
+								<s:if test="survey.respondent==1">
+									<input type="button" class="btn" name="publish" id="publish"
+										data-toggle="modal" data-target="#myModal"
+										onclick="getSurveyId(<s:property value="survey.surveyId" />)"
+										value="发    布">
+								</s:if>
+								<s:if test="survey.respondent==2">
+									<input type="button" class="btn" name="publish" id="publish"
+										
+										onclick="publishSurvey(<s:property value="survey.surveyId" />)"
+										value="发    布">
+								</s:if>
+								<s:if test="survey.respondent==3">
+									<input type="button" class="btn" name="publish" id="publish"
+										data-toggle="modal" data-target="#myModal"
+										onclick="getSurveyId(<s:property value="survey.surveyId" />)"
+										value="发    布">
+								</s:if>
+									<a
+										href="TeacherStudent_Survey_Modify_selectSurveyById?surveyId=<s:property value="survey.surveyId" />"
+										class="btn" id="modify">编 辑</a>
+								</s:if>
+							</div>
 						</div>
 					</div>
+					<!-- 模态框，用于添加参与活动信息 -->
+					<div class="modal fade" id="myModal" tabindex="-1" role="dialog"
+						aria-labelledby="myModalLabel" aria-hidden="true"
+						style="display: none">
+						<div class="modal-dialog">
+							<div class="modal-content">
+								<div class="modal-header">
+									<button type="button" class="close" data-dismiss="modal"
+										aria-hidden="true">×</button>
+									<h5 class="modal-title">设定问卷对象</h5>
+								</div>
+								<div class="modal-body">
+									<form action="TeacherStudent_Survey_List_addLimitForSurvey"
+										method="post" class="form-horizontal form-add"
+										enctype="multipart/form-data"
+										onsubmit="javascript:return isEmpty(1)">
+										<div class="control-group">
+											<label class="control-label">年级：</label>
+											<div class="controls">
+												<input type="text" name="gcs.grade" id="surveyGrade"
+													style="width: 40px" onchange=""
+													onFocus="WdatePicker(WdatePicker({lang:'zh-cn',dateFmt:'yyyy',readOnly:'true'})) ">
+											</div>
+										</div>
+										<div class="control-group">
+											<label class="control-label">班级：</label>
+											<div class="controls">
+												<select id="surveyClazz" name="gcs.clazz.claId">
+													<option value="0">全部</option>
+													<s:iterator value="allClazz" var="ac">
+														<option value="<s:property value="#ac.claId" />"><s:property
+																value="#ac.claName" /></option>
+													</s:iterator>
+												</select>
+											</div>
+										</div>
+										<input type="hidden" name="gcs.survey.surveyId" id="surveyId">
+
+										<div class="div-btn">
+											<input type="submit" value="提交" class="btn">
+										</div>
+									</form>
+								</div>
+
+							</div>
+						</div>
+					</div>
+					<!-- 模态框，用于添加参与活动信息完 -->
 				</div>
 			</div>
 		</div>
@@ -119,6 +188,7 @@
 	<script type="text/javascript" src="js/jquery1.12.1.js"></script>
 	<script type="text/javascript" src="js/bootstrap.js"></script>
 	<script type="text/javascript" src="js/survey.js"></script>
+	<script src="js/My97DatePickerBeta/My97DatePicker/WdatePicker.js"></script>
 	<script type="text/javascript">
 		var msg = "${requestScope.Message}";
 		if (msg != "") {
@@ -203,6 +273,26 @@
 			}, function(data) {
 				alert("发布成功");
 			});
+		}
+		//获取问卷ID
+		function getSurveyId(surveyId){
+			$("#surveyId").val(surveyId);
+		}
+		// 非空判断
+		function isEmpty() {
+			var grade = document.getElementById("surveyGrade");
+			var clazz = document.getElementById("surveyClazz");
+			
+			if (grade.value.toString().trim().length != 0
+					&& clazz.value.toString().trim().length != 0) {
+				
+				return true;
+			} else {
+				
+				alert("输入框不能为空！");
+				return false;
+			}
+
 		}
 	</script>
 </body>

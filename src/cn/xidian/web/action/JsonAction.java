@@ -20,7 +20,7 @@ import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.ActionSupport;
 
 import cn.xidian.entity.Clazz;
-
+import cn.xidian.entity.GradeClazzSurvey;
 import cn.xidian.entity.ItemEvaluatePoint;
 import cn.xidian.entity.ItemEvaluateScore;
 import cn.xidian.entity.ItemEvaluateType;
@@ -30,6 +30,7 @@ import cn.xidian.entity.Student;
 import cn.xidian.entity.StudentCourse;
 import cn.xidian.entity.StudentItem;
 import cn.xidian.entity.Survey;
+import cn.xidian.entity.SurveyReplyer;
 import cn.xidian.entity.SurveySelector;
 import cn.xidian.entity.Teacher;
 import cn.xidian.entity.TextAnswer;
@@ -90,6 +91,9 @@ public class JsonAction extends ActionSupport implements RequestAware {
 	private String[] sels;
 	private Integer role;
 	private PageBean<TextAnswer> taPageBean;
+	private PageBean<GradeClazzSurvey> gcsPageBean;
+	private Integer amount;
+	private PageBean<SurveyReplyer> srPageBean;//查看问卷参与者的列表
 
 	Map<String, Object> session = ActionContext.getContext().getSession();
 	User tUser = (User) session.get("tUser");
@@ -127,21 +131,25 @@ public class JsonAction extends ActionSupport implements RequestAware {
 		this.teacherStudentService = teacherStudentService;
 	}
 
+	// 根据小指标点查找该指标点对应的得分项(学生)
 	public String selectItemEvaScores() {
 		itemEvaluateScores = studentItemService.selectItemEvaScoresByPointId(pointId);
 		return "list";
 	}
 
+	// 根据项目的类型查找对应的小指标点（学生）
 	public String selectItemEvaPoint() {
 		itemEvaluatePoints = studentItemService.selectItemEvaPoints(itemTypeId);
 		return "list";
 	}
 
+	// 根据得分项的ID获取该项的具体分数（老师）
 	public String selectItemEvaScore() {
 		itemEvaluateScore = studentItemService.selectItemEvaScore(gradeId);
 		return "list";
 	}
 
+	// 老师评估学生的项目得分
 	public String evaluateStuSummaryByClazz() {
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		start = simpleDateFormat.format(startTime);
@@ -169,14 +177,12 @@ public class JsonAction extends ActionSupport implements RequestAware {
 			DecimalFormat df = new DecimalFormat("######0.00");
 			for (int i = 1; i <= itemEvaluateTypes.size(); i++) {
 				Double M = 0.0;
-				if (i == 2) {
 
-					M += countGrade(element, schoolYear);
-				}
 				items = studentItemService.selectItemByLimitTimes(i, sch, date1, date3);
 				StuEvaluateResult ser = new StuEvaluateResult();
 				for (StudentItem st : items) {
 					M += Double.parseDouble(st.getItemScore());
+
 				}
 				ser.setClazz(cla);
 				ser.setmScore(Double.parseDouble(df.format(M)));
@@ -189,6 +195,7 @@ public class JsonAction extends ActionSupport implements RequestAware {
 		return "list";
 	}
 
+	// 查看评估结果（老师和学生都要）
 	public String selectSummaryEva() {
 		pageBean = teacherStudentService.findByPageCid(clazz, schoolYear, page);// 根据一级分类查询带分页的商品
 		// 将PageBean存入到值栈中
@@ -196,6 +203,7 @@ public class JsonAction extends ActionSupport implements RequestAware {
 		return "list";
 	}
 
+	// 计算学生的课程加权平均分
 	public Double countGrade(Student stu, String schoolYear) {
 		Double allCredit = 0.0;
 		Double allCreditAndScore = 0.0;
@@ -215,6 +223,7 @@ public class JsonAction extends ActionSupport implements RequestAware {
 		return average;
 	}
 
+	// 根据学年查询学生的成绩（学生）
 	public String selectStuCourseGrades() {
 		String schNum = tUser.getSchNum();
 		s = studentService.selectInfBySchNum(schNum);
@@ -243,7 +252,7 @@ public class JsonAction extends ActionSupport implements RequestAware {
 		return "list";
 	}
 
-	// 查找学生项目
+	// 查找学生项目列表
 	public String selectItem() {
 		String schNum;
 		if (stuNum == null) {
@@ -258,7 +267,7 @@ public class JsonAction extends ActionSupport implements RequestAware {
 		return "list";
 	}
 
-	// 翻页查找问卷列表
+	// 翻页查找问卷列表（老师）
 	public String selectSurveys() {
 		String tchrSchNum = tUser.getSchNum();
 		teacher = teacherService.selectInfBySchNum(tchrSchNum);
@@ -266,7 +275,7 @@ public class JsonAction extends ActionSupport implements RequestAware {
 		return "list";
 	}
 
-	// 发布问卷
+	// 发布问卷（老师）
 	public String publishSurvey() {
 		surveyService.publishSurvey(surveyId);
 		return "list";
@@ -285,7 +294,24 @@ public class JsonAction extends ActionSupport implements RequestAware {
 	}
 
 	// 查询属于老师或学生的问卷
-	public String selectStuOrTchrSurveys() {
+	public String selectStuSurveys() {
+		if (tUser != null) {
+			String userRole = tUser.getIdentity().toString();
+			Student student = studentService.selectInfBySchNum(tUser.getSchNum());
+			if (userRole == "STUDENT") {
+				role = 1;
+			}
+			if (userRole == "TEACHER") {
+				role = 2;
+			}
+			gcsPageBean = surveyService.selectStuSurveys(role, page, student.getClazz().getClaId(),
+					student.getClazz().getClaGrade());
+		}
+		return "list";
+	}
+
+	// 查询属于老师或学生的问卷
+	public String selectTchrSurveys() {
 		if (tUser != null) {
 			String userRole = tUser.getIdentity().toString();
 			if (userRole == "STUDENT") {
@@ -294,7 +320,7 @@ public class JsonAction extends ActionSupport implements RequestAware {
 			if (userRole == "TEACHER") {
 				role = 2;
 			}
-			suPageBean = surveyService.selectStuOrTchrSurveys(role, page);
+			suPageBean = surveyService.selectTchrSurveys(role, page);
 		}
 		return "list";
 	}
@@ -311,6 +337,32 @@ public class JsonAction extends ActionSupport implements RequestAware {
 		return "list";
 	}
 
+	// 查看是否做过问卷
+	public String selectSurveyReplayer() {
+		String schNum = tUser.getSchNum();
+		String userRole = tUser.getIdentity().toString();
+		Integer userId = null;
+		if (userRole == "STUDENT") {
+			s = studentService.selectInfBySchNum(schNum);
+			userId = s.getStuId();
+		}
+		if (userRole == "TEACHER") {
+			teacher = teacherService.selectInfBySchNum(schNum);
+			userId = teacher.getTchrId();
+		}
+		List<SurveyReplyer> replyers = surveyService.selectSurveyReplayer(surveyId, userId,userRole);
+		amount = replyers.size();
+		return "list";
+	}
+
+	public String selectSurveyReplyersById() {
+		if (page == null) {
+			page = 1;
+		}
+		srPageBean = surveyService.selectSurveyReplyerById(surveyId,page);
+		return "list";
+	}
+	
 	public List<ItemEvaluateScore> getItemEvaluateScores() {
 		return itemEvaluateScores;
 	}
@@ -579,6 +631,30 @@ public class JsonAction extends ActionSupport implements RequestAware {
 
 	public void setMaxScoreArr(Double[] maxScoreArr) {
 		MaxScoreArr = maxScoreArr;
+	}
+
+	public PageBean<GradeClazzSurvey> getGcsPageBean() {
+		return gcsPageBean;
+	}
+
+	public void setGcsPageBean(PageBean<GradeClazzSurvey> gcsPageBean) {
+		this.gcsPageBean = gcsPageBean;
+	}
+
+	public Integer getAmount() {
+		return amount;
+	}
+
+	public void setAmount(Integer amount) {
+		this.amount = amount;
+	}
+
+	public PageBean<SurveyReplyer> getSrPageBean() {
+		return srPageBean;
+	}
+
+	public void setSrPageBean(PageBean<SurveyReplyer> srPageBean) {
+		this.srPageBean = srPageBean;
 	}
 
 }

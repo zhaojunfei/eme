@@ -64,6 +64,7 @@ public class TeacherStudentDaoImpl implements TeacherStudentDao {
 			return null;
 		}
 		Set<Student> students = new LinkedHashSet<Student>();
+		
 		Integer i = 0;
 		StringBuffer sb = new StringBuffer();
 		for (Clazz element : clazzs) {
@@ -81,25 +82,25 @@ public class TeacherStudentDaoImpl implements TeacherStudentDao {
 		if (limits.getStuClazz() != null) {
 			sql += " and claId=" + limits.getStuClazz();
 			if (!limits.getStuSchNum().equals("")) {
-				sql += " and stuSchNum=" + limits.getStuSchNum();
+				sql += " and stuSchNum  like '%" + limits.getStuSchNum()+"%'";
 				if (!limits.getStuName().equals("")) {
-					sql += " and stuName='" + limits.getStuName() + "'";
+					sql += " and stuName like '%" + limits.getStuName() +"%'";
 				}
 			} else {
 				if (!limits.getStuName().equals("")) {
-					sql += " and stuName='" + limits.getStuName() + "'";
+					sql += " and stuName like '%" + limits.getStuName() + "%'";
 				}
 			}
 		} else {
 			sql += " and claId in (" + clazzRange + ")";
 			if (!limits.getStuSchNum().equals("")) {
-				sql += " and stuSchNum=" + limits.getStuSchNum();
+				sql += " and stuSchNum like '%" + limits.getStuSchNum()+"%'";
 				if (!limits.getStuName().equals("")) {
-					sql += " and stuName='" + limits.getStuName() + "'";
+					sql += " and stuName like '%" + limits.getStuName() + "%'";
 				}
 			} else {
 				if (!limits.getStuName().equals("")) {
-					sql += " and stuName='" + limits.getStuName() + "'";
+					sql += " and stuName like '%" + limits.getStuName() + "%'";
 				}
 			}
 		}

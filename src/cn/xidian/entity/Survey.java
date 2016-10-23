@@ -14,19 +14,19 @@ import javax.persistence.TemporalType;
 @Entity
 @Table(name = "survey")
 public class Survey {
-	private Integer surveyId;//问卷Id
-	private String title;//问卷标题
-	private String discribe;//问卷大致描述
-	private Date createTime;//问卷创建时间
-	private Date startTime;//问卷开始时间
-	private Date endTime;//问卷截至时间
-	private String sponsor;//问卷发起单位
-	private Integer state;//问卷状态0表示待发布，1表示已发布，2表示已结束
-	private Teacher teacher;//问卷创建人
-	private String remark;//问卷备注
-	private Integer sumNum;//问卷被做了几次
-	private Integer delState;//问卷是否删除0表示已删除，1表示未删除
-	private Integer respondent;//问卷调查对象1代表学生2代表老师3代表既有老师又有学生
+	private Integer surveyId;// 问卷Id
+	private String title;// 问卷标题
+	private String discribe;// 问卷大致描述
+	private Date createTime;// 问卷创建时间
+	private Date startTime;// 问卷开始时间
+	private Date endTime;// 问卷截至时间
+	private String sponsor;// 问卷发起单位
+	private Integer state;// 问卷状态0表示待发布，1表示已发布，2表示已结束
+	private Teacher teacher;// 问卷创建人
+	private String remark;// 问卷备注
+	private Integer sumNum;// 问卷被做了几次
+	private Integer delState;// 问卷是否删除0表示已删除，1表示未删除
+	private Integer respondent;// 问卷调查对象1代表学生2代表老师3代表既有老师又有学生
 
 	@Id
 	@GeneratedValue
@@ -77,6 +77,7 @@ public class Survey {
 	public void setRemark(String remark) {
 		this.remark = remark;
 	}
+
 	@Temporal(TemporalType.DATE)
 	public Date getEndTime() {
 		return endTime;
@@ -95,7 +96,7 @@ public class Survey {
 	}
 
 	@ManyToOne
-	@JoinColumn(name="tchrId")
+	@JoinColumn(name = "tchrId")
 	public Teacher getTeacher() {
 		return teacher;
 	}
@@ -103,6 +104,7 @@ public class Survey {
 	public void setTeacher(Teacher teacher) {
 		this.teacher = teacher;
 	}
+
 	@Temporal(TemporalType.DATE)
 	public Date getStartTime() {
 		return startTime;

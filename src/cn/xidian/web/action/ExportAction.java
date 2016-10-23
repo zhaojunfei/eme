@@ -203,6 +203,7 @@ public class ExportAction extends ActionSupport implements RequestAware {
 			Row row = sheet.createRow(i);
 			row.createCell(0).setCellValue(evaluateResult.getStudent().getStuName());
 			row.createCell(1).setCellValue(evaluateResult.getStudent().getStuSchNum());
+			row.createCell(3).setCellValue("机电工程学院");
 			row.createCell(4).setCellValue(evaluateResult.getClazz().getClaName());
 			row.createCell(5).setCellValue(evaluateResult.getM1());
 			row.createCell(7).setCellValue(evaluateResult.getM2());

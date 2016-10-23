@@ -7,6 +7,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils.Text;
+
 @Entity
 @Table(name="course")
 public class Course {
@@ -15,7 +17,6 @@ public class Course {
 
 	private Department dept;// fk
 	private Teacher teacher;// fk，课程负责人，每门课程对应一个负责的老师
-	
 	private String cursNum;
 	private String cursName;
 	private String cursEngName;

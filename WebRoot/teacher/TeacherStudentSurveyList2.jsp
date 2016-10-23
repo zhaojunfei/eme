@@ -36,30 +36,47 @@
 						</div>
 						<div class="div-inf-tbl">
 							<div class="div-tchr-detail">
+								<a class="btn" href="teacher/TeacherStudentSurvey1.jsp">创建问卷</a>
 								<table class="table table-bordered table-condensed"
 									id="surveyList">
 									<thead>
 										<tr>
-											<th width="120px">问卷</th>
-											<th width="80px">开始</th>
-											<th width="80px">结束</th>
-											<th width="80px">发起单位</th>
+											<th style="width: 100px">问卷</th>
+											<th width="80px">创建时间</th>
+											<th width="60px">对象</th>
+											<th width="60px">状态</th>
 											<th width="80px">操作</th>
+
 										</tr>
 									</thead>
 									<tbody>
 										<s:iterator value="suPageBean.list" var="s">
 											<tr>
-												<td><s:property value="#s.title" /></td>
-												<td id="start<s:property value="#s.surveyId" />"><s:property
-														value="%{getText('{0,date,yyyy-MM-dd}',{#s.startTime})}" /></td>
-												<td id="end<s:property value="#s.surveyId" />"><s:property
-														value="%{getText('{0,date,yyyy-MM-dd}',{#s.endTime})}" /></td>
-												<td><s:property value="#s.sponsor" /></td>
 												<td><a
-													href="Teacher_Survey_Information_selectSurveyById?surveyId=<s:property value="#s.surveyId"/>"
-													onclick="return judgeDate(<s:property value="#s.surveyId" />);">填写</a>
+													href="TeacherStudent_Survey_3_selectSurveyById?surveyId=<s:property value="#s.surveyId" />&type=check"><s:property
+															value="#s.title" /></a></td>
+												<td><s:property
+														value="%{getText('{0,date,yyyy-MM-dd}',{#s.createTime})}" /></td>
+												<td><s:if test="#s.respondent==1">学生</s:if> <s:if
+														test="#s.respondent==2">教师</s:if> <s:if
+														test="#s.respondent==3">全体师生</s:if></td>
+												<td id="surveyState<s:property value="#s.surveyId" />"><s:if
+														test="#s.state==0">待发布</s:if> <s:if test="#s.state==1">已发布</s:if>
+													<s:if test="#s.state==2">已结束</s:if></td>
+
+												<td><a
+													href="TeacherStudent_Survey_Result_selectSurveyById?surveyId=<s:property value="#s.surveyId" />&type=result">数据</a>
+													&nbsp;&nbsp;<a
+													href="TeacherStudent_SurveyReplyer_List_selectSurveyReplyerById?surveyId=<s:property value="#s.surveyId" />">受访人列表</a>
 												</td>
+												<%-- <td><a
+													onclick="publishSurvey(<s:property value="#s.surveyId" />)">发布</a>
+													&nbsp;<a
+													onclick="overSurvey(<s:property value="#s.surveyId" />)">结束</a>
+													&nbsp;<a
+													href="TeacherStudent_Survey_Result_selectSurveyById?surveyId=<s:property value="#s.surveyId" />">数据</a>
+													
+												</td> --%>
 											</tr>
 										</s:iterator>
 									</tbody>
@@ -93,16 +110,17 @@
 		//显示后将request里的Message清空，防止回退时重复显示。
 
 		$(function() {
+			alert(message);
 			$(".container").css("min-height",
 					$(document).height() - 90 - 88 - 41 + "px");//container的最小高度为“浏览器当前窗口文档的高度-header高度-footer高度”
 		});
-//查找下一页或上一页问卷列表
+		//查找下一页或上一页问卷列表
 		function selectSurveys(page) {
 
 			$("#surveyList tbody").html("");
 			$
 					.getJSON(
-							"Json_selectTchrSurveys",
+							"Json_selectSurveys",
 							{
 								page : page
 							},
@@ -116,27 +134,50 @@
 											.each(
 													data.suPageBean.list,
 													function(i, value) {
-														var start = value.startTime
+														var str = value.createTime
 																.substr(
 																		0,
-																		value.startTime
+																		value.createTime
 																				.indexOf('T'));
-														var end = value.endTime
-														.substr(
-																0,
-																value.endTime
-																		.indexOf('T'));
+														var state = "";
+														switch (value.state) {
+														case 0:
+															state = "待发布";
+															break;
+														case 1:
+															state = "已发布";
+															break;
+														case 2:
+															state = "已结束";
+														}
+														var respondent = "";
+														switch (value.respondent) {
+														case 1:
+															respondent = "学生";
+															break;
+														case 2:
+															respondent = "教师";
+															break;
+														case 3:
+															respondent = "全体师生";
+														}
 														$("#surveyList")
 																.append(
-																		"<tr><td>"+value.title+"</td><td id='start"+value.surveyId+"'>"
-																				+ start
-																				+ "</td><td id='end"+value.surveyId+"'>"
-																				+ end
-																				+ "</td><td>"
-																				+ value.sponsor
-																				+ "</td><td><a href='Teacher_Survey_Information_selectSurveyById?surveyId="
+																		"<tr><td style="width:100px"><a href='TeacherStudent_Survey_3_selectSurveyById?surveyId="
 																				+ value.surveyId
-																				+ "' onclick='return judgeDate("+value.surveyId+");'>填写</a></td></tr>");
+																				+ "&type=check'>"
+																				+ value.title
+																				+ "</a></td><td>"
+																				+ str
+																				+ "</td><td>"
+																				+ respondent
+																				+ "</td><td id='surveyState"
+																				+ value.surveyId
+																				+ "'>"
+																				+ state
+																				+ "</td><td><a href='TeacherStudent_Survey_Result_selectSurveyById?surveyId="
+																				+ value.surveyId
+																				+ "&type=result'>数据</a></td></tr>");
 													});
 								}
 
@@ -151,7 +192,7 @@
 				selectSurveys(page - 1);
 			}
 		}
-		
+
 		//下一页
 		function downPage() {
 			var totalPage = parseInt($("#totalPage").html());
@@ -163,20 +204,23 @@
 			}
 		}
 		//发布问卷
-		function publishSurvey(surveyId){
-			$.getJSON("Json_publishSurvey",{
-				surveyId :surveyId
-			},function(data){
-				document.getElementById("surveyState"+surveyId).innerHTML="已发布";
-				alert("发布成功!");
-				});
-			
+		function publishSurvey(surveyId) {
+			$
+					.getJSON("Json_publishSurvey", {
+						surveyId : surveyId
+					},
+							function(data) {
+								document.getElementById("surveyState"
+										+ surveyId).innerHTML = "已发布";
+								alert("发布成功!");
+							});
+
 		}
 		//删除问卷
-		function deleteSurvey(surveyId){
-			$.getJSON("Json_deleteSurvey",{
-				surveyId:surveyId
-			},function(data){
+		function deleteSurvey(surveyId) {
+			$.getJSON("Json_deleteSurvey", {
+				surveyId : surveyId
+			}, function(data) {
 				/* document.getElementById("surveyId"+surveyId).style.display="none"; */
 				var page = parseInt($("#page").html());
 				alert("删除成功！");
@@ -184,32 +228,25 @@
 			});
 		}
 		//禁止更改已经派发的问卷
-		function stop(surveyId){
-			var state=document.getElementById("surveyState"+surveyId).innerHTML;
-			if(state.trim().toString() == "已发布"){
+		function stop(surveyId) {
+			var state = document.getElementById("surveyState" + surveyId).innerHTML;
+			if (state.trim().toString() == "已发布") {
 				alert("该问卷已发布，不能进行修改！");
 				return false;
-				}
+			}
 			return true;
 		}
-		//判断是否是在问卷规定的日期内
-		function judgeDate(surveyId){
-			var start=$("#start"+surveyId+"").html();
-			var end=$("#end"+surveyId+"").html();
-			var date1 = new Date(start);
-			var date2 = new Date(end);
-			var myDate = new Date();
-			if(date1.getTime()>myDate.getTime()){
-				alert("还未到问卷填写时间！");
-				return false;
-			}
-			if(date2.getTime()<myDate.getTime()){
-				alert("问卷填写时间已过！");
-				return false;
-			}
-			sessionStorage.setItem('surveyId',surveyId);
-			return true;
-			
+		//结束问卷调查
+		function overSurvey(surveyId) {
+			$
+					.getJSON("Json_overSurvey", {
+						surveyId : surveyId
+					},
+							function(data) {
+								document.getElementById("surveyState"
+										+ surveyId).innerHTML = "已结束";
+								alert("问卷结束设置成功！");
+							});
 		}
 	</script>
 </body>

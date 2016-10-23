@@ -41,41 +41,58 @@
 									id="surveyList">
 									<thead>
 										<tr>
-											<th width="100px">问卷</th>
+											<th style="width:100px">问卷</th>
 											<th width="80px">创建时间</th>
 											<th width="60px">对象</th>
 											<th width="60px">状态</th>
 											<th width="80px">操作</th>
-											<th width="90px">操作</th>
+
 										</tr>
 									</thead>
 									<tbody>
 										<s:iterator value="suPageBean.list" var="s">
 											<tr>
-												<td><a
-													href="TeacherStudent_Survey_3_selectSurveyById?surveyId=<s:property value="#s.surveyId" />"><s:property
+												<td style="width:100px"><a
+													href="TeacherStudent_Survey_3_selectSurveyById?surveyId=<s:property value="#s.surveyId" />&type=check"><s:property
 															value="#s.title" /></a></td>
 												<td><s:property
 														value="%{getText('{0,date,yyyy-MM-dd}',{#s.createTime})}" /></td>
-														<td><s:if
-														test="#s.respondent==1">学生</s:if> <s:if test="#s.respondent==2">教师</s:if>
-													<s:if test="#s.respondent==3">全体师生</s:if></td>
+												<td><s:if test="#s.respondent==1">学生</s:if> <s:if
+														test="#s.respondent==2">教师</s:if> <s:if
+														test="#s.respondent==3">全体师生</s:if></td>
 												<td id="surveyState<s:property value="#s.surveyId" />"><s:if
 														test="#s.state==0">待发布</s:if> <s:if test="#s.state==1">已发布</s:if>
 													<s:if test="#s.state==2">已结束</s:if></td>
-												
-												<td><a
-													href="TeacherStudent_Survey_Modify_selectSurveyById?surveyId=<s:property value="#s.surveyId" />"
-													onclick="return stop(<s:property value="#s.surveyId" />);">编辑</a>&nbsp;&nbsp;&nbsp;&nbsp;<a
+
+												<td><s:if test="#s.respondent==1">
+														<a data-toggle="modal" data-target="#myModal"
+															onclick="getSurveyId(<s:property value="#s.surveyId" />)">发布</a>
+													</s:if> <s:if test="#s.respondent==2">
+														<a
+															onclick="publishSurvey(<s:property value="#s.surveyId" />)">发布</a>
+													</s:if> <s:if test="#s.respondent==3">
+														<a data-toggle="modal" data-target="#myModal"
+															onclick="getSurveyId(<s:property value="#s.surveyId" />)">发布</a>
+													</s:if>&nbsp;<s:if test="#s.state==0">
+														<a
+															href="TeacherStudent_Survey_Modify_selectSurveyById?surveyId=<s:property value="#s.surveyId" />&type=modify">编辑</a>
+													</s:if>
+													<s:if test="#s.state==1">
+														<a data-toggle="modal" data-target="#judgeModal" onclick="getSurveyId(<s:property value="#s.surveyId" />)">编辑</a>
+													</s:if>
+													<s:if test="#s.state==2">
+														<a data-toggle="modal" data-target="#judgeModal" onclick="getSurveyId(<s:property value="#s.surveyId" />)">编辑</a>
+													</s:if>&nbsp;&nbsp;<a
 													onclick="deleteSurvey(<s:property value="#s.surveyId" />)">删除</a></td>
-												<td><a
+												<%-- <td><a
 													onclick="publishSurvey(<s:property value="#s.surveyId" />)">发布</a>
 													&nbsp;<a
 													onclick="overSurvey(<s:property value="#s.surveyId" />)">结束</a>
 													&nbsp;<a
 													href="TeacherStudent_Survey_Result_selectSurveyById?surveyId=<s:property value="#s.surveyId" />">数据</a>
-													
-												</td>
+												
+												</td> --%>
+
 											</tr>
 										</s:iterator>
 									</tbody>
@@ -92,6 +109,88 @@
 							</div>
 						</div>
 					</div>
+					<!-- 模态框，用于添加参与活动信息 -->
+					<div class="modal fade" id="myModal" tabindex="-1" role="dialog"
+						aria-labelledby="myModalLabel" aria-hidden="true"
+						style="display: none">
+						<div class="modal-dialog">
+							<div class="modal-content">
+								<div class="modal-header">
+									<button type="button" class="close" data-dismiss="modal"
+										aria-hidden="true">×</button>
+									<h5 class="modal-title">设定问卷对象</h5>
+								</div>
+								<div class="modal-body">
+									<form action="TeacherStudent_Survey_List_addLimitForSurvey"
+										method="post" class="form-horizontal form-add"
+										enctype="multipart/form-data"
+										onsubmit="javascript:return isEmpty(1)">
+										<div class="control-group">
+											<label class="control-label">年级：</label>
+											<div class="controls">
+												<input type="text" name="gcs.grade" id="surveyGrade"
+													style="width: 40px" onchange=""
+													onFocus="WdatePicker(WdatePicker({lang:'zh-cn',dateFmt:'yyyy',readOnly:'true'})) ">
+											</div>
+										</div>
+										<div class="control-group">
+											<label class="control-label">班级：</label>
+											<div class="controls">
+												<select id="surveyClazz" name="gcs.clazz.claId">
+													<option value="0">全部</option>
+													<s:iterator value="allClazz" var="ac">
+														<option value="<s:property value="#ac.claId" />"><s:property
+																value="#ac.claName" /></option>
+													</s:iterator>
+												</select>
+											</div>
+										</div>
+										<input type="hidden" name="gcs.survey.surveyId" id="surveyId">
+
+										<div class="div-btn">
+											<input type="submit" value="提交" class="btn">
+										</div>
+									</form>
+								</div>
+
+							</div>
+						</div>
+					</div>
+					<!-- 模态框，用于添加参与活动信息完 -->
+					<!-- 模态框，用于添加参与活动信息 -->
+					<div class="modal fade" id="judgeModal" tabindex="-1" role="dialog"
+						aria-labelledby="myModalLabel" aria-hidden="true"
+						style="display: none">
+						<div class="modal-dialog">
+							<div class="modal-content">
+								<div class="modal-header">
+									<button type="button" class="close" data-dismiss="modal"
+										aria-hidden="true">×</button>
+									<h5 class="modal-title">是否编辑？</h5>
+								</div>
+								<div class="modal-body">
+									<form action="TeacherStudent_Survey_Modify_selectSurveyById"
+										method="post" class="form-horizontal form-add"
+										enctype="multipart/form-data"
+										>
+										<div class="control-group">
+											<label class="">您的问卷已发布或已结束，如果提交修改，之前的统计数据将会丢失！ 是否进行问卷修改？</label>
+
+										</div>
+
+										<input type="hidden" name="surveyId" id="survey_id">
+										<input type="hidden" name="type" value="modify">
+
+										<div class="div-btn">
+											<input type="submit" value="确认" class="btn">
+										</div>
+									</form>
+								</div>
+
+							</div>
+						</div>
+					</div>
+					<!-- 模态框，用于添加参与活动信息完 -->
 				</div>
 			</div>
 		</div>
@@ -100,6 +199,7 @@
 	<script type="text/javascript" src="js/jquery1.12.1.js"></script>
 	<script type="text/javascript" src="js/bootstrap.js"></script>
 	<script type="text/javascript" src="js/survey.js"></script>
+	<script src="js/My97DatePickerBeta/My97DatePicker/WdatePicker.js"></script>
 	<script type="text/javascript">
 		var msg = "${requestScope.Message}";
 		if (msg != "") {
@@ -126,6 +226,7 @@
 							function(data) {
 								$("#page").html(data.suPageBean.page);
 								$("#totalPage").html(data.suPageBean.totalPage);
+								
 								if (data.suPageBean.list.length == 0) {
 									alert("未找到相关数据！");
 								} else {
@@ -139,32 +240,42 @@
 																		value.createTime
 																				.indexOf('T'));
 														var state = "";
+														
+														var modify;
+														var publish;
 														switch (value.state) {
 														case 0:
 															state = "待发布";
+															modify="<a href='TeacherStudent_Survey_Modify_selectSurveyById?surveyId="+value.surveyId+"&type=modify'>编辑</a>";
 															break;
 														case 1:
 															state = "已发布";
+															modify="<a data-toggle='modal' data-target='#judgeModal' onclick='getSurveyId("+value.surveyId+")'>编辑</a>";
 															break;
 														case 2:
 															state = "已结束";
+															modify="<a data-toggle='modal' data-target='#judgeModal' onclick='getSurveyId("+value.surveyId+")'>编辑</a>";
 														}
+														
 														var respondent="";
 														switch (value.respondent) {
 														case 1:
 															respondent = "学生";
+															publish="<a data-toggle='modal' data-target='#myModal' onclick='getSurveyId("+value.surveyId+")'>发布</a>";
 															break;
 														case 2:
 															respondent = "教师";
+															publish="<a onclick='publishSurvey("+value.surveyId+")'>发布</a>";
 															break;
 														case 3:
 															respondent = "全体师生";
+															publish="<a data-toggle='modal' data-target='#myModal' onclick='getSurveyId("+value.surveyId+")'>发布</a>";
 														}
 														$("#surveyList")
 																.append(
-																		"<tr><td><a href='TeacherStudent_Survey_3_selectSurveyById?surveyId="
+																		"<tr><td style='width:100px'><a  href='TeacherStudent_Survey_3_selectSurveyById?surveyId="
 																				+ value.surveyId
-																				+ "'>"+value.title+"</a></td><td>"
+																				+ "&type=check'>"+value.title+"</a></td><td>"
 																				+ str
 																				+ "</td><td>"
 																				+ respondent
@@ -172,19 +283,9 @@
 																				+ value.surveyId
 																				+ "'>"
 																				+ state
-																				+ "</td><td><a href='TeacherStudent_Survey_Modify_selectSurveyById?surveyId="
+																				+ "</td><td>"+publish+"&nbsp;"+modify+"&nbsp;&nbsp;<a onclick='deleteSurvey("
 																				+ value.surveyId
-																				+ "' onclick='return stop("
-																				+ value.surveyId
-																				+ ");'>编辑</a>&nbsp;&nbsp;&nbsp;<a onclick='deleteSurvey("
-																				+ value.surveyId
-																				+ ")'>删除</a></td><td><a onclick='publishSurvey("
-																				+ value.surveyId
-																				+ ")'>发布</a>&nbsp;&nbsp;<a onclick='overSurvey("
-																				+ value.surveyId
-																				+ ")'>结束</a>&nbsp;&nbsp;<a href='TeacherStudent_Survey_Result_selectSurveyById?surveyId="
-																				+ value.surveyId
-																				+ "'>数据</a></td></tr>");
+																				+ ")'>删除</a></td></tr>");
 													});
 								}
 
@@ -211,7 +312,7 @@
 			}
 		}
 		//发布问卷
-		function publishSurvey(surveyId){
+		 function publishSurvey(surveyId){
 			$.getJSON("Json_publishSurvey",{
 				surveyId :surveyId
 			},function(data){
@@ -219,7 +320,7 @@
 				alert("发布成功!");
 				});
 			
-		}
+		} 
 		//删除问卷
 		function deleteSurvey(surveyId){
 			$.getJSON("Json_deleteSurvey",{
@@ -240,15 +341,29 @@
 				}
 			return true;
 		}
-		//结束问卷调查
-		function overSurvey(surveyId){
-			$.getJSON("Json_overSurvey",{
-				surveyId:surveyId
-			},function(data){
-				document.getElementById("surveyState"+surveyId).innerHTML="已结束";
-				alert("问卷结束设置成功！");
-			});
+		//获取问卷ID
+		function getSurveyId(surveyId){
+			$("#surveyId").val(surveyId);
+			$("#survey_id").val(surveyId);
+			
 		}
+		// 非空判断
+		function isEmpty() {
+			var grade = document.getElementById("surveyGrade");
+			var clazz = document.getElementById("surveyClazz");
+			
+			if (grade.value.toString().trim().length != 0
+					&& clazz.value.toString().trim().length != 0) {
+				
+				return true;
+			} else {
+				
+				alert("输入框不能为空！");
+				return false;
+			}
+
+		}
+		
 	</script>
 </body>
 </html>

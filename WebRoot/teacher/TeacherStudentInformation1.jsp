@@ -108,7 +108,9 @@
 												<td><s:property value="#i.itemNum" /></td>
 												<td><s:property value="#i.itemName" /></td>
 												<td><s:property value="#i.itemState" /></td>
-												<td><s:property value="#i.itemScore" /></td>
+												<s:if test="#i.itemState=='已驳回'"><td>无效</td></s:if>
+												<s:if test="#i.itemState!='已驳回'"><td><s:property value="#i.itemScore" /></td></s:if>
+												
 												<td><a
 													href="TeacherStudent_Item_1_selectItemInfo?itemId=<s:property value="#i.stuItemId"/>">详情审核</a></td>
 											</tr>

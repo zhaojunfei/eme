@@ -3,7 +3,7 @@
 	<div class="navbar navbar-static-top">
 			<div class="navbar-inner nav-main">
 				<div class="div-brand">
-					<a class="brand">机械制造及其自动化</a></div>
+					<a class="brand">机械设计制造及其自动化</a></div>
 				<ul class="nav">
 					<li class="dropdown">
 						<a href="#" class="dropdown-toggle" data-toggle="dropdown">个人档案</a>

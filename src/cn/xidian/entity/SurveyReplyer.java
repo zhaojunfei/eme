@@ -15,7 +15,7 @@ public class SurveyReplyer {
 
 	private Integer surveyReplyId;
 	private Teacher teacher;
-	private Student student;
+	private Student student;            
 	private Survey survey;
 	private Date replyTime;
 	private String remark;

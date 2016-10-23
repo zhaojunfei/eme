@@ -193,7 +193,7 @@ public class StudentItemDaoImpl implements StudentItemDao {
 	@Override
 	public List<StudentItem> findByStuNum(String schNum, Integer begin, Integer limit) {
 		// TODO Auto-generated method stub
-		String sql="from StudentItem where stuId=(select stuId from Student as stuId where stuSchNum=? and isDelete=1)";
+		String sql="from StudentItem where stuId=(select stuId from Student as stuId where stuSchNum=? and isDelete=1) order by stuItemId desc";
 		Query query=currentSession().createQuery(sql).setFirstResult(begin).setMaxResults(limit);
 		query.setString(0, schNum);
 		return query.list();
@@ -210,6 +210,7 @@ public class StudentItemDaoImpl implements StudentItemDao {
 		query.setInteger(1, id);
 		query.setDate(2,startTime);
 		query.setDate(3,endTime);
+		
 		items.addAll(query.list());
 		return items;
 	}

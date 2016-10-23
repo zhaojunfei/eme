@@ -46,6 +46,9 @@
 								<label>学生参与项目</label>
 							</div>
 							<div class="div-inf-tbl">
+							<label class="lable-add" style="margin-bottom:10px"><a
+									href="Student_Award_Add_selectItemEvaType">添加</a></label>
+								<div>
 								<table class="table table-bordered table-condensed"
 									id="studentItemList">
 									<thead>
@@ -64,7 +67,12 @@
 												<td><s:property value="#i.itemNum" /></td>
 												<td><s:property value="#i.itemName" /></td>
 												<td><s:property value="#i.itemState" /></td>
-												<td><s:property value="#i.itemScore" /></td>
+												<s:if test="#i.itemState=='已驳回'">
+													<td>无效</td>
+												</s:if>
+												<s:if test="#i.itemState!='已驳回'">
+													<td><s:property value="#i.itemScore" /></td>
+												</s:if>
 												<td><a onclick="return confirm('确认删除？')"
 													href="Student_Portfolio_Activity_deleteItem?itemId=<s:property value="#i.stuItemId"/>">删除</a></td>
 												<td><a
@@ -73,16 +81,14 @@
 										</s:iterator>
 									</tbody>
 								</table>
-								<label class="lable-add"><a
-									href="Student_Award_Add_selectItemEvaType">添加</a></label>
-								<div>
+								
 									<input type=button class="btn btn-bottom" onclick="upPage()"
 										id="upPage" value="上一页">&nbsp;&nbsp;<span id="page"><s:property
 											value="siPageBean.page" /></span>&nbsp;&nbsp;<input type="button"
 										class="btn btn-bottom" onclick="downPage()" id="downPage"
 										value="下一页"><span class="left-distance">共&nbsp;&nbsp;<span
 										id="totalPage"><s:property value="siPageBean.totalPage" /></span>&nbsp;&nbsp;页
-									</span> 
+									</span>
 								</div>
 							</div>
 						</div>

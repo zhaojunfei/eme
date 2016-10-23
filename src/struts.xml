@@ -73,7 +73,13 @@
 			<result name="teacher">/teacher/TeacherStudent{1}{2}.jsp</result>
 			<result name="teacherStudentSurveyList" type="redirect">TeacherStudent_Survey_List_selectAllSurveys
 			</result>
+			<result name="teacherStudentDetail" type="chain">TeacherStudent_Information_1_selectStudentBySchNum
+			</result>
+			<result name="teacherStudentList" type="redirect">TeacherStudent_List_1_selectAllStus
+			</result>
 			<result name="surveyDone" type="redirect">TeacherStudent_Survey_List_selectAllSurveys
+			</result>
+			<result name="allSurveys" type="redirect">TeacherStudent_Survey_List_selectAllSurveys
 			</result>
 
 		</action>
@@ -107,8 +113,13 @@
 			<result name="stuItemList" type="chain">Student_Award_1_selectItem
 			</result>
 			<result name="false" type="chain">Major___selectMajorInf</result>
-			<result name="surveyDone" type="redirect">Student_Survey_List1_selectSurveys?message=success
+
+			<result name="surveyDone" type="redirect">
+				<param name="location">Student_Survey_List1_selectSurveys?message=${message}</param>
+				<param name="encode">true</param>
 			</result>
+			<!-- <result name="surveyDone" type="redirect"> Student_Survey_List1_selectSurveys?ss=${amount} 
+				</result> -->
 		</action>
 		<!-- student相关完 -->
 
@@ -135,7 +146,9 @@
 			</result>
 			<result name="teacherStudentList" type="redirect">TeacherStudent_List_1_selectAllStus
 			</result>
-			<result name="surveyDone" type="redirect">Teacher_Survey_List1_selectTeacherSurveys?message=success
+			<result name="surveyDone" type="redirect">
+				<param name="location">Teacher_Survey_List1_selectTeacherSurveys?message=${message}</param>
+				<param name="encode">true</param>
 			</result>
 			<interceptor-ref name="securityStack"></interceptor-ref>
 		</action>

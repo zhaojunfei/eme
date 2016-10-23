@@ -21,6 +21,7 @@ import org.springframework.stereotype.Component;
 import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.ActionSupport;
 import cn.xidian.entity.Clazz;
+import cn.xidian.entity.GradeClazzSurvey;
 import cn.xidian.web.bean.EvaluateResult;
 import cn.xidian.entity.ItemEvaluatePoint;
 import cn.xidian.entity.ItemEvaluateScore;
@@ -84,7 +85,8 @@ public class TeacherStudentAction extends ActionSupport implements RequestAware 
 	private PageBean<StudentItem> siPageBean;
 	private List<ItemEvaluateType> itemEvaluateTypes;
 	private List<StuEvaluateResult> stuEvaluateResults;
-	private Double[]  MaxScoreArr;
+	private Double[] MaxScoreArr;
+	private Double[] ScoreArr;
 
 	// 调查问卷添加
 	private Survey survey;
@@ -96,7 +98,9 @@ public class TeacherStudentAction extends ActionSupport implements RequestAware 
 	private List<SurveySelector> surveySelectors;
 	private List<TextAnswer> textAnswers;
 	private Student student;
-
+	private String type;
+	private GradeClazzSurvey gcs;
+	private PageBean<SurveyReplyer> srPageBean;
 
 	private Map<String, Object> request;
 	Map<String, Object> session = ActionContext.getContext().getSession();
@@ -175,7 +179,6 @@ public class TeacherStudentAction extends ActionSupport implements RequestAware 
 		students = list;
 		System.out.println(students.size());
 		if (students.size() == 0) {
-
 			this.addActionError("对不起，未找到相关信息！");
 		}
 		return "teacher";
@@ -330,7 +333,6 @@ public class TeacherStudentAction extends ActionSupport implements RequestAware 
 	}
 
 	public String selectEvaluateResultById() {
-		stuEvaluateResults = studentService.selectStuEvaluateResults(stuId, schoolYear);
 		itemEvaluateTypes = studentItemService.selectItemEvaTypes();
 		Double[] arr = new Double[itemEvaluateTypes.size()];
 		for (int i = 1; i <= itemEvaluateTypes.size(); i++) {
@@ -340,6 +342,14 @@ public class TeacherStudentAction extends ActionSupport implements RequestAware 
 			}
 		}
 		MaxScoreArr = arr;
+		stuEvaluateResults = studentService.selectStuEvaluateResults(stuId, schoolYear);
+		Double[] arr1 = new Double[itemEvaluateTypes.size()];
+		int i = 0;
+		for (StuEvaluateResult e : stuEvaluateResults) {
+			arr1[i] = e.getmScore();
+			i++;
+		}
+		ScoreArr = arr1;
 		return "teacher";
 	}
 
@@ -386,7 +396,7 @@ public class TeacherStudentAction extends ActionSupport implements RequestAware 
 	}
 
 	public String modifySurvey() {
-		
+
 		// 添加问卷
 		String tchrSchNum = tUser.getSchNum();
 		teacher = teacherService.selectInfBySchNum(tchrSchNum);
@@ -396,13 +406,13 @@ public class TeacherStudentAction extends ActionSupport implements RequestAware 
 		survey.setDelState(1);
 		survey.setTeacher(teacher);
 		survey.setSumNum(0);
-		boolean success=surveyService.createSurvey(survey);
+		boolean success = surveyService.createSurvey(survey);
 
 		// 添加问卷问题
 		boolean isSuccess = surveyService.addQuestion(qs, survey);
-		if (isSuccess&&success) {
+		if (isSuccess && success) {
 			request.put("Message", "问卷修改成功！！");
-			//删除之前的问卷
+			// 删除之前的问卷
 			surveyService.deleteSurvey(surveyId);
 		} else {
 			request.put("Message", "问卷修改失败！");
@@ -418,6 +428,19 @@ public class TeacherStudentAction extends ActionSupport implements RequestAware 
 			page = 1;
 		}
 		suPageBean = surveyService.selectAllSurveys(teacher, page);
+		allClazz = clazzService.findAllCla();
+		return "teacher";
+	}
+
+	// 查找非待发布的问卷
+	public String selectPublishedSurveys() {
+		String tchrSchNum = tUser.getSchNum();
+		teacher = teacherService.selectInfBySchNum(tchrSchNum);
+		if (page == null) {
+			page = 1;
+		}
+		suPageBean = surveyService.selectPublishedSurveys(teacher, page);
+		allClazz = clazzService.findAllCla();
 		return "teacher";
 	}
 
@@ -425,6 +448,12 @@ public class TeacherStudentAction extends ActionSupport implements RequestAware 
 	public String selectSurveyById() {
 		survey = surveyService.selectSurveyById(surveyId);
 		surveyQuestions = surveyService.selectQuestionBysurveyId(surveyId);
+
+		if (type.equals("check")) {
+			allClazz = clazzService.findAllCla();
+			System.out.println("类型：" + type);
+		}
+
 		return "teacher";
 	}
 
@@ -457,6 +486,26 @@ public class TeacherStudentAction extends ActionSupport implements RequestAware 
 			request.put("Message", "提交失败！");
 		}
 		return "surveyDone";
+	}
+
+	public String addLimitForSurvey() {
+		boolean isSuccess = surveyService.addLimitForSurvey(gcs);
+		if (isSuccess) {
+			request.put("Message", "发布成功！！");
+		} else {
+			request.put("Message", "发布失败！");
+		}
+		return "allSurveys";
+
+	}
+
+	public String selectSurveyReplyerById() {
+		survey=surveyService.selectSurveyById(surveyId);
+		if (page == null) {
+			page = 1;
+		}
+		srPageBean = surveyService.selectSurveyReplyerById(surveyId,page);
+		return "teacher";
 	}
 
 	public List<Student> getStudents() {
@@ -619,7 +668,6 @@ public class TeacherStudentAction extends ActionSupport implements RequestAware 
 		this.evaluateResultId = evaluateResultId;
 	}
 
-
 	public String getSchoolYear() {
 		return schoolYear;
 	}
@@ -746,6 +794,38 @@ public class TeacherStudentAction extends ActionSupport implements RequestAware 
 
 	public void setStuId(Integer stuId) {
 		this.stuId = stuId;
+	}
+
+	public Double[] getScoreArr() {
+		return ScoreArr;
+	}
+
+	public void setScoreArr(Double[] scoreArr) {
+		ScoreArr = scoreArr;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
+	public GradeClazzSurvey getGcs() {
+		return gcs;
+	}
+
+	public void setGcs(GradeClazzSurvey gcs) {
+		this.gcs = gcs;
+	}
+
+	public PageBean<SurveyReplyer> getSrPageBean() {
+		return srPageBean;
+	}
+
+	public void setSrPageBean(PageBean<SurveyReplyer> srPageBean) {
+		this.srPageBean = srPageBean;
 	}
 
 }

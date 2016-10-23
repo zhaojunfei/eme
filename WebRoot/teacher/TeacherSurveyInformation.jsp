@@ -34,6 +34,7 @@
 							<label>问卷调查</label>
 						</div>
 						<div class="div-inf-tbl">
+							<div style="font-size: 17px; color: red; display: none" id="warn">你已做过该问卷，不能重复填写！</div>
 							<div>
 								<h3 class="title_center">
 									<s:property value="survey.title" />
@@ -54,7 +55,7 @@
 								<s:iterator value="surveyQuestions" var="sq" status="status">
 									<ul class="question-style top-distance">
 										<label>Q<s:property value="%{#status.count}" />： <s:property
-												value="#sq.content" /><s:if test="#sq.type==2">（多选）</s:if></label>
+												value="#sq.content" /> <s:if test="#sq.type==2">（多选）</s:if></label>
 										<s:if test="#sq.type==1||#sq.type==2">
 											<s:generator val="#sq.selectors" separator="_" id="s" />
 											<s:iterator status="st" value="#request.s" id="selector">
@@ -76,6 +77,10 @@
 											<input type="hidden" class="selected"
 												id="seled<s:property value="%{#status.count}" />"
 												value="<s:property value="#sq.questionId" />">
+											<input type="hidden"
+												id="selQuesId<s:property value="%{#status.count}" />"
+												value="<s:property value="#sq.questionId" />">
+
 											<!-- 获取选中的选项的selectorNum -->
 										</s:if>
 										<s:if test="#sq.type==3">
@@ -86,6 +91,11 @@
 											<input type="hidden" class="textAnswer"
 												id="text<s:property value="%{#status.count}" />"
 												value="<s:property value="#sq.questionId" />">
+
+											<input type="hidden"
+												id="textQuesId<s:property value="%{#status.count}" />"
+												value="<s:property value="#sq.questionId" />">
+
 										</s:if>
 									</ul>
 
@@ -93,7 +103,7 @@
 								<%-- <input type="text" name="survey.surveyId"
 									value="<s:property value="survey.surveyId" />">
 								<!-- 获取问卷的ID --> --%>
-								
+
 								<div class="top-distance">
 									<span>问卷有效日期：</span><input type="text" name="startTime"
 										style="width: 100px;" readonly id="startTime"
@@ -102,8 +112,10 @@
 										id="endTime"
 										value="<s:property  value="%{getText('{0,date,yyyy-MM-dd}',{survey.endTime})}"/>">
 								</div>
-								<div class="top-distance right_align"><input type="submit" class="btn" value="提交问卷"
-									onclick="linkSelSubmit()"></div>
+								<div class="top-distance right_align">
+									<input type="submit" class="btn" id="submitSurvey" value="提交问卷"
+										onclick="linkSelSubmit()">
+								</div>
 							</form>
 						</div>
 					</div>
@@ -124,11 +136,28 @@
 		//显示后将request里的Message清空，防止回退时重复显示。
 
 		$(function() {
+			$.getJSON("Json_selectSurveyReplayer", {
+				surveyId : sessionStorage.getItem('surveyId')
+			}, function(data) {
+				if (data.amount > 0) {
+					$("#submitSurvey").hide();
+					$("#warn").show();
+				} else {
+					$("#submitSurvey").show();
+					$("#warn").hide();
+				}
+			});
 			$(".container").css("min-height",
 					$(document).height() - 90 - 88 - 41 + "px");//container的最小高度为“浏览器当前窗口文档的高度-header高度-footer高度”
 		});
 
 		function linkSelSubmit() {
+
+			var selecteds = document.getElementsByClassName("selected");
+			for (var l = 1; l <= selecteds.length; l++) {
+				document.getElementById("seled" + l + "").value = document
+						.getElementById("selQuesId" + l + "").value;
+			}
 			//获取选中的单选
 			var radios = document.getElementsByClassName("radio");
 			for (var i = 0; i < radios.length; i++) {
@@ -150,6 +179,8 @@
 			var texts = document.getElementsByClassName("textarea");
 			for (var m = 0; m < texts.length; m++) {
 				if (texts[m].value.trim() != "") {
+					document.getElementById("text" + texts[m].name + "").value = document
+							.getElementById("textQuesId" + texts[m].name + "").value;
 					document.getElementById("text" + texts[m].name + "").value += "#"
 							+ texts[m].value;
 				}
@@ -169,13 +200,13 @@
 			}
 
 		}
-//判断是否把问卷填写完整
+		//判断是否把问卷填写完整
 		function isEmpty() {
 			var selected = document.getElementsByClassName("selected");
 			for (var k = 0; k < selected.length; k++) {
 				if (selected[k].value.indexOf('#') < 0) {
-					var num=selected[k].id.substr(5,selected[k].id.length);
-					alert("第"+num+"题未做！请将问卷填写完整！");
+					var num = selected[k].id.substr(5, selected[k].id.length);
+					alert("第" + num + "题未做！请将问卷填写完整！");
 					return false;
 				}
 
@@ -184,8 +215,9 @@
 			var textAnswer = document.getElementsByClassName("textAnswer");
 			for (var n = 0; n < textAnswer.length; n++) {
 				if (textAnswer[n].value.indexOf('#') < 0) {
-					var num=textAnswer[n].id.substr(4,textAnswer[n].id.length);
-					alert("第"+num+"题未做！请将问卷填写完整！");
+					var num = textAnswer[n].id.substr(4,
+							textAnswer[n].id.length);
+					alert("第" + num + "题未做！请将问卷填写完整！");
 					return false;
 				}
 
@@ -193,12 +225,12 @@
 			return true;
 		}
 		//发布问卷
-		function publishSurvey(surveyId){
-			$.getJSON("Json_publishSurvey",{
-				surveyId :surveyId
-			},function(data){
+		function publishSurvey(surveyId) {
+			$.getJSON("Json_publishSurvey", {
+				surveyId : surveyId
+			}, function(data) {
 				alert("发布成功");
-				});
+			});
 		}
 	</script>
 </body>

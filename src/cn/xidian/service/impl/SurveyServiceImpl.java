@@ -7,8 +7,10 @@ import javax.annotation.Resource;
 
 import org.springframework.stereotype.Component;
 
+import cn.xidian.dao.ClazzDao;
 import cn.xidian.dao.SurveyDao;
-
+import cn.xidian.entity.Clazz;
+import cn.xidian.entity.GradeClazzSurvey;
 import cn.xidian.entity.PageBean;
 
 import cn.xidian.entity.Survey;
@@ -28,6 +30,13 @@ public class SurveyServiceImpl implements SurveyService {
 	@Resource(name = "surveyDaoImpl")
 	public void setSurveyDao(SurveyDao surveyDao) {
 		this.surveyDao = surveyDao;
+	}
+
+	private ClazzDao clazzDao;
+
+	@Resource(name = "clazzDaoImpl")
+	public void setClazzDao(ClazzDao clazzDao) {
+		this.clazzDao = clazzDao;
 	}
 
 	@Override
@@ -71,7 +80,7 @@ public class SurveyServiceImpl implements SurveyService {
 	public PageBean<Survey> selectAllSurveys(Teacher teacher, Integer page) {
 		// TODO Auto-generated method stub
 		List<Survey> surveys = surveyDao.selectAllSurveys(teacher);
-		PageBean<Survey> pageBean = PageUtils.page(page, surveys.size(),10);
+		PageBean<Survey> pageBean = PageUtils.page(page, surveys.size(), 10);
 		List<Survey> s = surveyDao.findSurveys(teacher, pageBean.getBegin(), pageBean.getLimit());
 		pageBean.setList(s);
 		return pageBean;
@@ -92,8 +101,7 @@ public class SurveyServiceImpl implements SurveyService {
 	@Override
 	public boolean addSurveyDone(List<SurveySelector> surveySelectors, List<TextAnswer> textAnswers, Survey survey) {
 		// TODO Auto-generated method stub
-		// 给问卷添加次数
-		surveyDao.updateSurveySumById(survey.getSurveyId());
+
 		// 存储选择题的答案结果
 		Iterator<SurveySelector> itqs = surveySelectors.iterator();
 		while (itqs.hasNext()) {
@@ -106,20 +114,22 @@ public class SurveyServiceImpl implements SurveyService {
 			}
 		}
 		// 存储文本问题的答案
-		if (textAnswers!=null) {
+		if (textAnswers != null) {
 			Iterator<TextAnswer> itta = textAnswers.iterator();
 			while (itta.hasNext()) {
 				String str = itta.next().getRemark();
 				TextAnswer ta = new TextAnswer();
 				SurveyQuestion surveyQuestion = new SurveyQuestion();
 				surveyQuestion = surveyDao.selectQuestionById(Integer.parseInt(str.substring(0, str.indexOf("#"))));
+				System.out.println("文本问题：" + str.substring(str.indexOf("#") + 1, str.length()));
 				ta.setAnswerContent(str.substring(str.indexOf("#") + 1, str.length()));
 				ta.setSurvey(survey);
 				ta.setSurveyQuestion(surveyQuestion);
 				surveyDao.addTextAnswer(ta);
 			}
 		}
-
+		// 给问卷添加次数
+		surveyDao.updateSurveySumById(survey.getSurveyId());
 		return true;
 	}
 
@@ -149,13 +159,29 @@ public class SurveyServiceImpl implements SurveyService {
 	}
 
 	@Override
-	public PageBean<Survey> selectStuOrTchrSurveys(Integer role, Integer page) {
+	public PageBean<GradeClazzSurvey> selectStuSurveys(Integer role, Integer page, Integer claId, String grade) {
 		// TODO Auto-generated method stub
-		List<Survey> surveys = surveyDao.selectStuOrTchrSurveys(role);
-		PageBean<Survey> pageBean = PageUtils.page(page, surveys.size(),10);
-		List<Survey> s = surveyDao.findStuOrTchrSurveys(role, pageBean.getBegin(), pageBean.getLimit());
-		pageBean.setList(s);
+
+		List<GradeClazzSurvey> gradeClazzSurveys = surveyDao.selectStuSurveys(role, claId, grade);
+		PageBean<GradeClazzSurvey> pageBean = PageUtils.page(page, gradeClazzSurveys.size(), 10);
+		List<GradeClazzSurvey> gcs = surveyDao.findStuSurveys(role, pageBean.getBegin(), pageBean.getLimit(), claId,
+				grade);
+		pageBean.setList(gcs);
 		return pageBean;
+
+	}
+
+	@Override
+	public PageBean<Survey> selectTchrSurveys(Integer role, Integer page) {
+		// TODO Auto-generated method stub
+
+		List<Survey> surveys = surveyDao.selectTchrSurveys(role);
+		PageBean<Survey> pageBean = PageUtils.page(page, surveys.size(), 10);
+		List<Survey> s = surveyDao.findTchrSurveys(role, pageBean.getBegin(), pageBean.getLimit());
+		pageBean.setList(s);
+
+		return pageBean;
+
 	}
 
 	@Override
@@ -167,10 +193,70 @@ public class SurveyServiceImpl implements SurveyService {
 	@Override
 	public PageBean<TextAnswer> selectSurveyTextResult(Integer page, Integer surveyId, Integer questionId) {
 		// TODO Auto-generated method stub
-		List<TextAnswer> textAnswers=surveyDao.selectSurveyTextResult(surveyId,questionId);
-		PageBean<TextAnswer> taPageBean = PageUtils.page(page, textAnswers.size(),5);
-		List<TextAnswer> tAnswers=surveyDao.findSurveyTextResult(surveyId,questionId,taPageBean.getBegin(),taPageBean.getLimit());
+		List<TextAnswer> textAnswers = surveyDao.selectSurveyTextResult(surveyId, questionId);
+		PageBean<TextAnswer> taPageBean = PageUtils.page(page, textAnswers.size(), 5);
+		List<TextAnswer> tAnswers = surveyDao.findSurveyTextResult(surveyId, questionId, taPageBean.getBegin(),
+				taPageBean.getLimit());
 		taPageBean.setList(tAnswers);
 		return taPageBean;
+	}
+
+	@Override
+	public boolean addLimitForSurvey(GradeClazzSurvey gradeClazzSurvey) {
+		// TODO Auto-generated method stub
+		boolean isSuccess = false;
+
+		if (gradeClazzSurvey.getClazz().getClaId().equals(0)) {
+			// 添加全部时的循环
+			List<Clazz> clazzs = clazzDao.selectByGrade(gradeClazzSurvey.getGrade());
+			for (int i = 0; i < clazzs.size(); i++) {
+				GradeClazzSurvey gcs = new GradeClazzSurvey();
+				gcs.setGrade(gradeClazzSurvey.getGrade());
+				gcs.setClazz(clazzs.get(i));
+				gcs.setSurvey(gradeClazzSurvey.getSurvey());
+				gradeClazzSurvey.setClazz(clazzs.get(i));
+				isSuccess = surveyDao.addLimitForSurvey(gcs);
+			}
+			surveyDao.publishSurvey(gradeClazzSurvey.getSurvey().getSurveyId());
+			return isSuccess;
+		} else {
+			isSuccess = surveyDao.addLimitForSurvey(gradeClazzSurvey);
+			surveyDao.publishSurvey(gradeClazzSurvey.getSurvey().getSurveyId());
+			return isSuccess;
+		}
+	}
+
+	@Override
+	public PageBean<Survey> selectPublishedSurveys(Teacher teacher, Integer page) {
+		// TODO Auto-generated method stub
+		List<Survey> surveys = surveyDao.selectPublishedSurveys(teacher);
+		PageBean<Survey> pageBean = PageUtils.page(page, surveys.size(), 10);
+		List<Survey> s = surveyDao.findPublishedSurveys(teacher, pageBean.getBegin(), pageBean.getLimit());
+		pageBean.setList(s);
+		return pageBean;
+
+	}
+
+	@Override
+	public List<SurveyReplyer> selectSurveyReplayer(Integer surveyId, Integer userId, String userRole) {
+		// TODO Auto-generated method stub
+		List<SurveyReplyer> surveyReplyers = null;
+		if (userRole == "STUDENT") {
+			surveyReplyers = surveyDao.selectStuSurveyReplayer(surveyId, userId);
+		}
+		if (userRole == "TEACHER") {
+			surveyReplyers = surveyDao.selectTeaSurveyReplayer(surveyId, userId);
+		}
+		return surveyReplyers;
+	}
+
+	@Override
+	public PageBean<SurveyReplyer> selectSurveyReplyerById(Integer surveyId, Integer page) {
+		// TODO Auto-generated method stub
+		List<SurveyReplyer> surveyReplyers = surveyDao.selectSurveyReplyerById(surveyId);
+		PageBean<SurveyReplyer> pageBean = PageUtils.page(page, surveyReplyers.size(), 20);
+		List<SurveyReplyer> sr = surveyDao.findSurveyReplyerById(surveyId, pageBean.getBegin(), pageBean.getLimit());
+		pageBean.setList(sr);
+		return pageBean;
 	}
 }
